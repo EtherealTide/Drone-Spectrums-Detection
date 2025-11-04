@@ -15,8 +15,17 @@ class ConfigInterface(QWidget):
 
     def setup_ui(self):
         component = Component()
-        layout = QVBoxLayout(self)
+        # 主布局 - 包含滚动区域
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(0, 0, 0, 0)
 
+        # Create a scroll area to hold all configuration cards
+        scroll_area = SingleDirectionScrollArea(
+            orient=Qt.Orientation.Vertical, parent=self
+        )
+        scroll_widget = QWidget()
+        scroll_widget.setObjectName("ConfigScrollWidget")
+        layout = QVBoxLayout(scroll_widget)
         # 系统状态卡片
         system_state_card_layout, system_state_card = component.create_card(
             self, height=80
@@ -37,11 +46,16 @@ class ConfigInterface(QWidget):
         # 创建DAC参数配置卡片
         dac_card = self.create_parameter_group_card("DAC", component, height=500)
         layout.addWidget(dac_card)
-
-        # 创建FFT参数配置卡片（如果需要）
+        # 创建ADC参数配置卡片
+        adc_card = self.create_parameter_group_card("ADC", component, height=500)
+        layout.addWidget(adc_card)
+        # 创建FFT参数配置卡片
         fft_card = self.create_parameter_group_card("FFT", component, height=150)
         layout.addWidget(fft_card)
-
+        layout.addStretch()  # 添加弹性空间
+        scroll_area.setWidget(scroll_widget)
+        scroll_area.setWidgetResizable(True)  # 使内容自适应大小
+        main_layout.addWidget(scroll_area)
         self.setStyleSheet("#ConfigInterface { background: white; }")
         self.resize(2560, 1440)
 
