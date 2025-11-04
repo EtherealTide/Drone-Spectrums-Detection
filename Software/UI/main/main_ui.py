@@ -80,7 +80,10 @@ class Window(FluentWindow):
 
     def initWindow(self):
         self.resize(1280, 720)
-        self.setWindowIcon(QIcon(":/qfluentwidgets/images/logo.png"))
+        # 将logo改为自定义图标
+        logo_path = Path(__file__).parent.parent / "main" / "logo.png"
+        self.setWindowIcon(QIcon(str(logo_path)))
+        # self.setWindowIcon(QIcon(":/qfluentwidgets/images/logo.png"))
         self.setWindowTitle("Drone Detection System Dashboard")
         # 强制设置全局背景为白色
         self.setStyleSheet(
