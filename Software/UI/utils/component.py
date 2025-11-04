@@ -16,6 +16,11 @@ class Component:
     def __init__(self):
         pass
 
+    def create_combobox(self, parent: QWidget, items: list):
+        combobox = ComboBox(parent)
+        combobox.addItems(items)
+        return combobox
+
     # 创建卡片并设置高度和水平
     def create_card(self, parent: QWidget, height=100, layout_type="QHBoxLayout"):
         card = CardWidget(parent)

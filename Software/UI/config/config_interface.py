@@ -49,8 +49,52 @@ class ConfigInterface(QWidget):
         # 创建ADC参数配置卡片
         adc_card = self.create_parameter_group_card("ADC", component, height=500)
         layout.addWidget(adc_card)
-        # 创建FFT参数配置卡片
-        fft_card = self.create_parameter_group_card("FFT", component, height=150)
+        # FFT参数，均采用复选框和输入框结合的方式
+        # fft_card = self.create_parameter_group_card("FFT", component, height=150)
+        fft_card_layout, fft_card = component.create_card(
+            self, height=150, layout_type="QGridLayout"
+        )
+        fft_params = self.parameter_table.get_parameter("FFT", default={})
+        # 添加头部标签
+        title_label = component.create_label(
+            self,
+            "FFT Parameters",
+            "#000000",
+            "#FFFFFF",
+            alignment=Qt.AlignmentFlag.AlignCenter,
+        )
+        title_label.setStyleSheet(
+            "font-size: 18px; font-weight: bold; padding: 10px; "
+            "color: #000000; "  # 显式设置黑色文字
+            "background-color: #F0F0F0; border-radius: 5px;"
+        )
+        fft_card_layout.addWidget(title_label, 0, 0, 1, 4)
+        row = 1
+        # Length 参数
+        length_label = component.create_label(
+            self,
+            f"Length: {fft_params['Length']} ",
+            "#000000",
+            "#FFFFFF",
+            alignment=Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft,
+        )
+        fft_card_layout.addWidget(length_label, row, 0)
+        # 当前值显示
+
+        combobox = component.create_combobox(
+            self, items=["128", "256", "512", "1024", "2048", "4096", "8192"]
+        )
+        fft_card_layout.addWidget(combobox, row, 1)
+        # Confirm按钮
+        confirm_button = PushButton("Set", self)
+        confirm_button.setFixedWidth(80)
+        # 更新参数
+        confirm_button.clicked.connect(
+            lambda: self._update_simple_parameter(
+                "FFT", "Length", int(combobox.currentText()), length_label
+            )
+        )
+        fft_card_layout.addWidget(confirm_button, row, 2)
         layout.addWidget(fft_card)
         layout.addStretch()  # 添加弹性空间
         scroll_area.setWidget(scroll_widget)
