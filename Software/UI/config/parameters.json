@@ -1,0 +1,40 @@
+{
+    "FFT": {
+        "Length": 1024,
+        "Fs": 1
+    },
+    "DAC": {
+        "DAC00": {
+            "freq": 1.2,
+            "phase": 0
+        },
+        "DAC02": {
+            "freq": 1.2,
+            "phase": 0
+        },
+        "DAC10": {
+            "freq": 1.2,
+            "phase": 0
+        },
+        "DAC12": {
+            "freq": 0.0,
+            "phase": 0
+        },
+        "DAC20": {
+            "freq": 1.2,
+            "phase": 0
+        },
+        "DAC22": {
+            "freq": 1.2,
+            "phase": 0
+        },
+        "DAC30": {
+            "freq": 2.4,
+            "phase": 0
+        },
+        "DAC32": {
+            "freq": 0.0,
+            "phase": 0
+        }
+    }
+}
