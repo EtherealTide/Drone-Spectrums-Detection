@@ -14,6 +14,7 @@ sys.path.insert(0, str(root_dir))
 from UI.icons.MyFluentIcon import MyFluentIcon
 from UI.config.config_interface import ConfigInterface
 from UI.visualization.visualization_interface import VisualizationInterface
+from UI.home.home import HomeInterface
 
 
 class Widget(QFrame):
@@ -40,7 +41,7 @@ class Window(FluentWindow):
         super().__init__()
 
         # 创建子界面,实际使用时将 Widget 换成自己的子界面
-        self.homeInterface = Widget("Home Interface", self)
+        self.homeInterface = HomeInterface(self)
         self.settingInterface = Widget("Setting Interface", self)
         self.albumInterface = Widget("Album Interface", self)
         self.albumInterface1 = Widget("Album Interface 1", self)
