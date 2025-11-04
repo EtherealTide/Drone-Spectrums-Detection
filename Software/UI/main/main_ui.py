@@ -79,7 +79,7 @@ class Window(FluentWindow):
         )
 
     def initWindow(self):
-        self.resize(900, 700)
+        self.resize(1280, 720)
         self.setWindowIcon(QIcon(":/qfluentwidgets/images/logo.png"))
         self.setWindowTitle("Drone Detection System Dashboard")
         # 强制设置全局背景为白色

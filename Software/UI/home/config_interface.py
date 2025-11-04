@@ -50,10 +50,11 @@ class ConfigInterface(QWidget):
         self.config_tree = TreeWidget(config_card)
         self.config_tree.setHeaderHidden(False)  # 显示表头
         self.config_tree.setColumnCount(2)  # 设置两列：参数名和值
-        self.config_tree.setHeaderLabels(["Parameter", "Value/Control"])
-
+        # self.config_tree.setHeaderLabels(["Parameter", "Value/Control"])
+        # 隐藏表头
+        self.config_tree.setHeaderHidden(True)
         # 设置列宽
-        self.config_tree.setColumnWidth(0, 200)  # 第一列宽度
+        self.config_tree.setColumnWidth(0, 250)  # 第一列宽度
         self.config_tree.setColumnWidth(1, 250)  # 第二列宽度
 
         # 构建树状结构
@@ -82,7 +83,8 @@ class ConfigInterface(QWidget):
         switch_widget = QWidget()
         switch_layout = QHBoxLayout(switch_widget)
         switch_layout.setContentsMargins(0, 0, 0, 0)
-
+        # 设置高度
+        switch_widget.setFixedHeight(30)
         switch = self.component.create_switch_button(
             switch_widget, "Connected", "Disconnected"
         )
@@ -118,7 +120,7 @@ class ConfigInterface(QWidget):
             fft_item,
             "Decimation Factor",
             fft_params.get("Decimation_factor", 256),
-            ["64", "128", "256", "512", "1024"],
+            ["64", "128", "256", "512", "1024", "2048", "4096", "8192"],
         )
 
         # FFT Centre Frequency
@@ -137,8 +139,10 @@ class ConfigInterface(QWidget):
         # 创建参数控制卡片
         param_widget = QWidget()
         param_layout = QHBoxLayout(param_widget)
-        param_layout.setContentsMargins(2, 2, 2, 2)
-        param_layout.setSpacing(5)
+        # 设置高度
+        param_widget.setFixedHeight(40)
+        param_layout.setContentsMargins(2, 2, 2, 2)  # 设置边距
+        param_layout.setSpacing(5)  # 设置控件间距
 
         # 当前值标签
         value_label = self.component.create_label(
@@ -149,6 +153,7 @@ class ConfigInterface(QWidget):
             alignment=Qt.AlignmentFlag.AlignCenter,
         )
         value_label.setFixedWidth(60)
+        # 背景颜色淡灰色
         value_label.setStyleSheet(
             "background-color: #E8F4F8; border-radius: 3px; padding: 3px;"
         )

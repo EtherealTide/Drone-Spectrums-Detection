@@ -51,7 +51,7 @@ class VisualizationInterface(QWidget):
         layout.addWidget(chart_card)
 
         self.setStyleSheet("#VisualizationInterface { background: white; }")
-        self.resize(1280, 720)
+        self.resize(2560, 1440)
 
 
 if __name__ == "__main__":

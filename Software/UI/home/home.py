@@ -31,7 +31,7 @@ class HomeInterface(QWidget):
 
         # 设置初始比例 (左:右 = 4:2)
         splitter.setStretchFactor(0, 4)
-        splitter.setStretchFactor(1, 2)
+        splitter.setStretchFactor(1, 1)
 
         layout.addWidget(splitter)
 
