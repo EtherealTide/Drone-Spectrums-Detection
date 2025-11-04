@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import QFrame, QHBoxLayout
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt
 from qfluentwidgets import setTheme, Theme
+from PyQt6.QtCore import QEventLoop, QTimer
 
 # 添加相对导入路径
 import sys
@@ -15,6 +16,9 @@ from UI.icons.MyFluentIcon import MyFluentIcon
 from UI.config.config_interface import ConfigInterface
 from UI.visualization.visualization_interface import VisualizationInterface
 from UI.home.home import HomeInterface
+from qfluentwidgets import SplashScreen
+from qframelesswindow import FramelessWindow, StandardTitleBar
+from PyQt6.QtCore import QSize
 
 
 class Widget(QFrame):
@@ -23,7 +27,6 @@ class Widget(QFrame):
         super().__init__(parent=parent)
         self.label = SubtitleLabel(text, self)
         self.hBoxLayout = QHBoxLayout(self)
-
         setFont(self.label, 24)
         self.label.setAlignment(
             Qt.AlignmentFlag.AlignCenter
@@ -39,17 +42,38 @@ class Window(FluentWindow):
 
     def __init__(self):
         super().__init__()
-
-        # 创建子界面,实际使用时将 Widget 换成自己的子界面
+        logo_path = Path(__file__).parent.parent / "main" / "logo.png"
+        # 显示启动界面
+        self.startInterface(logo_path)
+        # 创建子页面
         self.homeInterface = HomeInterface(self)
+        self.configInterface = ConfigInterface(self)
+        self.visualizationInterface = VisualizationInterface(self)
         self.settingInterface = Widget("Setting Interface", self)
         self.albumInterface = Widget("Album Interface", self)
         self.albumInterface1 = Widget("Album Interface 1", self)
-        self.configInterface = ConfigInterface(self)
-        self.visualizationInterface = VisualizationInterface(self)
 
         self.initNavigation()
-        self.initWindow()
+        self.initWindow(logo_path)
+
+    def startInterface(self, logo_path):
+        self.resize(700, 600)
+        self.setWindowTitle("Drone Detection System Dashboard")
+        self.setWindowIcon(QIcon(str(logo_path)))
+        self.splashScreen = SplashScreen(self.windowIcon(), self)
+        self.splashScreen.setIconSize(QSize(140, 140))
+
+        # 2. 在创建其他子页面前先显示主界面
+        self.show()
+        self.createSubInterface()
+        # 4. 隐藏启动页面
+        self.splashScreen.finish()
+
+    def createSubInterface(self):
+        """使用事件循环模拟耗时操作"""
+        loop = QEventLoop(self)
+        QTimer.singleShot(2000, loop.quit)  # 3秒后退出循环
+        loop.exec()  # 在这期间，事件循环继续运行，UI 可以正常渲染
 
     def initNavigation(self):
         self.addSubInterface(self.homeInterface, FIF.HOME, "Home")
@@ -78,11 +102,11 @@ class Window(FluentWindow):
             NavigationItemPosition.BOTTOM,
         )
 
-    def initWindow(self):
+    def initWindow(self, my_logo_path):
         self.resize(1280, 720)
         # 将logo改为自定义图标
-        logo_path = Path(__file__).parent.parent / "main" / "logo.png"
-        self.setWindowIcon(QIcon(str(logo_path)))
+
+        self.setWindowIcon(QIcon(str(my_logo_path)))
         # self.setWindowIcon(QIcon(":/qfluentwidgets/images/logo.png"))
         self.setWindowTitle("Drone Detection System Dashboard")
         # 强制设置全局背景为白色
