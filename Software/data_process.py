@@ -15,7 +15,7 @@ class DataProcessor:
                 # 从接收数据队列中获取数据
                 data = self.received_data_queue.get(timeout=1)
                 # 处理数据（示例：打印数据）
-                print(f"Processing data: {data}")
+                # print(f"Processing data: {data}")
                 # 标记任务完成
                 self.state.data_queue_status = "processing"
             except queue.Empty:
