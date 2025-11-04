@@ -1,74 +1,75 @@
 {
-    "FFT": {
-        "Length": 1024,
-        "Fs(GHz)": 1
+  "FFT": {
+    "Length": 1024,
+    "Decimation_factor": 256,
+    "Centre_frequency(MHz)": 400
+  },
+  "DAC": {
+    "DAC00": {
+      "freq(GHz)": 1.1,
+      "phase": 90
     },
-    "DAC": {
-        "DAC00": {
-            "freq(GHz)": 1.1,
-            "phase": 90
-        },
-        "DAC02": {
-            "freq(GHz)": 1.2,
-            "phase": 0
-        },
-        "DAC10": {
-            "freq(GHz)": 1.2,
-            "phase": 0
-        },
-        "DAC12": {
-            "freq(GHz)": 0.0,
-            "phase": 0
-        },
-        "DAC20": {
-            "freq(GHz)": 1.2,
-            "phase": 0
-        },
-        "DAC22": {
-            "freq(GHz)": 1.2,
-            "phase": 0
-        },
-        "DAC30": {
-            "freq(GHz)": 2.4,
-            "phase": 0
-        },
-        "DAC32": {
-            "freq(GHz)": 0.0,
-            "phase": 0
-        }
+    "DAC02": {
+      "freq(GHz)": 1.2,
+      "phase": 45
     },
-    "ADC": {
-        "ADC00": {
-            "gain": 1,
-            "offset": 0
-        },
-        "ADC02": {
-            "gain": 1,
-            "offset": 0
-        },
-        "ADC10": {
-            "gain": 1,
-            "offset": 0
-        },
-        "ADC12": {
-            "gain": 1,
-            "offset": 0
-        },
-        "ADC20": {
-            "gain": 1,
-            "offset": 0
-        },
-        "ADC22": {
-            "gain": 1,
-            "offset": 0
-        },
-        "ADC30": {
-            "gain": 1,
-            "offset": 0
-        },
-        "ADC32": {
-            "gain": 1,
-            "offset": 0
-        }
+    "DAC10": {
+      "freq(GHz)": 1.2,
+      "phase": 0
+    },
+    "DAC12": {
+      "freq(GHz)": 0.0,
+      "phase": 0
+    },
+    "DAC20": {
+      "freq(GHz)": 1.2,
+      "phase": 0
+    },
+    "DAC22": {
+      "freq(GHz)": 1.2,
+      "phase": 0
+    },
+    "DAC30": {
+      "freq(GHz)": 2.4,
+      "phase": 0
+    },
+    "DAC32": {
+      "freq(GHz)": 0.0,
+      "phase": 0
     }
+  },
+  "ADC": {
+    "ADC00": {
+      "gain": 1,
+      "offset": 0
+    },
+    "ADC02": {
+      "gain": 1,
+      "offset": 0
+    },
+    "ADC10": {
+      "gain": 1,
+      "offset": 0
+    },
+    "ADC12": {
+      "gain": 1,
+      "offset": 0
+    },
+    "ADC20": {
+      "gain": 1,
+      "offset": 0
+    },
+    "ADC22": {
+      "gain": 1,
+      "offset": 0
+    },
+    "ADC30": {
+      "gain": 1,
+      "offset": 0
+    },
+    "ADC32": {
+      "gain": 1,
+      "offset": 0
+    }
+  }
 }

@@ -56,7 +56,17 @@ class ConfigInterface(QWidget):
         scroll_area.setWidget(scroll_widget)
         scroll_area.setWidgetResizable(True)  # 使内容自适应大小
         main_layout.addWidget(scroll_area)
-        self.setStyleSheet("#ConfigInterface { background: white; }")
+        self.setStyleSheet(
+            """
+            #ConfigInterface { 
+                background-color: white; 
+            }
+            QWidget {
+                background-color: white;
+            }
+            """
+        )
+        scroll_widget.setStyleSheet("background-color: white;")
         self.resize(2560, 1440)
 
     def create_parameter_group_card(
@@ -85,11 +95,12 @@ class ConfigInterface(QWidget):
             self,
             group_name,
             "#000000",
-            "#F0F0F0",
+            "#FFFFFF",
             alignment=Qt.AlignmentFlag.AlignCenter,
         )
         title_label.setStyleSheet(
             "font-size: 18px; font-weight: bold; padding: 10px; "
+            "color: #000000; "  # 显式设置黑色文字
             "background-color: #F0F0F0; border-radius: 5px;"
         )
         card_layout.addWidget(title_label)
@@ -194,7 +205,7 @@ class ConfigInterface(QWidget):
             "#FFFFFF",
             alignment=Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft,
         )
-        name_label.setFixedWidth(150)
+        name_label.setFixedWidth(70)
         layout.addWidget(name_label, row, col)
         col += 1
 

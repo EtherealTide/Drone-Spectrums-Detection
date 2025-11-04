@@ -3,6 +3,7 @@ from qfluentwidgets import FluentIcon as FIF
 from PyQt6.QtWidgets import QFrame, QHBoxLayout
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt
+from qfluentwidgets import setTheme, Theme
 
 # 添加相对导入路径
 import sys
@@ -37,6 +38,7 @@ class Window(FluentWindow):
 
     def __init__(self):
         super().__init__()
+
         # 创建子界面,实际使用时将 Widget 换成自己的子界面
         self.homeInterface = Widget("Home Interface", self)
         self.settingInterface = Widget("Setting Interface", self)
@@ -79,6 +81,17 @@ class Window(FluentWindow):
         self.resize(900, 700)
         self.setWindowIcon(QIcon(":/qfluentwidgets/images/logo.png"))
         self.setWindowTitle("Drone Detection System Dashboard")
+        # 强制设置全局背景为白色
+        self.setStyleSheet(
+            """
+            QWidget {
+                background-color: white;
+            }
+            FluentWindow {
+                background-color: white;
+            }
+        """
+        )
 
 
 from PyQt6.QtWidgets import QApplication
@@ -86,6 +99,7 @@ import sys
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+
     w = Window()
     w.show()
     app.exec()

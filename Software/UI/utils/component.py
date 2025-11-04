@@ -8,6 +8,7 @@ from qfluentwidgets import (
     SwitchButton,
     BodyLabel,
     QColor,
+    ComboBox,
 )
 
 
@@ -43,14 +44,11 @@ class Component:
         color_light,
         color_dark,
         alignment=None,
-        width=None,
     ):
         label = BodyLabel(text, parent)
         label.setTextColor(QColor(color_light), QColor(color_dark))
         if alignment:
             label.setAlignment(alignment)
-        if width:
-            label.setFixedWidth(width)
 
         return label
 
