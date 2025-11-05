@@ -62,12 +62,13 @@ class Window(FluentWindow):
         self.setWindowTitle("Drone Detection System Dashboard")
         self.setWindowIcon(QIcon(str(logo_path)))
         self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIconSize(QSize(200, 200))
+        self.splashScreen.setIconSize(QSize(180, 180))
 
-        # 2. 在创建其他子页面前先显示主界面
+        # 2. 显示启动界面
         self.show()
+        # 延迟1秒加载过程
         self.createSubInterface()
-        # 4. 隐藏启动页面
+        # 隐藏启动页面
         self.splashScreen.finish()
 
     def createSubInterface(self):

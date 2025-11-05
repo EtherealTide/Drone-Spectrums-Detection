@@ -36,46 +36,16 @@ class HomeVisualizationCard(QWidget):
         self.center_freq = 2400  # MHz
         self.sample_rate = 20  # MHz
 
-        # 预计算的colormap（避免重复计算）.从而提高性能
-        self.colormap_cache = self._generate_colormap()
-
+        # 使用matplotlib的jet色图预计算颜色映射表
+        cmap = plt.get_cmap("jet")
+        self.colormap = (cmap(np.linspace(0, 1, 256))[:, :3] * 255).astype(np.uint8)
         # 灰色填充值（用于不足1024帧时的填充）
-        self.gray_fill_value = 128  # 中灰色（0-255范围）
+        self.gray_fill_value = 128
 
-        self.setup_ui()
-
-        # 降低更新频率：从50ms改为100ms (10fps)
+        self.setup_ui()  # 设置UI
+        # 定时器用于更新可视化
         self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_visualization)
-
-    def _generate_colormap(self):
-        """预生成colormap查找表"""
-        # 使用jet风格的colormap
-        # colormap = np.zeros((256, 3), dtype=np.uint8)
-        # for i in range(256):
-        #     val = i / 255.0
-        #     if val < 0.25:
-        #         r = 0
-        #         g = int(val * 4 * 255)
-        #         b = 255
-        #     elif val < 0.5:
-        #         r = 0
-        #         g = 255
-        #         b = int((0.5 - val) * 4 * 255)
-        #     elif val < 0.75:
-        #         r = int((val - 0.5) * 4 * 255)
-        #         g = 255
-        #         b = 0
-        #     else:
-        #         r = 255
-        #         g = int((1.0 - val) * 4 * 255)
-        #         b = 0
-        #     colormap[i] = [r, g, b]
-        # 使用matplotlib的jet colormap
-
-        cmap = plt.get_cmap("jet")
-        colormap = (cmap(np.linspace(0, 1, 256))[:, :3] * 255).astype(np.uint8)
-        return colormap
 
     def start_update(self):
         """启动可视化更新"""
@@ -175,7 +145,7 @@ class HomeVisualizationCard(QWidget):
         # 提取频谱数据
         spectrum = latest_data["spectrum"]
 
-        # 只在每2帧更新一次瀑布图（进一步降低频率）
+        # 每2帧更新一次瀑布图
         if self.update_count % 2 == 0:
             self.update_waterfall(spectrum)
 
@@ -248,8 +218,7 @@ class HomeVisualizationCard(QWidget):
             (waterfall_array - vmin) / (vmax - vmin) * 255, 0, 255
         ).astype(np.uint8)
 
-        # 使用预计算的colormap（已经是jet风格）
-        colored_image = self.colormap_cache[normalized]
+        colored_image = self.colormap[normalized]
 
         # 转换为QImage（注意：宽度*3是因为RGB三个通道）
         qimage = QImage(

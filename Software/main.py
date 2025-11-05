@@ -68,7 +68,6 @@ class DroneDetectionSystem:
         # 创建主界面（传入data_processor）
         self.main_window = Window(dataprocessor=self.data_processor)
         logger.info("✓ 用户界面初始化完成")
-
         # 绑定配置接口到通信层
         self.setup_connections()
 
@@ -78,14 +77,10 @@ class DroneDetectionSystem:
     def setup_connections(self):
         """设置各模块之间的连接"""
         # 将Home界面的连接按钮绑定到通信层
-        home_interface = self.main_window.homeInterface
 
         # 连接按钮信号
-        def on_connect_clicked():
-            if not self.state.communication_thread:
-                self.connect_device()
-            else:
-                self.disconnect_device()
+
+        self.connect_device()  # 调试阶段先直接连接设备
 
         # 这里需要根据您的HomeInterface实现来绑定
         # home_interface.connect_button.clicked.connect(on_connect_clicked)
@@ -94,9 +89,6 @@ class DroneDetectionSystem:
 
     def connect_device(self):
         """连接到设备"""
-        logger.info(
-            f"正在连接到设备 {self.state.device_ip}:{self.state.device_port}..."
-        )
 
         # 连接通信层
         self.communication.connect(self.state.device_ip, self.state.device_port)
@@ -151,7 +143,7 @@ class DroneDetectionSystem:
         # 自动连接（用于测试）
         from PyQt6.QtCore import QTimer
 
-        QTimer.singleShot(1000, self.connect_device)  # 1秒后自动连接
+        # QTimer.singleShot(1000, self.connect_device)  # 1秒后自动连接
 
         # 进入事件循环
         exit_code = self.app.exec()

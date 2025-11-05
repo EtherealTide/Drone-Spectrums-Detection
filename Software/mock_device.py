@@ -66,8 +66,9 @@ class MockDevice:
         signal = np.zeros(self.fft_length)
 
         # 峰值1: 中心频率附近
-        peak1_idx = self.fft_length // 2 + 100
-        signal[peak1_idx - 5 : peak1_idx + 5] = np.hamming(10) * 10.0
+        peak1_idx = self.fft_length // 2 + 50
+        window_size = 40  # 20*2 = 40个点
+        signal[peak1_idx - 20 : peak1_idx + 20] = np.hamming(window_size) * 10.0
 
         # 峰值2: 偏移频率
         peak2_idx = self.fft_length // 2 - 200

@@ -1,7 +1,7 @@
 {
   "FFT": {
     "Length": 1024,
-    "Decimation_factor": 256,
+    "Decimation_factor": 64,
     "Centre_frequency(MHz)": 200
   },
   "DAC": {
