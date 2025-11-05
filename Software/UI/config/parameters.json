@@ -1,6 +1,6 @@
 {
   "FFT": {
-    "Length": 128,
+    "Length": 1024,
     "Decimation_factor": 256,
     "Centre_frequency(MHz)": 200
   },

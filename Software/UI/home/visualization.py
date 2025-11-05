@@ -7,6 +7,7 @@ from qfluentwidgets import FluentIcon as FIF
 from ..utils.component import Component
 import numpy as np
 from collections import deque
+import matplotlib.pyplot as plt
 
 
 class HomeVisualizationCard(QWidget):
@@ -18,8 +19,8 @@ class HomeVisualizationCard(QWidget):
         # 数据处理器引用
         self.data_processor = data_processor
 
-        # 瀑布图参数 - 减少高度以提高性能
-        self.waterfall_height = 100  # 从200降到100
+        # 瀑布图参数 - 修改为1024帧高度
+        self.waterfall_height = 64  # 默认显示64帧
         self.waterfall_width = 512  # 固定宽度，用于降采样
         self.waterfall_data = deque(maxlen=self.waterfall_height)
 
@@ -35,8 +36,11 @@ class HomeVisualizationCard(QWidget):
         self.center_freq = 2400  # MHz
         self.sample_rate = 20  # MHz
 
-        # 预计算的colormap（避免重复计算）
+        # 预计算的colormap（避免重复计算）.从而提高性能
         self.colormap_cache = self._generate_colormap()
+
+        # 灰色填充值（用于不足1024帧时的填充）
+        self.gray_fill_value = 128  # 中灰色（0-255范围）
 
         self.setup_ui()
 
@@ -46,31 +50,36 @@ class HomeVisualizationCard(QWidget):
 
     def _generate_colormap(self):
         """预生成colormap查找表"""
-        colormap = np.zeros((256, 3), dtype=np.uint8)
-        for i in range(256):
-            val = i / 255.0
-            if val < 0.25:
-                r = 0
-                g = int(val * 4 * 255)
-                b = 255
-            elif val < 0.5:
-                r = 0
-                g = 255
-                b = int((0.5 - val) * 4 * 255)
-            elif val < 0.75:
-                r = int((val - 0.5) * 4 * 255)
-                g = 255
-                b = 0
-            else:
-                r = 255
-                g = int((1.0 - val) * 4 * 255)
-                b = 0
-            colormap[i] = [r, g, b]
+        # 使用jet风格的colormap
+        # colormap = np.zeros((256, 3), dtype=np.uint8)
+        # for i in range(256):
+        #     val = i / 255.0
+        #     if val < 0.25:
+        #         r = 0
+        #         g = int(val * 4 * 255)
+        #         b = 255
+        #     elif val < 0.5:
+        #         r = 0
+        #         g = 255
+        #         b = int((0.5 - val) * 4 * 255)
+        #     elif val < 0.75:
+        #         r = int((val - 0.5) * 4 * 255)
+        #         g = 255
+        #         b = 0
+        #     else:
+        #         r = 255
+        #         g = int((1.0 - val) * 4 * 255)
+        #         b = 0
+        #     colormap[i] = [r, g, b]
+        # 使用matplotlib的jet colormap
+
+        cmap = plt.get_cmap("jet")
+        colormap = (cmap(np.linspace(0, 1, 256))[:, :3] * 255).astype(np.uint8)
         return colormap
 
     def start_update(self):
         """启动可视化更新"""
-        self.update_timer.start(100)  # 100ms = 10fps
+        self.update_timer.start(25)  # 25ms = 40fps
 
     def stop_update(self):
         """停止可视化更新"""
@@ -205,7 +214,7 @@ class HomeVisualizationCard(QWidget):
             self.axis_y.setRange(min_power - margin, max_power + margin)
 
     def update_waterfall(self, spectrum_data):
-        """更新瀑布图 - 优化版"""
+        """更新瀑布图 - 新数据在顶部，旧数据向下滚动"""
         # 降采样到固定宽度
         fft_length = len(spectrum_data)
         downsample_factor = max(1, fft_length // self.waterfall_width)
@@ -214,13 +223,23 @@ class HomeVisualizationCard(QWidget):
         # 添加新的频谱线
         self.waterfall_data.append(downsampled)
 
-        # 如果数据不足，返回
-        if len(self.waterfall_data) < 5:
-            return
+        # 获取当前数据行数
+        current_height = len(self.waterfall_data)
 
-        # 转换为numpy数组
-        waterfall_array = np.array(list(self.waterfall_data), dtype=np.float32)
-        height, width = waterfall_array.shape
+        # 创建固定高度的数组（初始化为灰色填充值）
+        waterfall_array = np.full(
+            (self.waterfall_height, self.waterfall_width),
+            -50.0,  # 灰色填充值
+            dtype=np.float32,
+        )
+
+        if current_height > 0:
+            # 将数据转换为数组并翻转（最新的数据在前）
+            data_array = np.array(list(self.waterfall_data), dtype=np.float32)
+            data_array = np.flipud(data_array)  # 翻转数组，使最新数据在索引0
+
+            # 从顶部开始填充（新数据在顶部）
+            waterfall_array[:current_height, :] = data_array
 
         # 归一化到0-255（使用固定范围避免频繁计算）
         vmin = -80  # 固定最小值
@@ -229,12 +248,16 @@ class HomeVisualizationCard(QWidget):
             (waterfall_array - vmin) / (vmax - vmin) * 255, 0, 255
         ).astype(np.uint8)
 
-        # 使用预计算的colormap
+        # 使用预计算的colormap（已经是jet风格）
         colored_image = self.colormap_cache[normalized]
 
-        # 转换为QImage
+        # 转换为QImage（注意：宽度*3是因为RGB三个通道）
         qimage = QImage(
-            colored_image.data, width, height, width * 3, QImage.Format.Format_RGB888
+            colored_image.data,
+            self.waterfall_width,
+            self.waterfall_height,
+            self.waterfall_width * 3,
+            QImage.Format.Format_RGB888,
         )
 
         # 缩放到合适大小（使用更快的缩放算法）

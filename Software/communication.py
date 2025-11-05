@@ -75,7 +75,7 @@ class Communication:
         while self.state.communication_thread:
             try:
                 # 接收数据包头（包含序号和数据长度）
-                logging.info(f"[{packet_count}] 等待接收包头...")
+                # logging.info(f"[{packet_count}] 等待接收包头...")
                 header = self._recv_exact(8)  # 4字节序号 + 4字节长度
 
                 if not header:
@@ -83,9 +83,9 @@ class Communication:
                     break
 
                 packet_id, data_length = struct.unpack(">II", header)
-                logging.info(
-                    f"[{packet_count}] 收到包头: packet_id={packet_id}, data_length={data_length} 字节"
-                )
+                # logging.info(
+                #     f"[{packet_count}] 收到包头: packet_id={packet_id}, data_length={data_length} 字节"
+                # )
 
                 # 接收实际数据
                 data = self._recv_exact(data_length)
@@ -93,18 +93,18 @@ class Communication:
                     logging.error("接收数据失败")
                     break
 
-                logging.info(f"[{packet_count}] 成功接收数据: {len(data)} 字节")
+                # logging.info(f"[{packet_count}] 成功接收数据: {len(data)} 字节")
 
                 # 添加到缓冲区
                 self.buffer.extend(data)
                 packet_count += 1
 
-                logging.info(f"缓冲区当前大小: {len(self.buffer)}/{frame_size} 字节")
+                # logging.info(f"缓冲区当前大小: {len(self.buffer)}/{frame_size} 字节")
 
                 # 检查是否收到完整的FFT帧
                 if len(self.buffer) >= frame_size:
-                    logging.info("=" * 50)
-                    logging.info("完整FFT帧已接收！开始组装...")
+                    # logging.info("=" * 50)
+                    # logging.info("完整FFT帧已接收！开始组装...")
 
                     # 提取完整帧
                     frame_data = bytes(self.buffer[:frame_size])
@@ -112,7 +112,7 @@ class Communication:
 
                     # 解析为numpy数组（假设是float32）
                     fft_data = np.frombuffer(frame_data, dtype=np.float32)
-                    logging.info(f"FFT数据解析完成，长度: {len(fft_data)}")
+                    # logging.info(f"FFT数据解析完成，长度: {len(fft_data)}")
 
                     # 放入队列（非阻塞，如果队列满则丢弃旧数据）
                     try:
@@ -123,8 +123,8 @@ class Communication:
                                 "length": len(fft_data),
                             }
                         )
-                        logging.info("FFT数据已成功放入队列")
-                        logging.info("=" * 50)
+                        # logging.info("FFT数据已成功放入队列")
+                        # logging.info("=" * 50)
                     except queue.Full:
                         # 队列满时丢弃最旧的数据
                         logging.warning("FFT数据队列已满，丢弃最旧数据")

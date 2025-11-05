@@ -20,9 +20,9 @@ class MockDevice:
         self.send_thread = None
 
         # FFT参数
-        self.fft_length = 4096
+        self.fft_length = 1024
         self.packet_size = 128  # 每次发送128个点
-        self.send_interval = 0.2  # 100ms发送一帧完整FFT
+        self.send_interval = 0.01  # 100ms发送一帧完整FFT
 
     def start(self):
         """启动模拟设备"""
@@ -60,22 +60,22 @@ class MockDevice:
     def _generate_fft_data(self):
         """生成模拟FFT数据"""
         # 生成基础噪声
-        noise = np.random.normal(0, 0.1, self.fft_length)
+        noise = np.random.normal(0, 0.01, self.fft_length)
 
         # 添加几个峰值信号（模拟无人机信号）
         signal = np.zeros(self.fft_length)
 
         # 峰值1: 中心频率附近
         peak1_idx = self.fft_length // 2 + 100
-        signal[peak1_idx - 5 : peak1_idx + 5] = np.hamming(10) * 2.0
+        signal[peak1_idx - 5 : peak1_idx + 5] = np.hamming(10) * 10.0
 
         # 峰值2: 偏移频率
         peak2_idx = self.fft_length // 2 - 200
         signal[peak2_idx - 3 : peak2_idx + 3] = np.hamming(6) * 1.5
 
         # 峰值3: 随机位置（模拟干扰）
-        peak3_idx = np.random.randint(100, self.fft_length - 100)
-        signal[peak3_idx - 2 : peak3_idx + 2] = np.hamming(4) * 0.8
+        # peak3_idx = np.random.randint(100, self.fft_length - 100)
+        # signal[peak3_idx - 2 : peak3_idx + 2] = np.hamming(4) * 0.8
 
         # 合成最终信号
         fft_data = signal + noise

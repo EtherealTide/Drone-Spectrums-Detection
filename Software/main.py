@@ -35,7 +35,7 @@ class State:
         # 系统配置参数
         self.device_ip = "127.0.0.1"
         self.device_port = 5000
-        self.fft_length = 4096
+        self.fft_length = 1024
         self.center_freq = 2400  # MHz
         self.sample_rate = 20  # MHz
 
