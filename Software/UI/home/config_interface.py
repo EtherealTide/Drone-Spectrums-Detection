@@ -23,6 +23,7 @@ from ..utils.component import Component
 from ..utils.custom_style import CONFIRM_BUTTON_STYLE
 import json
 import os
+from PyQt6.QtCore import QSize
 
 
 class ConfigInterface(QWidget):
@@ -77,14 +78,14 @@ class ConfigInterface(QWidget):
 
         # 连接状态子项 - 使用开关
         connection_item = QTreeWidgetItem(["Connection"])
+        # 设置固定高度
+        # connection_item.setSizeHint(0, QSize(0, 30))
         system_item.addChild(connection_item)
 
         # 创建开关控件
         switch_widget = QWidget()
         switch_layout = QHBoxLayout(switch_widget)
-        switch_layout.setContentsMargins(0, 0, 0, 0)
-        # 设置高度
-        switch_widget.setFixedHeight(30)
+        switch_layout.setContentsMargins(5, 5, 5, 5)
         switch = self.component.create_switch_button(
             switch_widget, "Connected", "Disconnected"
         )
@@ -95,7 +96,11 @@ class ConfigInterface(QWidget):
         )
         switch_layout.addWidget(switch)
         switch_layout.addStretch()
-
+        switch_widget.adjustSize()  # 让开关控件自适应高度
+        widget_height = switch_widget.sizeHint().height() + 10
+        connection_item.setSizeHint(
+            1, QSize(0, widget_height)
+        )  # 让子项高度自适应，比子项里的控件高度稍大一些
         self.config_tree.setItemWidget(connection_item, 1, switch_widget)
 
         # 2. Receiver 节点
@@ -139,10 +144,9 @@ class ConfigInterface(QWidget):
         # 创建参数控制卡片
         param_widget = QWidget()
         param_layout = QHBoxLayout(param_widget)
-        # 设置高度
-        param_widget.setFixedHeight(40)
-        param_layout.setContentsMargins(2, 2, 2, 2)  # 设置边距
-        param_layout.setSpacing(5)  # 设置控件间距
+        param_layout.setContentsMargins(5, 5, 5, 5)  # 设置边距
+        # 设置控件间距.即当前值标签、输入框、set按钮之间的间距
+        param_layout.setSpacing(5)
 
         # 当前值标签
         value_label = self.component.create_label(
@@ -204,7 +208,11 @@ class ConfigInterface(QWidget):
         set_button.clicked.connect(update_value)
         param_layout.addWidget(set_button)
         param_layout.addStretch()
-
+        # 子项高度
+        # 自动计算并设置高度
+        param_widget.adjustSize()
+        widget_height = param_widget.sizeHint().height() + 10
+        param_item.setSizeHint(1, QSize(0, widget_height))
         self.config_tree.setItemWidget(param_item, 1, param_widget)
 
     def add_dac_adc_parameter(

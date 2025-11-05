@@ -61,7 +61,7 @@ class Window(FluentWindow):
         self.setWindowTitle("Drone Detection System Dashboard")
         self.setWindowIcon(QIcon(str(logo_path)))
         self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIconSize(QSize(140, 140))
+        self.splashScreen.setIconSize(QSize(200, 200))
 
         # 2. 在创建其他子页面前先显示主界面
         self.show()
@@ -72,7 +72,7 @@ class Window(FluentWindow):
     def createSubInterface(self):
         """使用事件循环模拟耗时操作"""
         loop = QEventLoop(self)
-        QTimer.singleShot(2000, loop.quit)  # 3秒后退出循环
+        QTimer.singleShot(1000, loop.quit)  # 1秒后退出循环
         loop.exec()  # 在这期间，事件循环继续运行，UI 可以正常渲染
 
     def initNavigation(self):
