@@ -22,7 +22,7 @@ class MockDevice:
         # FFT参数
         self.fft_length = 4096
         self.packet_size = 128  # 每次发送128个点
-        self.send_interval = 0.1  # 100ms发送一帧完整FFT
+        self.send_interval = 0.2  # 100ms发送一帧完整FFT
 
     def start(self):
         """启动模拟设备"""

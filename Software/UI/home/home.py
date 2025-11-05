@@ -3,14 +3,15 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QSplitter
 from qfluentwidgets import CardWidget, BodyLabel, setFont
 from qfluentwidgets import FluentIcon as FIF
-from ..home.config_interface import ConfigInterface
-from ..home.visualization import HomeVisualizationCard
+from .config_interface import ConfigInterface
+from .visualization import HomeVisualizationCard
 from ..utils.component import Component
 
 
 class HomeInterface(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, data_processor=None):
         super().__init__(parent)
+        self.data_processor = data_processor
         self.setObjectName("HomeInterface")
         self.setup_ui()
 
@@ -22,7 +23,9 @@ class HomeInterface(QWidget):
         splitter = QSplitter(Qt.Orientation.Horizontal)
 
         # 左侧可视化卡片
-        self.visualization_card = HomeVisualizationCard(self)
+        self.visualization_card = HomeVisualizationCard(
+            self, data_processor=self.data_processor
+        )
         splitter.addWidget(self.visualization_card)
 
         # 右侧配置界面卡片

@@ -18,7 +18,7 @@ class Communication:
 
         # 数据缓冲区
         self.buffer = bytearray()
-        self.expected_fft_length = 4096  # 默认FFT长度，可从配置读取
+        self.expected_fft_length = 1024  # 默认FFT长度，可从配置读取
         self.bytes_per_sample = 4  # 每个FFT点的字节数（float32）
 
     def connect(self, ip, port):
