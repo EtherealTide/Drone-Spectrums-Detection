@@ -1,5 +1,4 @@
 import threading
-import queue
 import time
 import numpy as np
 from collections import deque
@@ -10,13 +9,17 @@ class DataProcessor:
     def __init__(self, state):
         self.state = state
         self.fft_data_queue = None  # 从Communication接收的原始FFT数据
-        self.processed_data_queue = None  # 处理后供UI使用的数据
+        self.latest_processed_data = None  # 最新处理后的数据（替代队列）
+        self.data_lock = threading.Lock()  # 线程锁保护数据
         self.process_thread = None
 
         # 数据处理参数
         self.enable_averaging = False
         self.averaging_count = 10
         self.history_buffer = deque(maxlen=self.averaging_count)
+
+        # 统计信息
+        self.processed_frame_count = 0
 
     def start_processing(self):
         """启动数据处理线程"""
@@ -49,39 +52,29 @@ class DataProcessor:
                 # 数据处理
                 processed_data = self._process_fft_data(fft_data)
 
-                # 放入UI队列（非阻塞）
-                try:
-                    self.processed_data_queue.put_nowait(
-                        {
-                            "timestamp": timestamp,
-                            "spectrum": processed_data,
-                            "max_value": np.max(processed_data),
-                            "min_value": np.min(processed_data),
-                        }
-                    )
-                except queue.Full:
-                    # UI队列满，丢弃最旧数据
-                    try:
-                        self.processed_data_queue.get_nowait()
-                        self.processed_data_queue.put_nowait(
-                            {
-                                "timestamp": timestamp,
-                                "spectrum": processed_data,
-                                "max_value": np.max(processed_data),
-                                "min_value": np.min(processed_data),
-                            }
-                        )
-                    except:
-                        pass
+                # 使用线程锁更新最新数据
+                with self.data_lock:
+                    self.latest_processed_data = {
+                        "timestamp": timestamp,
+                        "spectrum": processed_data,
+                        "max_value": np.max(processed_data),
+                        "min_value": np.min(processed_data),
+                        "frame_id": self.processed_frame_count,
+                    }
+                    self.processed_frame_count += 1
 
                 self.state.data_queue_status = "processing"
 
-            except queue.Empty:
-                self.state.data_queue_status = "idle"
-                continue
             except Exception as e:
-                logging.error(f"数据处理异常: {e}")
+                if "Empty" not in str(type(e).__name__):
+                    logging.error(f"数据处理异常: {e}")
+                self.state.data_queue_status = "idle"
                 time.sleep(0.1)
+
+    def get_latest_data(self):
+        """获取最新处理后的数据（线程安全）"""
+        with self.data_lock:
+            return self.latest_processed_data
 
     def _process_fft_data(self, fft_data):
         """处理FFT数据"""
