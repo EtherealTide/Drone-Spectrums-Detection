@@ -22,7 +22,7 @@ class DataProcessor:
 
         # 瀑布图参数和数据
         self.waterfall_height = 64
-        self.waterfall_width = 512
+        self.waterfall_width = 1024
         self.waterfall_array = np.full(
             (self.waterfall_height, self.waterfall_width),
             -50.0,

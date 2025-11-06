@@ -13,13 +13,20 @@ class Communication:
     def __init__(self, state, fft_data_queue):
         self.socket = None
         self.state = state
-        self.fft_data_queue = fft_data_queue  # 存放完整FFT数据帧的队列
+        self.fft_data_queue = fft_data_queue
         self.receive_thread = None
 
         # 数据缓冲区
         self.buffer = bytearray()
-        self.expected_fft_length = 1024  # 默认FFT长度，可从配置读取
-        self.bytes_per_sample = 4  # 每个FFT点的字节数（float32）
+        self.expected_fft_length = 1024
+        self.bytes_per_sample = 4
+
+        # 帧同步参数
+        self.FRAME_START_MARKER = 0xAABBCCDD  # 帧起始标记
+        self.current_frame_id = -1  # 当前帧ID
+        self.current_frame_buffer = bytearray()  # 当前帧的数据缓冲
+        self.expected_packets_per_frame = 8  # 每帧期望的包数（1024/128=8）
+        self.received_packet_ids = set()  # 已接收的包ID
 
     def connect(self, ip, port):
         try:
@@ -64,68 +71,55 @@ class Communication:
             return False
 
     def _receive_loop(self):
-        """接收数据循环"""
+        """接收数据循环 - 改进版，支持丢包检测和帧同步"""
         frame_size = self.expected_fft_length * self.bytes_per_sample
-        logging.info(
-            f"接收线程启动，期待FFT帧大小: {frame_size} 字节 ({self.expected_fft_length} 点)"
-        )
-
-        packet_count = 0
+        logging.info(f"接收线程启动，期待FFT帧大小: {frame_size} 字节")
 
         while self.state.communication_thread:
             try:
-                # 接收数据包头（包含序号和数据长度）
-                # logging.info(f"[{packet_count}] 等待接收包头...")
-                header = self._recv_exact(8)  # 4字节序号 + 4字节长度
-
+                # 接收包头：[frame_id(4)] + [packet_id(4)] + [data_length(4)]
+                header = self._recv_exact(12)
                 if not header:
-                    logging.error("接收包头失败，连接可能已断开")
+                    logging.error("接收包头失败")
                     break
 
-                packet_id, data_length = struct.unpack(">II", header)
+                frame_id, packet_id, data_length = struct.unpack(">III", header)
+
                 # 接收实际数据
                 data = self._recv_exact(data_length)
                 if not data:
                     logging.error("接收数据失败")
                     break
 
-                # 添加到缓冲区
-                self.buffer.extend(data)
-                packet_count += 1
-                # 检查是否收到完整的FFT帧
-                if len(self.buffer) >= frame_size:
-                    # 提取完整帧
-                    frame_data = bytes(self.buffer[:frame_size])
-                    self.buffer = self.buffer[frame_size:]  # 移除已处理数据
-                    # 解析为numpy数组（假设是float32）
-                    fft_data = np.frombuffer(frame_data, dtype=np.float32)
-                    # 放入队列（非阻塞，如果队列满则丢弃旧数据）
-                    try:
-                        self.fft_data_queue.put_nowait(
-                            {
-                                "timestamp": time.time(),
-                                "data": fft_data,
-                                "length": len(fft_data),
-                            }
-                        )
+                # 检测新帧
+                if frame_id != self.current_frame_id:
+                    # 如果有上一帧数据，先处理
+                    if self.current_frame_id != -1:
+                        self._process_frame(self.current_frame_buffer, frame_id)
 
-                    except queue.Full:
-                        # 队列满时丢弃最旧的数据
-                        logging.warning("FFT数据队列已满，丢弃最旧数据")
-                        try:
-                            self.fft_data_queue.get_nowait()
-                            self.fft_data_queue.put_nowait(
-                                {
-                                    "timestamp": time.time(),
-                                    "data": fft_data,
-                                    "length": len(fft_data),
-                                }
-                            )
-                        except:
-                            pass
+                    # 重置当前帧状态
+                    self.current_frame_id = frame_id
+                    self.current_frame_buffer = bytearray()
+                    self.received_packet_ids.clear()
 
-                    # 重置包计数
-                    packet_count = 0
+                # 检查包是否重复
+                if packet_id in self.received_packet_ids:
+                    logging.warning(f"丢弃重复包: frame={frame_id}, packet={packet_id}")
+                    continue
+
+                # 添加到当前帧缓冲
+                self.current_frame_buffer.extend(data)
+                self.received_packet_ids.add(packet_id)
+
+                # 检查帧是否完整
+                if len(self.current_frame_buffer) >= frame_size:
+                    self._process_frame(
+                        self.current_frame_buffer[:frame_size], frame_id
+                    )
+                    # 重置状态
+                    self.current_frame_id = -1
+                    self.current_frame_buffer = bytearray()
+                    self.received_packet_ids.clear()
 
             except Exception as e:
                 if self.state.communication_thread:
@@ -133,6 +127,48 @@ class Communication:
                 break
 
         logging.info("接收线程已退出")
+
+    def _process_frame(self, frame_data, frame_id):
+        """处理完整的FFT帧"""
+        expected_size = self.expected_fft_length * self.bytes_per_sample
+
+        if len(frame_data) < expected_size:
+            # 帧不完整，检测丢包
+            missing_bytes = expected_size - len(frame_data)
+            missing_packets = missing_bytes // (128 * self.bytes_per_sample)
+            logging.warning(
+                f"帧 {frame_id} 不完整: 缺少 {missing_bytes} 字节 "
+                f"(约{missing_packets}个包)，丢弃该帧"
+            )
+            return
+
+        # 解析为numpy数组
+        fft_data = np.frombuffer(frame_data[:expected_size], dtype=np.float32)
+
+        # 放入队列
+        try:
+            self.fft_data_queue.put_nowait(
+                {
+                    "timestamp": time.time(),
+                    "data": fft_data,
+                    "length": len(fft_data),
+                    "frame_id": frame_id,
+                }
+            )
+        except queue.Full:
+            logging.warning("FFT数据队列已满，丢弃最旧数据")
+            try:
+                self.fft_data_queue.get_nowait()
+                self.fft_data_queue.put_nowait(
+                    {
+                        "timestamp": time.time(),
+                        "data": fft_data,
+                        "length": len(fft_data),
+                        "frame_id": frame_id,
+                    }
+                )
+            except:
+                pass
 
     def _recv_exact(self, num_bytes):
         """精确接收指定字节数"""
