@@ -23,12 +23,13 @@ class DataProcessor:
         # 瀑布图参数和数据
         self.waterfall_height = 64
         self.waterfall_width = 1024
-        self.waterfall_array = np.full(
-            (self.waterfall_height, self.waterfall_width),
-            -50.0,
-            dtype=np.float32,
+
+        # 初始化时用灰色填充buffer（-50.0 dB表示灰色）
+        gray_line = np.full(self.waterfall_width, -50.0, dtype=np.float32)
+        self.waterfall_buffer = deque(
+            [gray_line.copy() for _ in range(self.waterfall_height)],
+            maxlen=self.waterfall_height,
         )
-        self.waterfall_buffer = deque(maxlen=self.waterfall_height)
 
         # 统计信息
         self.processed_frame_count = 0
@@ -66,15 +67,15 @@ class DataProcessor:
                 # 数据处理
                 processed_spectrum = self._process_fft_data(fft_data)
 
-                # 更新瀑布图缓冲（降采样后的频谱）
+                # 降采样频谱
                 downsampled_spectrum = self._downsample_spectrum(processed_spectrum)
-                self.waterfall_buffer.append(downsampled_spectrum)
 
-                # 实时更新瀑布图数组
-                self._update_waterfall_array()
-
-                # 使用线程锁更新最新数据
+                # 使用线程锁更新数据
                 with self.data_lock:
+                    # 直接append到buffer（自动替换最老的数据）
+                    self.waterfall_buffer.append(downsampled_spectrum)
+
+                    # 更新最新频谱和统计信息
                     self.latest_spectrum = processed_spectrum
                     self.max_value = np.max(processed_spectrum)
                     self.min_value = np.min(processed_spectrum)
@@ -88,23 +89,6 @@ class DataProcessor:
                 self.state.data_queue_status = "idle"
                 time.sleep(0.1)
 
-    def _update_waterfall_array(self):
-        """更新瀑布图数组（在数据处理线程中调用）"""
-        current_height = len(self.waterfall_buffer)
-
-        if current_height == 0:
-            return
-
-        # 重置数组为灰色填充
-        self.waterfall_array.fill(-50.0)
-
-        # 将数据转换为数组并翻转（最新的数据在前）
-        data_array = np.array(list(self.waterfall_buffer), dtype=np.float32)
-        data_array = np.flipud(data_array)  # 翻转数组，使最新数据在索引0
-
-        # 从顶部开始填充（新数据在顶部）
-        self.waterfall_array[:current_height, :] = data_array
-
     def get_latest_spectrum(self):
         """获取最新的完整频谱数据（线程安全）"""
         with self.data_lock:
@@ -114,10 +98,25 @@ class DataProcessor:
                 else None
             )
 
-    def get_waterfall_array(self):
-        """获取瀑布图数组的副本（线程安全）"""
+    def get_waterfall_buffer(self):
+        """获取瀑布图buffer的副本（线程安全）- 返回list"""
         with self.data_lock:
-            return self.waterfall_array.copy()
+            return list(self.waterfall_buffer)  # 浅拷贝deque为list
+
+    # 保留原有的get_waterfall_array以兼容（但标记为deprecated）
+    def get_waterfall_array(self):
+        """获取瀑布图数组（已废弃，请使用get_waterfall_buffer）"""
+        buffer_copy = self.get_waterfall_buffer()
+        if not buffer_copy:
+            return np.full(
+                (self.waterfall_height, self.waterfall_width),
+                -50.0,
+                dtype=np.float32,
+            )
+
+        # 转换为数组并翻转
+        data_array = np.array(buffer_copy, dtype=np.float32)
+        return np.flipud(data_array)
 
     def get_stats(self):
         """获取统计信息（线程安全）"""
@@ -158,11 +157,22 @@ class DataProcessor:
 
     def set_waterfall_params(self, height=None, width=None):
         """设置瀑布图参数"""
-        if height is not None:
-            self.waterfall_height = height
-            self.waterfall_buffer = deque(maxlen=height)
-            logging.info(f"瀑布图高度已设置为: {height}")
+        with self.data_lock:
+            if height is not None:
+                self.waterfall_height = height
+                # 重新初始化buffer
+                gray_line = np.full(self.waterfall_width, -50.0, dtype=np.float32)
+                self.waterfall_buffer = deque(
+                    [gray_line.copy() for _ in range(height)], maxlen=height
+                )
+                logging.info(f"瀑布图高度已设置为: {height}")
 
-        if width is not None:
-            self.waterfall_width = width
-            logging.info(f"瀑布图宽度已设置为: {width}")
+            if width is not None:
+                self.waterfall_width = width
+                # 重新初始化buffer
+                gray_line = np.full(width, -50.0, dtype=np.float32)
+                self.waterfall_buffer = deque(
+                    [gray_line.copy() for _ in range(self.waterfall_height)],
+                    maxlen=self.waterfall_height,
+                )
+                logging.info(f"瀑布图宽度已设置为: {width}")

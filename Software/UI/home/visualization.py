@@ -177,25 +177,34 @@ class HomeVisualizationCard(QWidget):
             self.axis_y.setRange(min_power - margin, max_power + margin)
 
     def update_waterfall(self):
-        """更新瀑布图 - 从数据处理层获取已更新的数组"""
-        # 从数据处理层获取瀑布图数组（已经是处理好的）
-        waterfall_array = self.data_processor.get_waterfall_array()
-
-        if waterfall_array is None:
+        """更新瀑布图 - 在UI线程转换数组"""
+        if self.data_processor is None:
             return
+
+        # 从数据处理层获取buffer副本（快速，只持有锁很短时间）
+        waterfall_buffer = self.data_processor.get_waterfall_buffer()
+
+        if not waterfall_buffer:
+            return
+
+        # 在UI线程转换为numpy数组（不持有锁）
+        data_array = np.array(waterfall_buffer, dtype=np.float32)
+
+        # 翻转数组，使最新数据在顶部（索引0）
+        data_array = np.flipud(data_array)
 
         # 归一化到0-255
         vmin = -80
         vmax = -20
-        normalized = np.clip(
-            (waterfall_array - vmin) / (vmax - vmin) * 255, 0, 255
-        ).astype(np.uint8)
+        normalized = np.clip((data_array - vmin) / (vmax - vmin) * 255, 0, 255).astype(
+            np.uint8
+        )
 
         # 应用颜色映射
         colored_image = self.colormap[normalized]
 
         # 转换为QImage
-        height, width = waterfall_array.shape
+        height, width = data_array.shape
         qimage = QImage(
             colored_image.data,
             width,
