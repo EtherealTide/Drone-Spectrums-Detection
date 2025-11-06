@@ -16,19 +16,12 @@ class HomeVisualizationCard(QWidget):
         self.setObjectName("HomeVisualizationCard")
         self.component = Component()
 
-        # 数据处理器引用
+        # 数据处理器引用（只用于获取数据）
         self.data_processor = data_processor
-
-        # 瀑布图参数 - 修改为1024帧高度
-        self.waterfall_height = 64  # 默认显示64帧
-        self.waterfall_width = 512  # 固定宽度，用于降采样
-        self.waterfall_data = deque(maxlen=self.waterfall_height)
 
         # 统计信息
         self.frame_displayed = 0
         self.last_frame_id = -1
-
-        # 性能统计
         self.update_count = 0
         self.skip_count = 0
 
@@ -39,10 +32,9 @@ class HomeVisualizationCard(QWidget):
         # 使用matplotlib的jet色图预计算颜色映射表
         cmap = plt.get_cmap("jet")
         self.colormap = (cmap(np.linspace(0, 1, 256))[:, :3] * 255).astype(np.uint8)
-        # 灰色填充值（用于不足1024帧时的填充）
-        self.gray_fill_value = 128
 
-        self.setup_ui()  # 设置UI
+        self.setup_ui()
+
         # 定时器用于更新可视化
         self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_visualization)
@@ -126,14 +118,13 @@ class HomeVisualizationCard(QWidget):
         if self.data_processor is None:
             return
 
-        # 获取最新数据
-        latest_data = self.data_processor.get_latest_data()
-
-        if latest_data is None:
+        # 获取统计信息
+        stats = self.data_processor.get_stats()
+        if stats is None:
             return
 
         # 检查是否是新帧
-        frame_id = latest_data["frame_id"]
+        frame_id = stats["frame_id"]
         if frame_id == self.last_frame_id:
             self.skip_count += 1
             return  # 同一帧，不重复处理
@@ -142,19 +133,21 @@ class HomeVisualizationCard(QWidget):
         self.frame_displayed += 1
         self.update_count += 1
 
-        # 提取频谱数据
-        spectrum = latest_data["spectrum"]
+        # 获取最新频谱数据
+        spectrum = self.data_processor.get_latest_spectrum()
+        if spectrum is None:
+            return
 
         # 每2帧更新一次瀑布图
         if self.update_count % 2 == 0:
-            self.update_waterfall(spectrum)
+            self.update_waterfall()
 
         # 每次都更新频谱图
         self.update_spectrum(spectrum)
 
         # 每5帧更新一次统计信息
         if self.update_count % 5 == 0:
-            self.update_stats(latest_data)
+            self.update_stats(stats)
 
     def update_spectrum(self, spectrum_data):
         """更新频谱图 - 修复版（使用QPointF）"""
@@ -183,63 +176,45 @@ class HomeVisualizationCard(QWidget):
             margin = max(5, (max_power - min_power) * 0.1)  # 至少5dB的margin
             self.axis_y.setRange(min_power - margin, max_power + margin)
 
-    def update_waterfall(self, spectrum_data):
-        """更新瀑布图 - 新数据在顶部，旧数据向下滚动"""
-        # 降采样到固定宽度
-        fft_length = len(spectrum_data)
-        downsample_factor = max(1, fft_length // self.waterfall_width)
-        downsampled = spectrum_data[::downsample_factor][: self.waterfall_width]
+    def update_waterfall(self):
+        """更新瀑布图 - 从数据处理层获取已更新的数组"""
+        # 从数据处理层获取瀑布图数组（已经是处理好的）
+        waterfall_array = self.data_processor.get_waterfall_array()
 
-        # 添加新的频谱线
-        self.waterfall_data.append(downsampled)
+        if waterfall_array is None:
+            return
 
-        # 获取当前数据行数
-        current_height = len(self.waterfall_data)
-
-        # 创建固定高度的数组（初始化为灰色填充值）
-        waterfall_array = np.full(
-            (self.waterfall_height, self.waterfall_width),
-            -50.0,  # 灰色填充值
-            dtype=np.float32,
-        )
-
-        if current_height > 0:
-            # 将数据转换为数组并翻转（最新的数据在前）
-            data_array = np.array(list(self.waterfall_data), dtype=np.float32)
-            data_array = np.flipud(data_array)  # 翻转数组，使最新数据在索引0
-
-            # 从顶部开始填充（新数据在顶部）
-            waterfall_array[:current_height, :] = data_array
-
-        # 归一化到0-255（使用固定范围避免频繁计算）
-        vmin = -80  # 固定最小值
-        vmax = -20  # 固定最大值
+        # 归一化到0-255
+        vmin = -80
+        vmax = -20
         normalized = np.clip(
             (waterfall_array - vmin) / (vmax - vmin) * 255, 0, 255
         ).astype(np.uint8)
 
+        # 应用颜色映射
         colored_image = self.colormap[normalized]
 
-        # 转换为QImage（注意：宽度*3是因为RGB三个通道）
+        # 转换为QImage
+        height, width = waterfall_array.shape
         qimage = QImage(
             colored_image.data,
-            self.waterfall_width,
-            self.waterfall_height,
-            self.waterfall_width * 3,
+            width,
+            height,
+            width * 3,
             QImage.Format.Format_RGB888,
         )
 
-        # 缩放到合适大小（使用更快的缩放算法）
+        # 缩放并显示
         pixmap = QPixmap.fromImage(qimage).scaled(
             self.waterfall_label.width(),
             self.waterfall_label.height(),
             Qt.AspectRatioMode.IgnoreAspectRatio,
-            Qt.TransformationMode.FastTransformation,  # 使用快速变换
+            Qt.TransformationMode.FastTransformation,
         )
 
         self.waterfall_label.setPixmap(pixmap)
 
-    def update_stats(self, data):
+    def update_stats(self, stats):
         """更新统计信息"""
         drop_rate = (
             (self.skip_count / (self.update_count + self.skip_count) * 100)
@@ -249,10 +224,10 @@ class HomeVisualizationCard(QWidget):
 
         stats_text = f"""
         <p><b>显示帧数:</b> {self.frame_displayed}</p>
-        <p><b>处理帧数:</b> {data['frame_id']}</p>
+        <p><b>处理帧数:</b> {stats['frame_id']}</p>
         <p><b>跳过帧数:</b> {self.skip_count} ({drop_rate:.1f}%)</p>
-        <p><b>最大值:</b> {data['max_value']:.2f} dB</p>
-        <p><b>最小值:</b> {data['min_value']:.2f} dB</p>
+        <p><b>最大值:</b> {stats['max_value']:.2f} dB</p>
+        <p><b>最小值:</b> {stats['min_value']:.2f} dB</p>
         """
         self.stats_label.setText(stats_text)
 

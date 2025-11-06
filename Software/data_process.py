@@ -8,9 +8,8 @@ import logging
 class DataProcessor:
     def __init__(self, state):
         self.state = state
-        self.fft_data_queue = None  # 从Communication接收的原始FFT数据
-        self.latest_processed_data = None  # 最新处理后的数据（替代队列）
-        self.data_lock = threading.Lock()  # 线程锁保护数据
+        self.fft_data_queue = None
+        self.data_lock = threading.Lock()
         self.process_thread = None
 
         # 数据处理参数
@@ -18,8 +17,23 @@ class DataProcessor:
         self.averaging_count = 10
         self.history_buffer = deque(maxlen=self.averaging_count)
 
+        # 最新频谱数据（完整分辨率）
+        self.latest_spectrum = None
+
+        # 瀑布图参数和数据
+        self.waterfall_height = 64
+        self.waterfall_width = 512
+        self.waterfall_array = np.full(
+            (self.waterfall_height, self.waterfall_width),
+            -50.0,
+            dtype=np.float32,
+        )
+        self.waterfall_buffer = deque(maxlen=self.waterfall_height)
+
         # 统计信息
         self.processed_frame_count = 0
+        self.max_value = -100.0
+        self.min_value = 0.0
 
     def start_processing(self):
         """启动数据处理线程"""
@@ -50,31 +64,76 @@ class DataProcessor:
                 timestamp = fft_frame["timestamp"]
 
                 # 数据处理
-                processed_data = self._process_fft_data(fft_data)
+                processed_spectrum = self._process_fft_data(fft_data)
+
+                # 更新瀑布图缓冲（降采样后的频谱）
+                downsampled_spectrum = self._downsample_spectrum(processed_spectrum)
+                self.waterfall_buffer.append(downsampled_spectrum)
+
+                # 实时更新瀑布图数组
+                self._update_waterfall_array()
 
                 # 使用线程锁更新最新数据
                 with self.data_lock:
-                    self.latest_processed_data = {
-                        "timestamp": timestamp,
-                        "spectrum": processed_data,
-                        "max_value": np.max(processed_data),
-                        "min_value": np.min(processed_data),
-                        "frame_id": self.processed_frame_count,
-                    }
+                    self.latest_spectrum = processed_spectrum
+                    self.max_value = np.max(processed_spectrum)
+                    self.min_value = np.min(processed_spectrum)
                     self.processed_frame_count += 1
 
                 self.state.data_queue_status = "processing"
 
             except Exception as e:
                 if "Empty" not in str(type(e).__name__):
-                    logging.error(f"数据处理异常: {e}")
+                    logging.error(f"数据处理异常: {e}", exc_info=True)
                 self.state.data_queue_status = "idle"
                 time.sleep(0.1)
 
-    def get_latest_data(self):
-        """获取最新处理后的数据（线程安全）"""
+    def _update_waterfall_array(self):
+        """更新瀑布图数组（在数据处理线程中调用）"""
+        current_height = len(self.waterfall_buffer)
+
+        if current_height == 0:
+            return
+
+        # 重置数组为灰色填充
+        self.waterfall_array.fill(-50.0)
+
+        # 将数据转换为数组并翻转（最新的数据在前）
+        data_array = np.array(list(self.waterfall_buffer), dtype=np.float32)
+        data_array = np.flipud(data_array)  # 翻转数组，使最新数据在索引0
+
+        # 从顶部开始填充（新数据在顶部）
+        self.waterfall_array[:current_height, :] = data_array
+
+    def get_latest_spectrum(self):
+        """获取最新的完整频谱数据（线程安全）"""
         with self.data_lock:
-            return self.latest_processed_data
+            return (
+                self.latest_spectrum.copy()
+                if self.latest_spectrum is not None
+                else None
+            )
+
+    def get_waterfall_array(self):
+        """获取瀑布图数组的副本（线程安全）"""
+        with self.data_lock:
+            return self.waterfall_array.copy()
+
+    def get_stats(self):
+        """获取统计信息（线程安全）"""
+        with self.data_lock:
+            return {
+                "frame_id": self.processed_frame_count,
+                "max_value": self.max_value,
+                "min_value": self.min_value,
+            }
+
+    def _downsample_spectrum(self, spectrum_data):
+        """将频谱降采样到固定宽度"""
+        fft_length = len(spectrum_data)
+        downsample_factor = max(1, fft_length // self.waterfall_width)
+        downsampled = spectrum_data[::downsample_factor][: self.waterfall_width]
+        return downsampled
 
     def _process_fft_data(self, fft_data):
         """处理FFT数据"""
@@ -96,3 +155,14 @@ class DataProcessor:
         self.averaging_count = count
         self.history_buffer = deque(maxlen=count)
         logging.info(f"移动平均: {'启用' if enable else '禁用'}, 窗口: {count}")
+
+    def set_waterfall_params(self, height=None, width=None):
+        """设置瀑布图参数"""
+        if height is not None:
+            self.waterfall_height = height
+            self.waterfall_buffer = deque(maxlen=height)
+            logging.info(f"瀑布图高度已设置为: {height}")
+
+        if width is not None:
+            self.waterfall_width = width
+            logging.info(f"瀑布图宽度已设置为: {width}")
