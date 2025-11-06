@@ -3,6 +3,7 @@ import queue
 import logging
 from pathlib import Path
 from PyQt6.QtWidgets import QApplication
+from PyQt6.QtCore import QObject, pyqtSignal
 
 # 添加项目路径
 sys.path.append(str(Path(__file__).parent))
@@ -24,11 +25,15 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-class State:
-    """系统状态类"""
+class State(QObject):
+    """系统状态类 - 支持信号"""
+
+    # 定义信号
+    connection_changed = pyqtSignal(bool)  # 连接状态变化信号
 
     def __init__(self):
-        self.communication_thread = False
+        super().__init__()
+        self._communication_thread = False
         self.data_processing_thread = False
         self.data_queue_status = "idle"
 
@@ -38,6 +43,19 @@ class State:
         self.fft_length = 1024
         self.center_freq = 2400  # MHz
         self.sample_rate = 20  # MHz
+
+    @property
+    def communication_thread(self):
+        """只读属性"""
+        return self._communication_thread
+
+    @communication_thread.setter
+    def communication_thread(self, value):
+        """设置连接状态并发出信号"""
+        if self._communication_thread != value:
+            self._communication_thread = value
+            self.connection_changed.emit(value)
+            logger.info(f"连接状态变更: {value}")
 
 
 class DroneDetectionSystem:
@@ -65,9 +83,10 @@ class DroneDetectionSystem:
         # 创建Qt应用
         self.app = QApplication(sys.argv)
 
-        # 创建主界面（传入data_processor）
-        self.main_window = Window(dataprocessor=self.data_processor)
+        # 创建主界面（传入data_processor和state）
+        self.main_window = Window(dataprocessor=self.data_processor, state=self.state)
         logger.info("✓ 用户界面初始化完成")
+
         # 绑定配置接口到通信层
         self.setup_connections()
 
@@ -76,64 +95,85 @@ class DroneDetectionSystem:
 
     def setup_connections(self):
         """设置各模块之间的连接"""
-        # 将Home界面的连接按钮绑定到通信层
 
-        # 连接按钮信号
-
-        self.connect_device()  # 调试阶段先直接连接设备
-
-        # 这里需要根据您的HomeInterface实现来绑定
-        # home_interface.connect_button.clicked.connect(on_connect_clicked)
+        # 连接 ConfigInterface 的连接请求信号到处理函数
+        config_interface = self.main_window.homeInterface.config_interface
+        config_interface.connection_request.connect(self.handle_connection_request)
 
         logger.info("✓ 模块连接设置完成")
 
+    def handle_connection_request(self, should_connect):
+        """处理连接请求"""
+        if should_connect:
+            logger.info("收到连接请求...")
+            self.connect_device()
+        else:
+            logger.info("收到断开请求...")
+            self.disconnect_device()
+
     def connect_device(self):
         """连接到设备"""
+        try:
+            # 连接通信层
+            self.communication.connect(self.state.device_ip, self.state.device_port)
 
-        # 连接通信层
-        self.communication.connect(self.state.device_ip, self.state.device_port)
+            if self.state.communication_thread:
+                logger.info("✓ 设备连接成功")
 
-        if self.state.communication_thread:
-            logger.info("✓ 设备连接成功")
+                # 启动数据处理线程
+                self.data_processor.start_processing()
+                logger.info("✓ 数据处理线程已启动")
 
-            # 启动数据处理线程
-            self.data_processor.start_processing()
-            logger.info("✓ 数据处理线程已启动")
+                # 启动可视化更新
+                if hasattr(self.main_window, "visualizationInterface"):
+                    viz = self.main_window.visualizationInterface
+                    if hasattr(viz, "visualization_card"):
+                        viz.visualization_card.start_update()
+                        logger.info("✓ 可视化更新已启动")
 
-            # 启动可视化更新
-            if hasattr(self.main_window, "visualizationInterface"):
-                viz = self.main_window.visualizationInterface
-                if hasattr(viz, "visualization_card"):
-                    viz.visualization_card.start_update()
-                    logger.info("✓ 可视化更新已启动")
+                # 更新Home界面的可视化
+                if hasattr(self.main_window.homeInterface, "visualization_card"):
+                    self.main_window.homeInterface.visualization_card.start_update()
+                    logger.info("✓ Home界面可视化已启动")
 
-            # 更新Home界面的可视化
-            if hasattr(self.main_window.homeInterface, "visualization_card"):
-                self.main_window.homeInterface.visualization_card.start_update()
-                logger.info("✓ Home界面可视化已启动")
-        else:
-            logger.error("✗ 设备连接失败")
+                return True
+            else:
+                logger.error("✗ 设备连接失败")
+                return False
+
+        except Exception as e:
+            logger.error(f"连接设备异常: {e}", exc_info=True)
+            # 确保状态正确
+            self.state._communication_thread = False
+            self.state.connection_changed.emit(False)
+            return False
 
     def disconnect_device(self):
         """断开设备连接"""
-        logger.info("正在断开设备连接...")
+        try:
+            logger.info("正在断开设备连接...")
 
-        # 停止可视化更新
-        if hasattr(self.main_window, "visualizationInterface"):
-            viz = self.main_window.visualizationInterface
-            if hasattr(viz, "visualization_card"):
-                viz.visualization_card.stop_update()
+            # 停止可视化更新
+            if hasattr(self.main_window, "visualizationInterface"):
+                viz = self.main_window.visualizationInterface
+                if hasattr(viz, "visualization_card"):
+                    viz.visualization_card.stop_update()
 
-        if hasattr(self.main_window.homeInterface, "visualization_card"):
-            self.main_window.homeInterface.visualization_card.stop_update()
+            if hasattr(self.main_window.homeInterface, "visualization_card"):
+                self.main_window.homeInterface.visualization_card.stop_update()
 
-        # 停止数据处理
-        self.data_processor.stop_processing()
+            # 停止数据处理
+            self.data_processor.stop_processing()
 
-        # 断开通信
-        self.communication.disconnect()
+            # 断开通信
+            self.communication.disconnect()
 
-        logger.info("✓ 设备已断开")
+            logger.info("✓ 设备已断开")
+            return True
+
+        except Exception as e:
+            logger.error(f"断开设备异常: {e}", exc_info=True)
+            return False
 
     def run(self):
         """运行系统"""

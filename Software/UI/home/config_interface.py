@@ -1,5 +1,5 @@
 # home界面的右侧卡片内容，主要是各个模块的参数调整，使用树状控件
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -24,15 +24,26 @@ from ..utils.custom_style import CONFIRM_BUTTON_STYLE
 import json
 import os
 from PyQt6.QtCore import QSize
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ConfigInterface(QWidget):
+    # 定义信号
+    connection_request = pyqtSignal(bool)  # True=连接, False=断开
+
     def __init__(self, parent=None, state=None):
         super().__init__(parent)
         self.setObjectName("ConfigInterface")
         self.component = Component()
         self.state = state
+        self.connection_switch = None  # 保存开关引用
         self.setup_ui()
+
+        # 监听状态变化
+        if self.state:
+            self.state.connection_changed.connect(self.on_connection_state_changed)
 
     def setup_ui(self):
         layout = QVBoxLayout(self)
@@ -85,14 +96,14 @@ class ConfigInterface(QWidget):
         switch_widget = QWidget()
         switch_layout = QHBoxLayout(switch_widget)
         switch_layout.setContentsMargins(5, 5, 5, 5)
-        switch = self.component.create_switch_button(
+        self.connection_switch = self.component.create_switch_button(
             switch_widget, "Connected", "Disconnected"
         )
-        # 改变系统连接状态state.is_connected
-        switch.checkedChanged.connect(
-            lambda checked: setattr(self.state, "is_connected", checked)
-        )
-        switch_layout.addWidget(switch)
+
+        # 连接开关信号到请求处理函数
+        self.connection_switch.checkedChanged.connect(self.on_switch_toggled)
+
+        switch_layout.addWidget(self.connection_switch)
         switch_layout.addStretch()
         switch_widget.adjustSize()  # 让开关控件自适应高度
         widget_height = switch_widget.sizeHint().height() + 10
@@ -133,6 +144,34 @@ class ConfigInterface(QWidget):
             fft_params.get("Centre_frequency(MHz)", 400),
             None,  # None 表示使用输入框
         )
+
+    def on_switch_toggled(self, checked):
+        """开关被切换时触发"""
+        logger.info(f"连接开关被切换: {checked}")
+
+        # 禁用开关，防止重复点击
+        self.connection_switch.setEnabled(False)
+
+        # 发出连接请求信号
+        self.connection_request.emit(checked)
+
+        # 延迟重新启用开关（给连接操作一些时间）
+        from PyQt6.QtCore import QTimer
+
+        QTimer.singleShot(1000, lambda: self.connection_switch.setEnabled(True))
+
+    def on_connection_state_changed(self, is_connected):
+        """连接状态变化时更新开关"""
+        if self.connection_switch:
+            # 阻止信号，避免循环触发
+            self.connection_switch.blockSignals(True)
+            self.connection_switch.setChecked(is_connected)
+            self.connection_switch.blockSignals(False)
+
+            # 重新启用开关
+            self.connection_switch.setEnabled(True)
+
+            logger.info(f"UI开关状态已更新: {is_connected}")
 
     def add_fft_parameter(self, parent_item, param_name, current_value, options):
         """添加FFT参数行 - 包含当前值、选择框和Set按钮"""

@@ -32,23 +32,23 @@ class Communication:
         try:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.connect((ip, port))
-            self.socket.setsockopt(
-                socket.SOL_SOCKET, socket.SO_RCVBUF, 1024 * 1024
-            )  # 1MB接收缓冲区
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1024 * 1024)
 
             # 启动接收线程
             self.receive_thread = threading.Thread(
                 target=self._receive_loop, daemon=True
             )
             self.receive_thread.start()
-            self.state.communication_thread = True
+            self.state.communication_thread = True  # 这会触发信号
             logging.info(f"已连接到 {ip}:{port}")
+            return True
         except Exception as e:
             logging.error(f"连接失败: {e}")
-            self.state.communication_thread = False
+            self.state.communication_thread = False  # 这会触发信号
+            return False
 
     def disconnect(self):
-        self.state.communication_thread = False
+        self.state.communication_thread = False  # 这会触发信号
         if self.socket:
             self.socket.close()
             self.socket = None

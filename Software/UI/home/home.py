@@ -29,7 +29,7 @@ class HomeInterface(QWidget):
         )
         splitter.addWidget(self.visualization_card)
 
-        # 右侧配置界面卡片
+        # 右侧配置界面卡片（传入state）
         self.config_interface = ConfigInterface(self, state=self.state)
         splitter.addWidget(self.config_interface)
 
