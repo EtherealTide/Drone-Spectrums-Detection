@@ -27,10 +27,11 @@ from PyQt6.QtCore import QSize
 
 
 class ConfigInterface(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, state=None):
         super().__init__(parent)
         self.setObjectName("ConfigInterface")
         self.component = Component()
+        self.state = state
         self.setup_ui()
 
     def setup_ui(self):
@@ -78,8 +79,6 @@ class ConfigInterface(QWidget):
 
         # 连接状态子项 - 使用开关
         connection_item = QTreeWidgetItem(["Connection"])
-        # 设置固定高度
-        # connection_item.setSizeHint(0, QSize(0, 30))
         system_item.addChild(connection_item)
 
         # 创建开关控件
@@ -89,10 +88,9 @@ class ConfigInterface(QWidget):
         switch = self.component.create_switch_button(
             switch_widget, "Connected", "Disconnected"
         )
+        # 改变系统连接状态state.is_connected
         switch.checkedChanged.connect(
-            lambda checked: print(
-                f"System connection: {'Connected' if checked else 'Disconnected'}"
-            )
+            lambda checked: setattr(self.state, "is_connected", checked)
         )
         switch_layout.addWidget(switch)
         switch_layout.addStretch()

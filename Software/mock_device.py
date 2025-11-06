@@ -84,10 +84,7 @@ class MockDevice:
         return fft_data.astype(np.float32)
 
     def _send_loop(self):
-        """数据发送循环 - 改进版，添加帧ID"""
-        packet_id = 0
-        frame_id = 0
-
+        """数据发送循环 - 每个包前加魔数"""
         while self.running:
             try:
                 # 生成一帧完整的FFT数据
@@ -102,19 +99,19 @@ class MockDevice:
                     end_idx = start_idx + self.packet_size
                     packet_data = fft_data[start_idx:end_idx].tobytes()
 
-                    # 构造数据包: [frame_id(4)] + [packet_id(4)] + [data_length(4)] + [data]
-                    header = struct.pack(">III", frame_id, packet_id, len(packet_data))
+                    # 构造数据包: [magic(4)] + [packet_id(4)] + [data_length(4)] + [data]
+                    header = struct.pack(
+                        ">III",
+                        0xAABBCCDD,  # 魔数
+                        i,  # 包ID（帧内序号，从0开始）
+                        len(packet_data),  # 数据长度
+                    )
 
                     # 发送
                     self.client_socket.sendall(header + packet_data)
-
-                    packet_id += 1
                     time.sleep(0.001)
 
-                frame_id += 1
-                logging.info(
-                    f"已发送第 {frame_id} 帧 (包: {packet_id-num_packets} - {packet_id-1})"
-                )
+                logging.info(f"已发送一帧 ({num_packets} 个包)")
 
                 # 等待下一帧
                 time.sleep(self.send_interval)

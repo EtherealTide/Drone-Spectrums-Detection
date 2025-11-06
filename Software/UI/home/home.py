@@ -9,9 +9,10 @@ from ..utils.component import Component
 
 
 class HomeInterface(QWidget):
-    def __init__(self, parent=None, data_processor=None):
+    def __init__(self, parent=None, data_processor=None, state=None):
         super().__init__(parent)
         self.data_processor = data_processor
+        self.state = state
         self.setObjectName("HomeInterface")
         self.setup_ui()
 
@@ -29,7 +30,7 @@ class HomeInterface(QWidget):
         splitter.addWidget(self.visualization_card)
 
         # 右侧配置界面卡片
-        self.config_interface = ConfigInterface(self)
+        self.config_interface = ConfigInterface(self, state=self.state)
         splitter.addWidget(self.config_interface)
 
         # 设置初始比例 (左:右 = 4:2)
