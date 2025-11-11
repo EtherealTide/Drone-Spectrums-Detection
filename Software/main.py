@@ -83,9 +83,7 @@ class DroneDetectionSystem:
         self.data_processor.fft_data_queue = self.fft_data_queue
         logger.info("✓ 数据处理层初始化完成")
         # 创建算法层
-        self.detector = DroneDetector(
-            self.state, self.data_processor, "yolov5s-drone-best.pt"
-        )
+        self.detector = DroneDetector(self.state, self.data_processor, "best.pt")
         # 创建Qt应用
         self.app = QApplication(sys.argv)
 
@@ -97,7 +95,7 @@ class DroneDetectionSystem:
 
         # 绑定配置接口到通信层
         self.setup_connections()
-        self.connect_device()  # 默认连接
+        # self.connect_device()  # 默认连接
         logger.info("系统初始化完成！")
         logger.info("=" * 60)
 

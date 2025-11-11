@@ -109,7 +109,6 @@ class DataProcessor:
                         break  # 队列已空
 
                 self.batch_size = len(batch_frames)
-                logging.info(f"批量获取 {self.batch_size} 帧数据")
 
                 # 步骤2: 处理批量数据（计算幅度，不转dB）
                 processed_batch = []
