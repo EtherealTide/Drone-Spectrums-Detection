@@ -49,12 +49,12 @@ class State(QObject):
         """只读属性"""
         return self._communication_thread
 
-    @communication_thread.setter
+    @communication_thread.setter  # 当设置communication_thread属性的值时自动调用这个
     def communication_thread(self, value):
         """设置连接状态并发出信号"""
         if self._communication_thread != value:
             self._communication_thread = value
-            self.connection_changed.emit(value)
+            self.connection_changed.emit(value)  # emit的作用是发出信号
             logger.info(f"连接状态变更: {value}")
 
 
@@ -89,20 +89,24 @@ class DroneDetectionSystem:
 
         # 绑定配置接口到通信层
         self.setup_connections()
-
+        self.connect_device()  # 默认连接
         logger.info("系统初始化完成！")
         logger.info("=" * 60)
 
-    def setup_connections(self):
+    def setup_connections(self):  # 这个函数将主要实现控件与功能模块之间的连接
         """设置各模块之间的连接"""
 
         # 连接 ConfigInterface 的连接请求信号到处理函数
         config_interface = self.main_window.homeInterface.config_interface
-        config_interface.connection_request.connect(self.handle_connection_request)
+        config_interface.connection_request.connect(
+            self.handle_connection_request
+        )  # connect将信号与槽函数连接起来，信号发出时会调用槽函数，这里信号connection_request变化时调用handle_connection_request函数
 
         logger.info("✓ 模块连接设置完成")
 
-    def handle_connection_request(self, should_connect):
+    def handle_connection_request(
+        self, should_connect
+    ):  # should_connect就是config_interface发出的信号参数
         """处理连接请求"""
         if should_connect:
             logger.info("收到连接请求...")

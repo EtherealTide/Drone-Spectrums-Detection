@@ -22,7 +22,7 @@ class MockDevice:
         # FFT参数
         self.fft_length = 1024
         self.packet_size = 128  # 每次发送128个点
-        self.send_interval = 0.01  # 100ms发送一帧完整FFT
+        self.send_interval = 0.001  # 100ms发送一帧完整FFT
 
     def start(self):
         """启动模拟设备"""
@@ -109,12 +109,12 @@ class MockDevice:
 
                     # 发送
                     self.client_socket.sendall(header + packet_data)
-                    time.sleep(0.001)
+                    # time.sleep(0.001)
 
                 logging.info(f"已发送一帧 ({num_packets} 个包)")
 
                 # 等待下一帧
-                time.sleep(self.send_interval)
+                # time.sleep(self.send_interval)
 
             except Exception as e:
                 if self.running:

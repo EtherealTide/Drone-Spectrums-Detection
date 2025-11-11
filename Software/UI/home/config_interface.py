@@ -165,7 +165,7 @@ class ConfigInterface(QWidget):
         if self.connection_switch:
             # 阻止信号，避免循环触发
             self.connection_switch.blockSignals(True)
-            self.connection_switch.setChecked(is_connected)
+            self.connection_switch.setChecked(is_connected)  # setChecked是更新按钮状态
             self.connection_switch.blockSignals(False)
 
             # 重新启用开关

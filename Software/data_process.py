@@ -21,7 +21,7 @@ class DataProcessor:
         self.latest_spectrum = None
 
         # 瀑布图参数和数据
-        self.waterfall_height = 64
+        self.waterfall_height = 128
         self.waterfall_width = 1024
 
         # 初始化时用灰色填充buffer（-50.0 dB表示灰色）
@@ -102,21 +102,6 @@ class DataProcessor:
         """获取瀑布图buffer的副本（线程安全）- 返回list"""
         with self.data_lock:
             return list(self.waterfall_buffer)  # 浅拷贝deque为list
-
-    # 保留原有的get_waterfall_array以兼容（但标记为deprecated）
-    def get_waterfall_array(self):
-        """获取瀑布图数组（已废弃，请使用get_waterfall_buffer）"""
-        buffer_copy = self.get_waterfall_buffer()
-        if not buffer_copy:
-            return np.full(
-                (self.waterfall_height, self.waterfall_width),
-                -50.0,
-                dtype=np.float32,
-            )
-
-        # 转换为数组并翻转
-        data_array = np.array(buffer_copy, dtype=np.float32)
-        return np.flipud(data_array)
 
     def get_stats(self):
         """获取统计信息（线程安全）"""
