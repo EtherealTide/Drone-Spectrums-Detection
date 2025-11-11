@@ -8,16 +8,20 @@ from ..utils.component import Component
 import numpy as np
 from collections import deque
 import matplotlib.pyplot as plt
+import logging
 
 
 class HomeVisualizationCard(QWidget):
-    def __init__(self, parent=None, data_processor=None):
+    def __init__(self, parent=None, data_processor=None, detector=None):
         super().__init__(parent)
         self.setObjectName("HomeVisualizationCard")
         self.component = Component()
 
-        # 数据处理器引用（只用于获取数据）
+        # 数据处理器引用（用于获取频谱数据）
         self.data_processor = data_processor
+
+        # 算法检测器引用（用于获取检测结果图像）
+        self.detector = detector
 
         # 统计信息
         self.frame_displayed = 0
@@ -25,13 +29,12 @@ class HomeVisualizationCard(QWidget):
         self.update_count = 0
         self.skip_count = 0
 
+        # 检测统计
+        self.last_detection_count = 0
+
         # 频率轴参数
         self.center_freq = 2400  # MHz
         self.sample_rate = 20  # MHz
-
-        # 使用matplotlib的jet色图预计算颜色映射表
-        cmap = plt.get_cmap("jet")
-        self.colormap = (cmap(np.linspace(0, 1, 256))[:, :3] * 255).astype(np.uint8)
 
         self.setup_ui()
 
@@ -60,22 +63,22 @@ class HomeVisualizationCard(QWidget):
         top_chart_layout.addWidget(self.spectrum_chart_view)
         layout.addWidget(top_chart_card)
 
-        # 下方图表卡片 - 瀑布图
+        # 下方卡片 - 检测结果图像
         bottom_chart_layout, bottom_chart_card = self.component.create_card(
-            self, height=260
+            self, height=300
         )
 
-        # 瀑布图显示标签
-        self.waterfall_label = QLabel(bottom_chart_card)
-        self.waterfall_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.waterfall_label.setStyleSheet("background-color: black;")
-        self.waterfall_label.setMinimumHeight(180)
-        bottom_chart_layout.addWidget(self.waterfall_label)
+        # 检测结果图像标签
+        self.detection_label = QLabel(bottom_chart_card)
+        self.detection_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.detection_label.setStyleSheet("background-color: black;")
+        self.detection_label.setMinimumHeight(200)
+        bottom_chart_layout.addWidget(self.detection_label)
 
-        # 统计信息标签
-        self.stats_label = BodyLabel(bottom_chart_card)
-        self.stats_label.setText("等待数据...")
-        bottom_chart_layout.addWidget(self.stats_label)
+        # 检测统计信息标签
+        self.detection_stats_label = BodyLabel(bottom_chart_card)
+        self.detection_stats_label.setText("等待检测数据...")
+        bottom_chart_layout.addWidget(self.detection_stats_label)
 
         layout.addWidget(bottom_chart_card)
 
@@ -104,8 +107,8 @@ class HomeVisualizationCard(QWidget):
 
         # Y轴 - 功率
         self.axis_y = QValueAxis()
-        self.axis_y.setTitleText("Power (dB)")
-        self.axis_y.setRange(-100, 20)
+        self.axis_y.setTitleText("Power (Normalized)")
+        self.axis_y.setRange(0, 1)  # 归一化数据范围
         chart.addAxis(self.axis_y, Qt.AlignmentFlag.AlignLeft)
         self.spectrum_series.attachAxis(self.axis_y)
 
@@ -114,11 +117,11 @@ class HomeVisualizationCard(QWidget):
         return chart
 
     def update_visualization(self):
-        """更新可视化（频谱图和瀑布图）"""
+        """更新可视化（频谱图和检测结果）"""
         if self.data_processor is None:
             return
 
-        # 获取统计信息
+        # 获取数据处理统计信息
         stats = self.data_processor.get_stats()
         if stats is None:
             return
@@ -135,22 +138,16 @@ class HomeVisualizationCard(QWidget):
 
         # 获取最新频谱数据
         spectrum = self.data_processor.get_latest_spectrum()
-        if spectrum is None:
-            return
+        if spectrum is not None:
+            # 每次都更新频谱图
+            self.update_spectrum(spectrum)
 
-        # 每2帧更新一次瀑布图
-        if self.update_count % 2 == 0:
-            self.update_waterfall()
-
-        # 每次都更新频谱图
-        self.update_spectrum(spectrum)
-
-        # 每5帧更新一次统计信息
-        if self.update_count % 5 == 0:
-            self.update_stats(stats)
+        # 每帧都更新检测结果图像（如果检测器可用）
+        if self.detector is not None:
+            self.update_detection_image()
 
     def update_spectrum(self, spectrum_data):
-        """更新频谱图 - 修复版（使用QPointF）"""
+        """更新频谱图"""
         # 降采样到固定点数（如500个点）
         target_points = 500
         fft_length = len(spectrum_data)
@@ -169,76 +166,99 @@ class HomeVisualizationCard(QWidget):
         # 使用replace替代clear+append（更高效）
         self.spectrum_series.replace(points)
 
-        # 动态调整Y轴范围（但不是每次都调整）
+        # 动态调整Y轴范围（每10帧调整一次）
         if self.update_count % 10 == 0:
             max_power = np.max(spectrum_data)
             min_power = np.min(spectrum_data)
-            margin = max(5, (max_power - min_power) * 0.1)  # 至少5dB的margin
-            self.axis_y.setRange(min_power - margin, max_power + margin)
+            margin = max(0.05, (max_power - min_power) * 0.1)  # 至少5%的margin
+            self.axis_y.setRange(max(0, min_power - margin), min(1, max_power + margin))
 
-    def update_waterfall(self):
-        """更新瀑布图 - 在UI线程转换数组"""
-        if self.data_processor is None:
+    def update_detection_image(self):
+        """更新检测结果图像"""
+        try:
+            # 从检测器获取带框的图像
+            detection_image = self.detector.get_detection_image()
+
+            if detection_image is None:
+                # 无检测图像，显示提示
+                self.detection_label.setText("等待检测结果...")
+                return
+
+            # 转换numpy数组为QImage并显示
+            h, w = detection_image.shape[:2]
+
+            # 确保是RGB格式
+            if len(detection_image.shape) == 2:  # 灰度图
+                detection_image = np.stack([detection_image] * 3, axis=-1)
+
+            # 创建QImage
+            qimage = QImage(
+                detection_image.data,
+                w,
+                h,
+                w * 3,
+                QImage.Format.Format_RGB888,
+            )
+
+            # 缩放到标签大小并显示
+            pixmap = QPixmap.fromImage(qimage).scaled(
+                self.detection_label.width(),
+                self.detection_label.height(),
+                Qt.AspectRatioMode.KeepAspectRatio,  # 保持宽高比
+                Qt.TransformationMode.SmoothTransformation,  # 平滑缩放
+            )
+            self.detection_label.setPixmap(pixmap)
+
+            # 每5帧更新一次检测统计信息
+            if self.update_count % 5 == 0:
+                self.update_detection_stats()
+
+        except Exception as e:
+            logging.error(f"更新检测图像失败: {e}", exc_info=True)
+            self.detection_label.setText(f"显示错误: {str(e)}")
+
+    def update_detection_stats(self):
+        """更新检测统计信息"""
+        if self.detector is None:
             return
 
-        # 从数据处理层获取buffer副本（快速，只持有锁很短时间）
-        waterfall_buffer = self.data_processor.get_waterfall_buffer()
+        try:
+            # 获取检测统计
+            detection_stats = self.detector.get_detection_stats()
 
-        if not waterfall_buffer:
-            return
+            # 获取当前检测结果
+            detection_results = self.detector.get_detection_results()
 
-        # 在UI线程转换为numpy数组（不持有锁）
-        data_array = np.array(waterfall_buffer, dtype=np.float32)
+            # 计算检测FPS
+            current_count = detection_stats.get("detection_count", 0)
+            detection_delta = current_count - self.last_detection_count
+            self.last_detection_count = current_count
 
-        # 翻转数组，使最新数据在顶部（索引0）
-        data_array = np.flipud(data_array)
+            # 构建统计信息文本
+            stats_text = f"""
+            <p><b>检测次数:</b> {detection_stats.get('total_detections', 0)}</p>
+            <p><b>当前目标:</b> {detection_stats.get('current_objects', 0)}</p>
+            <p><b>总目标数:</b> {detection_stats.get('total_objects', 0)}</p>
+            """
 
-        # 归一化到0-255
-        vmin = -80
-        vmax = -20
-        normalized = np.clip((data_array - vmin) / (vmax - vmin) * 255, 0, 255).astype(
-            np.uint8
-        )
+            # 显示当前检测到的目标详情
+            if detection_results:
+                stats_text += "<p><b>检测详情:</b></p>"
+                for i, result in enumerate(detection_results[:3]):  # 最多显示3个
+                    stats_text += (
+                        f"<p>  {i+1}. {result['class_name']}: "
+                        f"{result['confidence']:.2f}</p>"
+                    )
+                if len(detection_results) > 3:
+                    stats_text += f"<p>  ... 还有 {len(detection_results)-3} 个</p>"
+            else:
+                stats_text += "<p><b>当前无目标</b></p>"
 
-        # 应用颜色映射
-        colored_image = self.colormap[normalized]
+            self.detection_stats_label.setText(stats_text)
 
-        # 转换为QImage
-        height, width = data_array.shape
-        qimage = QImage(
-            colored_image.data,
-            width,
-            height,
-            width * 3,
-            QImage.Format.Format_RGB888,
-        )
-
-        # 缩放并显示
-        pixmap = QPixmap.fromImage(qimage).scaled(
-            self.waterfall_label.width(),
-            self.waterfall_label.height(),
-            Qt.AspectRatioMode.IgnoreAspectRatio,
-            Qt.TransformationMode.FastTransformation,
-        )
-
-        self.waterfall_label.setPixmap(pixmap)
-
-    def update_stats(self, stats):
-        """更新统计信息"""
-        drop_rate = (
-            (self.skip_count / (self.update_count + self.skip_count) * 100)
-            if self.update_count > 0
-            else 0
-        )
-
-        stats_text = f"""
-        <p><b>显示帧数:</b> {self.frame_displayed}</p>
-        <p><b>处理帧数:</b> {stats['frame_id']}</p>
-        <p><b>跳过帧数:</b> {self.skip_count} ({drop_rate:.1f}%)</p>
-        <p><b>最大值:</b> {stats['max_value']:.2f} dB</p>
-        <p><b>最小值:</b> {stats['min_value']:.2f} dB</p>
-        """
-        self.stats_label.setText(stats_text)
+        except Exception as e:
+            logging.error(f"更新检测统计失败: {e}", exc_info=True)
+            self.detection_stats_label.setText(f"统计错误: {str(e)}")
 
     def update_config(self, center_freq, sample_rate):
         """更新频率配置"""

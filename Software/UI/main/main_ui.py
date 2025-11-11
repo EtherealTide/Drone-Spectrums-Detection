@@ -40,16 +40,20 @@ class Widget(QFrame):
 class Window(FluentWindow):
     """主界面"""
 
-    def __init__(self, dataprocessor=None, state=None):
+    def __init__(self, dataprocessor=None, state=None, detector=None):
         super().__init__()
         self.data_processor = dataprocessor
         self.state = state
+        self.detector = detector
         logo_path = Path(__file__).parent.parent / "main" / "logo.png"
         # 显示启动界面
         self.startInterface(logo_path)
         # 创建子页面
         self.homeInterface = HomeInterface(
-            self, data_processor=self.data_processor, state=self.state
+            self,
+            data_processor=self.data_processor,
+            state=self.state,
+            detector=self.detector,
         )
         self.configInterface = ConfigInterface(self)
         self.visualizationInterface = VisualizationInterface(self)

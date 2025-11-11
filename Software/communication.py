@@ -18,13 +18,15 @@ class Communication:
 
         # 数据缓冲区
         self.buffer = bytearray()
-        self.expected_fft_length = 1024
+        self.expected_fft_length = self.state.fft_length  # FFT长度
         self.bytes_per_sample = 4
 
         # 包同步参数
         self.PACKET_MAGIC = 0xAABBCCDD  # 包起始魔数
         self.current_frame_buffer = bytearray()  # 当前帧的数据缓冲
-        self.expected_packets_per_frame = 8  # 每帧期望的包数（1024/128=8）
+        self.expected_packets_per_frame = (
+            self.expected_fft_length // self.state.packet_size
+        )
         self.last_packet_id = -1  # 上一个包的ID
         self.frame_count = 0  # 接收到的完整帧计数
 

@@ -4,6 +4,7 @@ import numpy as np
 import time
 import threading
 import logging
+from pathlib import Path
 
 logging.basicConfig(level=logging.INFO)
 
@@ -20,9 +21,15 @@ class MockDevice:
         self.send_thread = None
 
         # FFT参数
-        self.fft_length = 1024
+        self.fft_length = 512
         self.packet_size = 128  # 每次发送128个点
         self.send_interval = 0.001  # 100ms发送一帧完整FFT
+
+        # 数据流相关
+        self.data_dir = Path(__file__).parent / "2"
+        self.npy_files = sorted(self.data_dir.glob("*.npy"))
+        self._current_file_idx = 0
+        self._buffer = np.array([], dtype=np.float32)
 
     def start(self):
         """启动模拟设备"""
@@ -58,30 +65,47 @@ class MockDevice:
         logging.info("模拟设备已停止")
 
     def _generate_fft_data(self):
-        """生成模拟FFT数据"""
-        # 生成基础噪声
-        noise = np.random.normal(0, 0.01, self.fft_length)
+        """从指定目录中读取npy文件并转换为数据流"""
+        if not self.npy_files:
+            raise RuntimeError(f"未在目录 {self.data_dir} 中找到任何.npy文件")
 
-        # 添加几个峰值信号（模拟无人机信号）
-        signal = np.zeros(self.fft_length)
+        while self._buffer.size < self.fft_length:
+            next_chunk = self._load_next_file_chunk()
+            if next_chunk.size == 0:
+                continue
+            if self._buffer.size == 0:
+                self._buffer = next_chunk
+            else:
+                self._buffer = np.concatenate((self._buffer, next_chunk))
 
-        # 峰值1: 中心频率附近
-        peak1_idx = self.fft_length // 2 + 50
-        window_size = 40  # 20*2 = 40个点
-        signal[peak1_idx - 20 : peak1_idx + 20] = np.hamming(window_size) * 10.0
+        fft_data = self._buffer[: self.fft_length]
+        self._buffer = self._buffer[self.fft_length :]
+        return fft_data
 
-        # 峰值2: 偏移频率
-        peak2_idx = self.fft_length // 2 - 200
-        signal[peak2_idx - 3 : peak2_idx + 3] = np.hamming(6) * 1.5
+    def _load_next_file_chunk(self):
+        """加载下一个有效的npy文件数据"""
+        attempts = 0
+        total_files = len(self.npy_files)
+        while attempts < total_files:
+            file_path = self.npy_files[self._current_file_idx]
+            self._current_file_idx = (self._current_file_idx + 1) % total_files
+            attempts += 1
 
-        # 峰值3: 随机位置（模拟干扰）
-        # peak3_idx = np.random.randint(100, self.fft_length - 100)
-        # signal[peak3_idx - 2 : peak3_idx + 2] = np.hamming(4) * 0.8
+            try:
+                data = np.load(file_path)
+            except Exception as exc:
+                logging.error(f"加载文件 {file_path} 失败: {exc}", exc_info=True)
+                continue
 
-        # 合成最终信号
-        fft_data = signal + noise
+            flat_data = np.asarray(data, dtype=np.float32).ravel()
+            if flat_data.size == 0:
+                logging.warning(f"文件 {file_path} 为空，跳过")
+                continue
 
-        return fft_data.astype(np.float32)
+            return flat_data
+
+        logging.error("无法从任何npy文件中获取有效数据")
+        return np.array([], dtype=np.float32)
 
     def _send_loop(self):
         """数据发送循环 - 每个包前加魔数"""

@@ -9,10 +9,11 @@ from ..utils.component import Component
 
 
 class HomeInterface(QWidget):
-    def __init__(self, parent=None, data_processor=None, state=None):
+    def __init__(self, parent=None, data_processor=None, state=None, detector=None):
         super().__init__(parent)
         self.data_processor = data_processor
         self.state = state
+        self.detector = detector
         self.setObjectName("HomeInterface")
         self.setup_ui()
 
@@ -25,7 +26,7 @@ class HomeInterface(QWidget):
 
         # 左侧可视化卡片
         self.visualization_card = HomeVisualizationCard(
-            self, data_processor=self.data_processor
+            self, data_processor=self.data_processor, detector=self.detector
         )
         splitter.addWidget(self.visualization_card)
 

@@ -11,6 +11,7 @@ sys.path.append(str(Path(__file__).parent))
 from communication import Communication
 from data_process import DataProcessor
 from UI.main.main_ui import Window
+from algorithms import DroneDetector
 
 # 配置日志
 logging.basicConfig(
@@ -35,12 +36,14 @@ class State(QObject):
         super().__init__()
         self._communication_thread = False
         self.data_processing_thread = False
+        self.detection_thread = False
         self.data_queue_status = "idle"
 
         # 系统配置参数
         self.device_ip = "127.0.0.1"
         self.device_port = 5000
-        self.fft_length = 1024
+        self.fft_length = 512
+        self.packet_size = 128
         self.center_freq = 2400  # MHz
         self.sample_rate = 20  # MHz
 
@@ -79,12 +82,17 @@ class DroneDetectionSystem:
         self.data_processor = DataProcessor(self.state)
         self.data_processor.fft_data_queue = self.fft_data_queue
         logger.info("✓ 数据处理层初始化完成")
-
+        # 创建算法层
+        self.detector = DroneDetector(
+            self.state, self.data_processor, "yolov5s-drone-best.pt"
+        )
         # 创建Qt应用
         self.app = QApplication(sys.argv)
 
         # 创建主界面（传入data_processor和state）
-        self.main_window = Window(dataprocessor=self.data_processor, state=self.state)
+        self.main_window = Window(
+            dataprocessor=self.data_processor, state=self.state, detector=self.detector
+        )
         logger.info("✓ 用户界面初始化完成")
 
         # 绑定配置接口到通信层
@@ -127,7 +135,9 @@ class DroneDetectionSystem:
                 # 启动数据处理线程
                 self.data_processor.start_processing()
                 logger.info("✓ 数据处理线程已启动")
-
+                # 启动检测线程
+                self.detector.start_detection()
+                logger.info("✓ yolo检测线程已启动")
                 # 启动可视化更新
                 if hasattr(self.main_window, "visualizationInterface"):
                     viz = self.main_window.visualizationInterface
@@ -165,7 +175,8 @@ class DroneDetectionSystem:
 
             if hasattr(self.main_window.homeInterface, "visualization_card"):
                 self.main_window.homeInterface.visualization_card.stop_update()
-
+            # 停止检测线程
+            self.detector.stop_detection()
             # 停止数据处理
             self.data_processor.stop_processing()
 
