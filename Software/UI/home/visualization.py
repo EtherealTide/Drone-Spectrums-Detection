@@ -44,7 +44,7 @@ class HomeVisualizationCard(QWidget):
 
     def start_update(self):
         """启动可视化更新"""
-        self.update_timer.start(25)  # 25ms = 40fps
+        self.update_timer.start(40)  # 40ms = 25fps
 
     def stop_update(self):
         """停止可视化更新"""
@@ -108,6 +108,7 @@ class HomeVisualizationCard(QWidget):
         # Y轴 - 功率
         self.axis_y = QValueAxis()
         self.axis_y.setTitleText("Power (Normalized)")
+        # Y轴范围设置为固定值
         self.axis_y.setRange(0, 1)  # 归一化数据范围
         chart.addAxis(self.axis_y, Qt.AlignmentFlag.AlignLeft)
         self.spectrum_series.attachAxis(self.axis_y)
@@ -148,8 +149,8 @@ class HomeVisualizationCard(QWidget):
 
     def update_spectrum(self, spectrum_data):
         """更新频谱图"""
-        # 降采样到固定点数（如500个点）
-        target_points = 500
+        # 降采样到固定点数（如512个点）
+        target_points = 512
         fft_length = len(spectrum_data)
         downsample_factor = max(1, fft_length // target_points)
 
@@ -176,20 +177,38 @@ class HomeVisualizationCard(QWidget):
     def update_detection_image(self):
         """更新检测结果图像"""
         try:
-            # 从检测器获取带框的图像
             detection_image = self.detector.get_detection_image()
 
             if detection_image is None:
-                # 无检测图像，显示提示
                 self.detection_label.setText("等待检测结果...")
                 return
 
-            # 转换numpy数组为QImage并显示
             h, w = detection_image.shape[:2]
 
             # 确保是RGB格式
-            if len(detection_image.shape) == 2:  # 灰度图
+            if len(detection_image.shape) == 2:
                 detection_image = np.stack([detection_image] * 3, axis=-1)
+
+            # 计算标签的宽高比
+            label_width = self.detection_label.width()
+            label_height = self.detection_label.height()
+            label_ratio = label_width / label_height
+            image_ratio = w / h
+
+            # 裁剪图像以匹配标签宽高比
+            if image_ratio > label_ratio:
+                # 图像太宽，裁剪左右
+                new_width = int(h * label_ratio)
+                start_x = (w - new_width) // 2
+                detection_image = detection_image[:, start_x : start_x + new_width, :]
+            else:
+                # 图像太高，裁剪上下
+                new_height = int(w / label_ratio)
+                start_y = (h - new_height) // 2
+                detection_image = detection_image[start_y : start_y + new_height, :, :]
+
+            # 更新尺寸
+            h, w = detection_image.shape[:2]
 
             # 创建QImage
             qimage = QImage(
@@ -200,12 +219,12 @@ class HomeVisualizationCard(QWidget):
                 QImage.Format.Format_RGB888,
             )
 
-            # 缩放到标签大小并显示
+            # 现在可以放心使用IgnoreAspectRatio（因为已经裁剪到正确比例）
             pixmap = QPixmap.fromImage(qimage).scaled(
-                self.detection_label.width(),
-                self.detection_label.height(),
-                Qt.AspectRatioMode.KeepAspectRatio,  # 保持宽高比
-                Qt.TransformationMode.SmoothTransformation,  # 平滑缩放
+                label_width,
+                label_height,
+                Qt.AspectRatioMode.IgnoreAspectRatio,
+                Qt.TransformationMode.SmoothTransformation,
             )
             self.detection_label.setPixmap(pixmap)
 
@@ -229,16 +248,23 @@ class HomeVisualizationCard(QWidget):
             # 获取当前检测结果
             detection_results = self.detector.get_detection_results()
 
-            # 计算检测FPS
             current_count = detection_stats.get("detection_count", 0)
             detection_delta = current_count - self.last_detection_count
             self.last_detection_count = current_count
-
+            # 获取处理帧数
+            processed_frames = self.data_processor.get_stats().get("frame_id", 1)
+            # 获取显示帧数
+            displayed_frames = self.frame_displayed if self.frame_displayed > 0 else 1
+            # 获取fps
+            detection_fps = detection_stats.get("fps", 0.0)
             # 构建统计信息文本
             stats_text = f"""
+            <p><b>数据处理帧数:</b> {processed_frames}</p>
+            <p><b>显示帧数:</b> {displayed_frames}</p>
+            <p><b>检测FPS:</b> {detection_fps:.2f}</p>
             <p><b>检测次数:</b> {detection_stats.get('total_detections', 0)}</p>
-            <p><b>当前目标:</b> {detection_stats.get('current_objects', 0)}</p>
-            <p><b>总目标数:</b> {detection_stats.get('total_objects', 0)}</p>
+
+            
             """
 
             # 显示当前检测到的目标详情

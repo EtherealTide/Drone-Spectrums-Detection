@@ -41,7 +41,7 @@ class DroneDetector:
         # 统计信息
         self.total_detections = 0  # 总检测次数
         self.total_objects = 0  # 总检测到的目标数
-
+        self.fps = 0.0  # 检测帧率
         # 加载YOLO模型
         # 获取算法层绝对路径，yolo和算法层在同一目录下
         self.algorithm_path = pathlib.Path(__file__).parent.absolute()
@@ -192,15 +192,7 @@ class DroneDetector:
 
                 # 计算处理时间
                 elapsed = time.time() - start_time
-                fps = 1.0 / elapsed if elapsed > 0 else 0
-
-                if len(detection_info) > 0:
-                    logging.info(
-                        f"检测完成: 发现 {len(detection_info)} 个目标, "
-                        f"耗时: {elapsed*1000:.1f}ms, FPS: {fps:.1f}"
-                    )
-                else:
-                    logging.debug(f"检测完成: 无目标, 耗时: {elapsed*1000:.1f}ms")
+                self.fps = 1.0 / elapsed if elapsed > 0 else 0
 
                 # 无延迟，立即进行下一次检测
 
@@ -247,6 +239,7 @@ class DroneDetector:
                 "total_objects": self.total_objects,
                 "last_detection_time": self.last_detection_time,
                 "current_objects": len(self.detection_results),
+                "fps": self.fps,
             }
 
     # ==================== 配置接口 ====================

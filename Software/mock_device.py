@@ -25,8 +25,8 @@ class MockDevice:
         self.packet_size = 128  # 每次发送128个点
         self.send_interval = 0.001  # 100ms发送一帧完整FFT
 
-        # 数据流相关
-        self.data_dir = Path(__file__).parent / "2"
+        # 数据流相关，数据存在代码的上两级目录的2文件夹中
+        self.data_dir = Path(__file__).parent.parent.parent / "2"
         self.npy_files = sorted(self.data_dir.glob("*.npy"))
         self._current_file_idx = 0
         self._buffer = np.array([], dtype=np.float32)

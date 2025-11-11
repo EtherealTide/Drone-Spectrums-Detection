@@ -72,7 +72,7 @@ class DroneDetectionSystem:
         self.state = State()
 
         # 创建通信层和数据处理层之间的队列
-        self.fft_data_queue = queue.Queue(maxsize=5)
+        self.fft_data_queue = queue.Queue(maxsize=50)
 
         # 创建通信层
         self.communication = Communication(self.state, self.fft_data_queue)

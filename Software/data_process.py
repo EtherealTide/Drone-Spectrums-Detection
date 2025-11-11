@@ -192,6 +192,8 @@ class DataProcessor:
                 # shape: (height, width)
                 waterfall_array = np.array(waterfall_list, dtype=np.float32)
                 waterfall_array = np.flipud(waterfall_array)
+                # 数据转置
+                waterfall_array = waterfall_array.T  # shape: (width, height)
 
                 # 转换为颜色索引 [0, 255]
                 color_indices = (waterfall_array * 255.0).astype(np.uint8)

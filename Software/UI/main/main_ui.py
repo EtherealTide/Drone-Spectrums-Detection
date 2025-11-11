@@ -112,7 +112,7 @@ class Window(FluentWindow):
         )
 
     def initWindow(self, my_logo_path):
-        self.resize(1280, 720)
+        self.resize(1440, 900)
         # 将logo改为自定义图标
 
         self.setWindowIcon(QIcon(str(my_logo_path)))
