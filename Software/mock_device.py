@@ -144,7 +144,8 @@ class MockDevice:
                 if self.running:
                     logging.error(f"发送数据异常: {e}", exc_info=True)
                 break
-
+        # 重新初始化连接
+        self.start()
         logging.info("发送线程已退出")
 
     def set_fft_length(self, length):

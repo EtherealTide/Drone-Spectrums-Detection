@@ -182,13 +182,17 @@ class HomeVisualizationCard(QWidget):
             if detection_image is None:
                 self.detection_label.setText("等待检测结果...")
                 return
-
             h, w = detection_image.shape[:2]
 
             # 确保是RGB格式
             if len(detection_image.shape) == 2:
                 detection_image = np.stack([detection_image] * 3, axis=-1)
+            # 转置图像为高度x宽度x通道
+            # ✅ 转置图像：交换高度和宽度
+            detection_image = np.transpose(detection_image, (1, 0, 2))
 
+            # ✅ 关键修复：确保数组是连续的（C-contiguous）
+            detection_image = np.ascontiguousarray(detection_image)
             # 计算标签的宽高比
             label_width = self.detection_label.width()
             label_height = self.detection_label.height()

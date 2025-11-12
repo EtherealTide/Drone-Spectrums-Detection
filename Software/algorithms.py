@@ -79,7 +79,7 @@ class DroneDetector:
 
             # 执行一次推理（不保存结果）
             _ = self.model(dummy_image, verbose=False)
-            logging.info("✓ 模型预热完成，首次检测将更快")
+            logging.info("✓ 模型预热完成")
 
         except Exception as e:
             logging.warning(f"模型预热失败: {e}，将在首次检测时初始化")
@@ -180,7 +180,6 @@ class DroneDetector:
                             (text_width, text_height), baseline = cv2.getTextSize(
                                 label, font, font_scale, thickness
                             )
-
                             # 绘制文本背景
                             cv2.rectangle(
                                 annotated_image,
