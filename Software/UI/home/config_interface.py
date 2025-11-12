@@ -32,157 +32,137 @@ logger = logging.getLogger(__name__)
 class ConfigInterface(QWidget):
     # 定义信号
     connection_request = pyqtSignal(bool)  # True=连接, False=断开
+    parameter_change_request = pyqtSignal(str, str, object)  # (group, name, value)
 
     def __init__(self, parent=None, state=None):
         super().__init__(parent)
         self.setObjectName("ConfigInterface")
         self.component = Component()
         self.state = state
-        self.connection_switch = None  # 保存开关引用
+        self.connection_switch = None
         self.setup_ui()
 
         # 监听状态变化
         if self.state:
             self.state.connection_changed.connect(self.on_connection_state_changed)
+            # UI层监听参数变化只是为了更新显示值
+            self.state.parameters_changed.connect(self.on_parameters_updated)
 
     def setup_ui(self):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(5, 5, 5, 5)
-
-        # 读取参数配置文件
-        config_path = os.path.join(
-            os.path.dirname(__file__), "../config/parameters.json"
-        )
-        with open(config_path, "r", encoding="utf-8") as f:
-            self.parameters = json.load(f)
 
         # 创建参数配置卡片
         config_layout, config_card = self.component.create_card(self, height=600)
 
         # 创建树状控件
         self.config_tree = TreeWidget(config_card)
-        self.config_tree.setHeaderHidden(False)  # 显示表头
-        self.config_tree.setColumnCount(2)  # 设置两列：参数名和值
-        # self.config_tree.setHeaderLabels(["Parameter", "Value/Control"])
-        # 隐藏表头
         self.config_tree.setHeaderHidden(True)
-        # 设置列宽
-        self.config_tree.setColumnWidth(0, 250)  # 第一列宽度
-        self.config_tree.setColumnWidth(1, 250)  # 第二列宽度
+        self.config_tree.setColumnCount(2)
+        self.config_tree.setColumnWidth(0, 250)
+        self.config_tree.setColumnWidth(1, 250)
 
-        # 构建树状结构
+        # 构建树状结构（从state读取）
         self.build_tree()
-
-        # 展开所有节点
         self.config_tree.expandAll()
 
         config_layout.addWidget(self.config_tree)
         layout.addWidget(config_card)
 
-        self.setStyleSheet("#ConfigInterface { background: white; }")
-
     def build_tree(self):
-        """构建参数树状结构"""
-
+        """构建参数树状结构（从state读取初始值）"""
         # 1. System Status 节点
         system_item = QTreeWidgetItem(["System Status"])
         self.config_tree.addTopLevelItem(system_item)
 
-        # 连接状态子项 - 使用开关
+        # 连接状态子项
         connection_item = QTreeWidgetItem(["Connection"])
         system_item.addChild(connection_item)
 
-        # 创建开关控件
         switch_widget = QWidget()
         switch_layout = QHBoxLayout(switch_widget)
         switch_layout.setContentsMargins(5, 5, 5, 5)
         self.connection_switch = self.component.create_switch_button(
             switch_widget, "Connected", "Disconnected"
         )
-
-        # 连接开关信号到请求处理函数
         self.connection_switch.checkedChanged.connect(self.on_switch_toggled)
 
         switch_layout.addWidget(self.connection_switch)
         switch_layout.addStretch()
-        switch_widget.adjustSize()  # 让开关控件自适应高度
-        widget_height = switch_widget.sizeHint().height() + 10
-        connection_item.setSizeHint(
-            1, QSize(0, widget_height)
-        )  # 让子项高度自适应，比子项里的控件高度稍大一些
+        connection_item.setSizeHint(1, QSize(0, switch_widget.sizeHint().height() + 10))
         self.config_tree.setItemWidget(connection_item, 1, switch_widget)
 
         # 2. Receiver 节点
         receiver_item = QTreeWidgetItem(["Receiver"])
         self.config_tree.addTopLevelItem(receiver_item)
 
-        # FFT 参数子节点
-        fft_params = self.parameters.get("FFT", {})
         fft_item = QTreeWidgetItem(["FFT"])
         receiver_item.addChild(fft_item)
 
-        # FFT Length - 使用卡片形式
-        self.add_fft_parameter(
+        # 从state读取初始值
+        self.add_parameter(
             fft_item,
+            "FFT",
             "Length",
-            fft_params.get("Length", 256),
+            self.state.fft_length,
             ["128", "256", "512", "1024", "2048", "4096", "8192"],
         )
 
-        # FFT Decimation Factor
-        self.add_fft_parameter(
+        self.add_parameter(
             fft_item,
-            "Decimation Factor",
-            fft_params.get("Decimation_factor", 256),
-            ["64", "128", "256", "512", "1024", "2048", "4096", "8192"],
+            "FFT",
+            "Decimation_factor",
+            self.state.decimation_factor,
+            ["4", "8", "16", "32", "64", "128", "256", "512", "1024"],
         )
 
-        # FFT Centre Frequency
-        self.add_fft_parameter(
-            fft_item,
-            "Centre Frequency (MHz)",
-            fft_params.get("Centre_frequency(MHz)", 400),
-            None,  # None 表示使用输入框
+        self.add_parameter(
+            fft_item, "FFT", "Centre_frequency(MHz)", self.state.center_frequency, None
         )
 
-    def on_switch_toggled(self, checked):
-        """开关被切换时触发"""
-        logger.info(f"连接开关被切换: {checked}")
+        self.add_parameter(
+            fft_item, "FFT", "bandwidth(MHz)", self.state.bandwidth, None
+        )
 
-        # 禁用开关，防止重复点击
-        self.connection_switch.setEnabled(False)
+        # 3. UI 节点
+        ui_item = QTreeWidgetItem(["UI"])
+        self.config_tree.addTopLevelItem(ui_item)
 
-        # 发出连接请求信号
-        self.connection_request.emit(checked)
+        self.add_parameter(
+            ui_item, "UI", "spectum_left_freq(MHz)", self.state.spectrum_left_freq, None
+        )
 
-        # 延迟重新启用开关（给连接操作一些时间）
-        from PyQt6.QtCore import QTimer
+        self.add_parameter(
+            ui_item,
+            "UI",
+            "spectum_right_freq(MHz)",
+            self.state.spectrum_right_freq,
+            None,
+        )
+        # yolo检测参数节点
+        detection_item = QTreeWidgetItem(["Detection"])
+        self.config_tree.addTopLevelItem(detection_item)
+        self.add_parameter(
+            detection_item,
+            "Detection",
+            "conf_threshold",
+            self.state.conf_threshold,
+            None,
+        )
+        self.add_parameter(
+            detection_item, "Detection", "iou_threshold", self.state.iou_threshold, None
+        )
 
-        QTimer.singleShot(1000, lambda: self.connection_switch.setEnabled(True))
-
-    def on_connection_state_changed(self, is_connected):
-        """连接状态变化时更新开关"""
-        if self.connection_switch:
-            # 阻止信号，避免循环触发
-            self.connection_switch.blockSignals(True)
-            self.connection_switch.setChecked(is_connected)  # setChecked是更新按钮状态
-            self.connection_switch.blockSignals(False)
-
-            # 重新启用开关
-            self.connection_switch.setEnabled(True)
-
-            logger.info(f"UI开关状态已更新: {is_connected}")
-
-    def add_fft_parameter(self, parent_item, param_name, current_value, options):
-        """添加FFT参数行 - 包含当前值、选择框和Set按钮"""
+    def add_parameter(
+        self, parent_item, param_group, param_name, current_value, options
+    ):
+        """添加参数行"""
         param_item = QTreeWidgetItem([param_name])
         parent_item.addChild(param_item)
 
-        # 创建参数控制卡片
         param_widget = QWidget()
         param_layout = QHBoxLayout(param_widget)
-        param_layout.setContentsMargins(5, 5, 5, 5)  # 设置边距
-        # 设置控件间距.即当前值标签、输入框、set按钮之间的间距
+        param_layout.setContentsMargins(5, 5, 5, 5)
         param_layout.setSpacing(5)
 
         # 当前值标签
@@ -194,7 +174,6 @@ class ConfigInterface(QWidget):
             alignment=Qt.AlignmentFlag.AlignCenter,
         )
         value_label.setFixedWidth(60)
-        # 背景颜色淡灰色
         value_label.setStyleSheet(
             "background-color: #E8F4F8; border-radius: 3px; padding: 3px;"
         )
@@ -209,7 +188,6 @@ class ConfigInterface(QWidget):
         else:
             input_widget = LineEdit(param_widget)
             input_widget.setText(str(current_value))
-            input_widget.setPlaceholderText(f"Enter {param_name}")
             input_widget.setFixedWidth(100)
 
         param_layout.addWidget(input_widget)
@@ -220,110 +198,66 @@ class ConfigInterface(QWidget):
         setCustomStyleSheet(set_button, CONFIRM_BUTTON_STYLE, CONFIRM_BUTTON_STYLE)
 
         def update_value():
+            """发送参数更新请求"""
             new_value = input_widget.currentText() if options else input_widget.text()
             try:
+                # 转换为数值
                 numeric_value = float(new_value)
                 if numeric_value.is_integer():
                     numeric_value = int(numeric_value)
 
-                # 更新显示
-                value_label.setText(str(numeric_value))
+                # 发射信号给main处理
+                self.parameter_change_request.emit(
+                    param_group, param_name, numeric_value
+                )
 
-                # 更新参数文件
-                if param_name == "Length":
-                    self.parameters["FFT"]["Length"] = numeric_value
-                elif param_name == "Decimation Factor":
-                    self.parameters["FFT"]["Decimation_factor"] = numeric_value
-                elif param_name == "Centre Frequency (MHz)":
-                    self.parameters["FFT"]["Centre_frequency(MHz)"] = numeric_value
+                logger.info(
+                    f"请求更新参数: {param_group}.{param_name} = {numeric_value}"
+                )
 
-                self.save_parameters()
-                print(f"FFT parameter '{param_name}' updated to {numeric_value}")
             except ValueError:
-                print(f"Invalid value for parameter '{param_name}': {new_value}")
-
-        set_button.clicked.connect(update_value)
-        param_layout.addWidget(set_button)
-        param_layout.addStretch()
-        # 子项高度
-        # 自动计算并设置高度
-        param_widget.adjustSize()
-        widget_height = param_widget.sizeHint().height() + 10
-        param_item.setSizeHint(1, QSize(0, widget_height))
-        self.config_tree.setItemWidget(param_item, 1, param_widget)
-
-    def add_dac_adc_parameter(
-        self, parent_item, param_name, current_value, range_tuple
-    ):
-        """添加DAC/ADC参数行"""
-        param_item = QTreeWidgetItem([param_name])
-        parent_item.addChild(param_item)
-
-        # 创建参数控制卡片
-        param_widget = QWidget()
-        param_layout = QHBoxLayout(param_widget)
-        param_layout.setContentsMargins(2, 2, 2, 2)
-        param_layout.setSpacing(5)
-
-        # 当前值标签
-        value_label = self.component.create_label(
-            param_widget,
-            str(current_value),
-            "#000000",
-            "#E8F4F8",
-            alignment=Qt.AlignmentFlag.AlignCenter,
-        )
-        value_label.setFixedWidth(60)
-        value_label.setStyleSheet(
-            "background-color: #E8F4F8; border-radius: 3px; padding: 3px;"
-        )
-        param_layout.addWidget(value_label)
-
-        # 输入框
-        input_widget = LineEdit(param_widget)
-        input_widget.setText(str(current_value))
-        input_widget.setPlaceholderText(f"Enter {param_name}")
-        input_widget.setFixedWidth(100)
-        param_layout.addWidget(input_widget)
-
-        # Set按钮
-        set_button = PushButton("Set", param_widget)
-        set_button.setFixedWidth(50)
-        setCustomStyleSheet(set_button, CONFIRM_BUTTON_STYLE, CONFIRM_BUTTON_STYLE)
-
-        def update_value():
-            new_value = input_widget.text()
-            try:
-                numeric_value = float(new_value)
-
-                # 检查范围
-                min_val, max_val, step = range_tuple
-                if not (min_val <= numeric_value <= max_val):
-                    print(f"Value out of range [{min_val}, {max_val}]")
-                    return
-
-                # 更新显示
-                value_label.setText(str(numeric_value))
-                print(f"Parameter '{param_name}' updated to {numeric_value}")
-
-                # TODO: 这里可以添加保存到参数文件的逻辑
-            except ValueError:
-                print(f"Invalid value for parameter '{param_name}': {new_value}")
+                logger.error(f"无效的参数值: {param_name} = {new_value}")
 
         set_button.clicked.connect(update_value)
         param_layout.addWidget(set_button)
         param_layout.addStretch()
 
+        param_item.setSizeHint(1, QSize(0, param_widget.sizeHint().height() + 10))
         self.config_tree.setItemWidget(param_item, 1, param_widget)
 
-    def save_parameters(self):
-        """保存参数到JSON文件"""
-        config_path = os.path.join(
-            os.path.dirname(__file__), "../config/parameters.json"
-        )
-        with open(config_path, "w", encoding="utf-8") as f:
-            json.dump(self.parameters, f, indent=2, ensure_ascii=False)
-        print("Parameters saved successfully!")
+        # 保存引用（用于后续更新显示）
+        if not hasattr(self, "_value_labels"):
+            self._value_labels = {}
+        self._value_labels[f"{param_group}.{param_name}"] = value_label
+
+    def on_parameters_updated(self, change_info):
+        """参数更新后，刷新UI显示值"""
+        group = change_info["group"]
+        name = change_info["name"]
+        value = change_info["value"]
+
+        key = f"{group}.{name}"
+        if key in self._value_labels:
+            self._value_labels[key].setText(str(value))
+            logger.info(f"UI显示已更新: {key} = {value}")
+
+    def on_connection_state_changed(self, is_connected):
+        """连接状态变化时更新开关"""
+        if self.connection_switch:
+            self.connection_switch.blockSignals(True)
+            self.connection_switch.setChecked(is_connected)
+            self.connection_switch.blockSignals(False)
+            self.connection_switch.setEnabled(True)
+
+    def on_switch_toggled(self, checked):
+        """开关被切换时触发"""
+        logger.info(f"连接开关被切换: {checked}")
+        self.connection_switch.setEnabled(False)
+        self.connection_request.emit(checked)
+
+        from PyQt6.QtCore import QTimer
+
+        QTimer.singleShot(1000, lambda: self.connection_switch.setEnabled(True))
 
 
 if __name__ == "__main__":

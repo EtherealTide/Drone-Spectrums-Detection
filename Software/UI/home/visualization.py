@@ -12,29 +12,21 @@ import logging
 
 
 class HomeVisualizationCard(QWidget):
-    def __init__(self, parent=None, data_processor=None, detector=None):
+    def __init__(self, parent=None, data_processor=None, detector=None, state=None):
         super().__init__(parent)
         self.setObjectName("HomeVisualizationCard")
         self.component = Component()
 
-        # 数据处理器引用（用于获取频谱数据）
+        # 引用
         self.data_processor = data_processor
-
-        # 算法检测器引用（用于获取检测结果图像）
         self.detector = detector
+        self.state = state  # 保存state引用
 
         # 统计信息
         self.frame_displayed = 0
         self.last_frame_id = -1
         self.update_count = 0
-        self.skip_count = 0
-
-        # 检测统计
-        self.last_detection_count = 0
-
-        # 频率轴参数
-        self.center_freq = 2400  # MHz
-        self.sample_rate = 20  # MHz
+        # 最大频率范围 0~index/fft_length*real_sample_rate
 
         self.setup_ui()
 
@@ -86,93 +78,81 @@ class HomeVisualizationCard(QWidget):
 
     def create_spectrum_chart(self):
         """创建功率谱图表"""
-        self.spectrum_series = QLineSeries()
-        self.spectrum_series.setName("Power Spectrum")
-
         chart = QChart()
-        chart.addSeries(self.spectrum_series)
-        chart.setTitle("Real-time Power Spectrum")
+        chart.setTitle("实时功率谱")
         chart.setAnimationOptions(QChart.AnimationOption.NoAnimation)
 
-        # X轴 - 频率
-        self.axis_x = QValueAxis()
-        self.axis_x.setTitleText("Frequency (MHz)")
-        self.axis_x.setLabelFormat("%.1f")
-        self.axis_x.setRange(
-            self.center_freq - self.sample_rate / 2,
-            self.center_freq + self.sample_rate / 2,
-        )
-        chart.addAxis(self.axis_x, Qt.AlignmentFlag.AlignBottom)
-        self.spectrum_series.attachAxis(self.axis_x)
+        # 创建数据系列
+        self.spectrum_series = QLineSeries()
+        self.spectrum_series.setName("功率谱")
+        chart.addSeries(self.spectrum_series)
 
-        # Y轴 - 功率
-        self.axis_y = QValueAxis()
-        self.axis_y.setTitleText("Power (Normalized)")
-        # Y轴范围设置为固定值
-        self.axis_y.setRange(0, 1)  # 归一化数据范围
-        chart.addAxis(self.axis_y, Qt.AlignmentFlag.AlignLeft)
-        self.spectrum_series.attachAxis(self.axis_y)
+        # 从state读取频率参数
+        left_freq = self.state.spectrum_left_freq
+        right_freq = self.state.spectrum_right_freq
+        center_freq = self.state.center_frequency
 
-        chart.legend().setAlignment(Qt.AlignmentFlag.AlignBottom)
+        # 创建X轴（频率轴）
+        axis_x = QValueAxis()
+        axis_x.setTitleText(f"频率 (MHz) - 中心频率: {center_freq:.1f} MHz")
+        axis_x.setRange(left_freq, right_freq)
+        axis_x.setLabelFormat("%.1f")
+        chart.addAxis(axis_x, Qt.AlignmentFlag.AlignBottom)
+        self.spectrum_series.attachAxis(axis_x)
+
+        # 创建Y轴（功率轴）
+        axis_y = QValueAxis()
+        axis_y.setTitleText("归一化功率 ")
+        axis_y.setRange(0, 1)
+        axis_y.setLabelFormat("%.0f")
+        chart.addAxis(axis_y, Qt.AlignmentFlag.AlignLeft)
+        self.spectrum_series.attachAxis(axis_y)
 
         return chart
 
-    def update_visualization(self):
-        """更新可视化（频谱图和检测结果）"""
-        if self.data_processor is None:
-            return
-
-        # 获取数据处理统计信息
-        stats = self.data_processor.get_stats()
-        if stats is None:
-            return
-
-        # 检查是否是新帧
-        frame_id = stats["frame_id"]
-        if frame_id == self.last_frame_id:
-            self.skip_count += 1
-            return  # 同一帧，不重复处理
-
-        self.last_frame_id = frame_id
-        self.frame_displayed += 1
-        self.update_count += 1
-
-        # 获取最新频谱数据
-        spectrum = self.data_processor.get_latest_spectrum()
-        if spectrum is not None:
-            # 每次都更新频谱图
-            self.update_spectrum(spectrum)
-
-        # 每帧都更新检测结果图像（如果检测器可用）
-        if self.detector is not None:
-            self.update_detection_image()
-
     def update_spectrum(self, spectrum_data):
-        """更新频谱图"""
-        # 降采样到固定点数（如512个点）
-        target_points = 512
-        fft_length = len(spectrum_data)
-        downsample_factor = max(1, fft_length // target_points)
+        """更新频谱图（每次调用时从state读取最新参数）"""
+        if spectrum_data is None:
+            return
+        # 计算频率点
+        max_freq = self.state.sample_rate // 2
+        self.freq_points = np.linspace(0, max_freq / 1e6, self.state.fft_length // 2)
+        # 从state读取最新的频率参数
+        left_freq = self.state.spectrum_left_freq
+        right_freq = self.state.spectrum_right_freq
 
-        # 构建QPointF列表
-        points = []
-        freq_resolution = self.sample_rate / fft_length
-        freq_start = self.center_freq - self.sample_rate / 2
+        # 更新X轴范围
+        self.axis_x = self.spectrum_chart.axes(Qt.Orientation.Horizontal)[0]
+        self.axis_x.setRange(left_freq, right_freq)
 
-        for i in range(0, fft_length, downsample_factor):
-            freq = freq_start + i * freq_resolution
-            power = spectrum_data[i]
-            points.append(QPointF(freq, power))
-
-        # 使用replace替代clear+append（更高效）
+        # 更新数据点
+        points = [
+            QPointF(freq, power) for freq, power in zip(self.freq_points, spectrum_data)
+        ]
         self.spectrum_series.replace(points)
 
-        # 动态调整Y轴范围（每10帧调整一次）
-        if self.update_count % 10 == 0:
-            max_power = np.max(spectrum_data)
-            min_power = np.min(spectrum_data)
-            margin = max(0.05, (max_power - min_power) * 0.1)  # 至少5%的margin
-            self.axis_y.setRange(max(0, min_power - margin), min(1, max_power + margin))
+    def update_visualization(self):
+        """更新可视化（25Hz定时调用）"""
+        self.update_count += 1
+
+        try:
+            # 更新频谱图
+            if self.data_processor:
+                spectrum_data = self.data_processor.get_latest_spectrum()
+                if spectrum_data is not None:
+                    self.update_spectrum(spectrum_data)
+
+            # 更新检测图像
+            if self.detector:
+                self.update_detection_image()
+                self.frame_displayed += 1
+
+            # 每5帧更新一次统计信息
+            if self.update_count % 5 == 0:
+                self.update_detection_stats()
+
+        except Exception as e:
+            logging.error(f"可视化更新异常: {e}", exc_info=True)
 
     def update_detection_image(self):
         """更新检测结果图像"""
@@ -232,10 +212,6 @@ class HomeVisualizationCard(QWidget):
             )
             self.detection_label.setPixmap(pixmap)
 
-            # 每5帧更新一次检测统计信息
-            if self.update_count % 5 == 0:
-                self.update_detection_stats()
-
         except Exception as e:
             logging.error(f"更新检测图像失败: {e}", exc_info=True)
             self.detection_label.setText(f"显示错误: {str(e)}")
@@ -253,12 +229,11 @@ class HomeVisualizationCard(QWidget):
             detection_results = self.detector.get_detection_results()
 
             current_count = detection_stats.get("detection_count", 0)
-            detection_delta = current_count - self.last_detection_count
-            self.last_detection_count = current_count
+
             # 获取处理帧数
             processed_frames = self.data_processor.get_stats().get("frame_id", 1)
             # 获取显示帧数
-            displayed_frames = self.frame_displayed if self.frame_displayed > 0 else 1
+            displayed_frames = self.frame_displayed
             # 获取fps
             detection_fps = detection_stats.get("fps", 0.0)
             # 构建统计信息文本

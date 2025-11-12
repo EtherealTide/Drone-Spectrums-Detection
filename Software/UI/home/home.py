@@ -18,27 +18,32 @@ class HomeInterface(QWidget):
         self.setup_ui()
 
     def setup_ui(self):
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(10, 10, 10, 10)
+        main_layout = QHBoxLayout(self)
+        main_layout.setContentsMargins(10, 10, 10, 10)
+        main_layout.setSpacing(10)
 
-        # 创建分割器
         splitter = QSplitter(Qt.Orientation.Horizontal)
 
-        # 左侧可视化卡片
+        # 左侧：可视化卡片（传入state）
         self.visualization_card = HomeVisualizationCard(
-            self, data_processor=self.data_processor, detector=self.detector
+            parent=self,
+            data_processor=self.data_processor,
+            detector=self.detector,
+            state=self.state,  # 传入state
         )
         splitter.addWidget(self.visualization_card)
 
-        # 右侧配置界面卡片（传入state）
-        self.config_interface = ConfigInterface(self, state=self.state)
+        # 右侧：配置界面（传入state）
+        self.config_interface = ConfigInterface(
+            parent=self,
+            state=self.state,  # 传入state
+        )
         splitter.addWidget(self.config_interface)
 
-        # 设置初始比例 (左:右 = 4:2)
-        splitter.setStretchFactor(0, 3)
-        splitter.setStretchFactor(1, 1)
+        splitter.setStretchFactor(0, 7)
+        splitter.setStretchFactor(1, 3)
 
-        layout.addWidget(splitter)
+        main_layout.addWidget(splitter)
 
         self.setStyleSheet(
             """

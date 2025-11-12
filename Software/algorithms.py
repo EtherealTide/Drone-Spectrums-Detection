@@ -57,8 +57,8 @@ class DroneDetector:
             self.model = None
 
         # 检测参数
-        self.conf_threshold = 0.25  # 置信度阈值
-        self.iou_threshold = 0.45  # NMS IoU阈值
+        self.conf_threshold = self.state.conf_threshold  # 置信度阈值
+        self.iou_threshold = self.state.iou_threshold  # NMS IoU阈值
 
         logging.info("算法层初始化完成")
 
@@ -128,6 +128,8 @@ class DroneDetector:
                     continue
 
                 # 步骤2: YOLO检测
+                self.conf_threshold = self.state.conf_threshold  # 首先更新检测参数
+                self.iou_threshold = self.state.iou_threshold
                 results = self.model(
                     input_image,
                     conf=self.conf_threshold,

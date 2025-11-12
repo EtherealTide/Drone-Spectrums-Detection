@@ -12,6 +12,7 @@ from communication import Communication
 from data_process import DataProcessor
 from UI.main.main_ui import Window
 from algorithms import DroneDetector
+from state import State
 
 # 配置日志
 logging.basicConfig(
@@ -26,41 +27,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-class State(QObject):
-    """系统状态类 - 支持信号"""
-
-    # 定义信号
-    connection_changed = pyqtSignal(bool)  # 连接状态变化信号
-
-    def __init__(self):
-        super().__init__()
-        self._communication_thread = False
-        self.data_processing_thread = False
-        self.detection_thread = False
-        self.data_queue_status = "idle"
-
-        # 系统配置参数
-        self.device_ip = "127.0.0.1"
-        self.device_port = 5000
-        self.fft_length = 512
-        self.packet_size = 128
-        self.center_freq = 2400  # MHz
-        self.sample_rate = 20  # MHz
-
-    @property
-    def communication_thread(self):
-        """只读属性"""
-        return self._communication_thread
-
-    @communication_thread.setter  # 当设置communication_thread属性的值时自动调用这个
-    def communication_thread(self, value):
-        """设置连接状态并发出信号"""
-        if self._communication_thread != value:
-            self._communication_thread = value
-            self.connection_changed.emit(value)  # emit的作用是发出信号
-            logger.info(f"连接状态变更: {value}")
-
-
 class DroneDetectionSystem:
     """无人机检测系统主类"""
 
@@ -68,8 +34,9 @@ class DroneDetectionSystem:
         logger.info("=" * 60)
         logger.info("初始化无人机检测系统...")
 
-        # 创建系统状态
+        # 创建系统状态（包含参数管理）
         self.state = State()
+        logger.info("✓ 系统状态初始化完成")
 
         # 创建通信层和数据处理层之间的队列
         self.fft_data_queue = queue.Queue(maxsize=50)
@@ -82,33 +49,76 @@ class DroneDetectionSystem:
         self.data_processor = DataProcessor(self.state)
         self.data_processor.fft_data_queue = self.fft_data_queue
         logger.info("✓ 数据处理层初始化完成")
+
         # 创建算法层
         self.detector = DroneDetector(self.state, self.data_processor, "best.pt")
+        logger.info("✓ 算法层初始化完成")
+
         # 创建Qt应用
         self.app = QApplication(sys.argv)
 
-        # 创建主界面（传入data_processor和state）
+        # 创建主界面
         self.main_window = Window(
             dataprocessor=self.data_processor, state=self.state, detector=self.detector
         )
         logger.info("✓ 用户界面初始化完成")
 
-        # 绑定配置接口到通信层
+        # 绑定信号
         self.setup_connections()
-        # self.connect_device()  # 默认连接
         logger.info("系统初始化完成！")
         logger.info("=" * 60)
 
     def setup_connections(self):  # 这个函数将主要实现控件与功能模块之间的连接
         """设置各模块之间的连接"""
+        # 绑定连接请求处理
+        if hasattr(self.main_window, "homeInterface"):
+            home = self.main_window.homeInterface
+            if hasattr(home, "config_interface"):
+                # 连接请求
+                home.config_interface.connection_request.connect(
+                    self.handle_connection_request
+                )
+                # 参数更新请求
+                home.config_interface.parameter_change_request.connect(
+                    self.handle_parameter_change_request
+                )
+                logger.info("✓ 信号连接设置完成")
 
-        # 连接 ConfigInterface 的连接请求信号到处理函数
-        config_interface = self.main_window.homeInterface.config_interface
-        config_interface.connection_request.connect(
-            self.handle_connection_request
-        )  # connect将信号与槽函数连接起来，信号发出时会调用槽函数，这里信号connection_request变化时调用handle_connection_request函数
+    def handle_parameter_change_request(self, group: str, name: str, value):
+        """处理参数更新请求
 
-        logger.info("✓ 模块连接设置完成")
+        Args:
+            group: 参数组名（如 "FFT", "UI"）
+            name: 参数名
+            value: 新值
+        """
+        logger.info(f"处理参数更新请求: {group}.{name} = {value}")
+
+        try:
+            # 更新state中的参数（会自动保存到文件）
+            self.state.set_parameter(group, name, value)
+
+            # 根据参数类型执行特定操作
+            if group == "FFT":
+                if name == "Length":
+                    # 更新数据处理层的FFT长度
+                    if hasattr(self.data_processor, "set_fft_length"):
+                        self.data_processor.set_fft_length(value)
+                        logger.info(f"✓ FFT长度已更新: {value}")
+
+                elif name == "Decimation_factor":
+                    # 更新抽取因子（可能需要重启通信）
+                    logger.info(f"✓ 抽取因子已更新: {value}")
+
+            elif group == "UI":
+                # UI参数更新后，可视化界面会在下次刷新时自动使用新值
+                # 无需额外操作
+                logger.info(f"✓ UI参数已更新: {name} = {value}")
+
+            logger.info("✓ 参数更新完成")
+
+        except Exception as e:
+            logger.error(f"参数更新失败: {e}", exc_info=True)
 
     def handle_connection_request(
         self, should_connect
