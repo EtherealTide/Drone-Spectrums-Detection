@@ -50,6 +50,8 @@ class DroneDetector:
             model_path = str(self.algorithm_path / model_path)
             self.model = YOLO(model_path)
             logging.info("✓ YOLO模型加载成功")
+            # 预热模型
+            self._warmup_model()
         except Exception as e:
             logging.error(f"YOLO模型加载失败: {e}")
             self.model = None
@@ -59,6 +61,28 @@ class DroneDetector:
         self.iou_threshold = 0.45  # NMS IoU阈值
 
         logging.info("算法层初始化完成")
+
+    def _warmup_model(self):
+        """预热模型，加速首次推理"""
+        if self.model is None:
+            return
+
+        try:
+            logging.info("🔥 预热YOLO模型...")
+            # 创建假图像进行预热
+            dummy_image = np.random.randint(
+                0,
+                255,
+                (self.data_processor.fft_length, self.data_processor.fft_length, 3),
+                dtype=np.uint8,
+            )
+
+            # 执行一次推理（不保存结果）
+            _ = self.model(dummy_image, verbose=False)
+            logging.info("✓ 模型预热完成，首次检测将更快")
+
+        except Exception as e:
+            logging.warning(f"模型预热失败: {e}，将在首次检测时初始化")
 
     def start_detection(self):
         """启动检测线程"""
