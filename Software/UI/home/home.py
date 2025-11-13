@@ -24,24 +24,24 @@ class HomeInterface(QWidget):
 
         splitter = QSplitter(Qt.Orientation.Horizontal)
 
-        # 左侧：可视化卡片（传入state）
+        # 左侧：可视化卡片
         self.visualization_card = HomeVisualizationCard(
             parent=self,
             data_processor=self.data_processor,
             detector=self.detector,
-            state=self.state,  # 传入state
+            state=self.state,
         )
         splitter.addWidget(self.visualization_card)
 
-        # 右侧：配置界面（传入state）
+        # 右侧：配置界面
         self.config_interface = ConfigInterface(
             parent=self,
-            state=self.state,  # 传入state
+            state=self.state,
         )
         splitter.addWidget(self.config_interface)
-
-        splitter.setStretchFactor(0, 7)
-        splitter.setStretchFactor(1, 3)
+        # 设置左右面板的拉伸比例为5:3
+        splitter.setStretchFactor(0, 1)
+        splitter.setStretchFactor(1, 1)
 
         main_layout.addWidget(splitter)
 

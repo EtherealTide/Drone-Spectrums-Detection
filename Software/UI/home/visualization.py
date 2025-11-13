@@ -65,6 +65,7 @@ class HomeVisualizationCard(QWidget):
         self.detection_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.detection_label.setStyleSheet("background-color: black;")
         self.detection_label.setMinimumHeight(200)
+        # self.detection_label.setMinimumWidth(400)
         bottom_chart_layout.addWidget(self.detection_label)
 
         # 检测统计信息标签
@@ -115,8 +116,8 @@ class HomeVisualizationCard(QWidget):
         if spectrum_data is None:
             return
         # 计算频率点
-        max_freq = self.state.sample_rate // 2
-        self.freq_points = np.linspace(0, max_freq / 1e6, self.state.fft_length // 2)
+        max_freq = self.state.sample_rate
+        self.freq_points = np.linspace(0, max_freq / 1e6, self.state.fft_length)
         # 从state读取最新的频率参数
         left_freq = self.state.spectrum_left_freq
         right_freq = self.state.spectrum_right_freq
@@ -162,7 +163,6 @@ class HomeVisualizationCard(QWidget):
             if detection_image is None:
                 self.detection_label.setText("等待检测结果...")
                 return
-            h, w = detection_image.shape[:2]
 
             # 确保是RGB格式
             if len(detection_image.shape) == 2:
@@ -174,6 +174,7 @@ class HomeVisualizationCard(QWidget):
             # ✅ 关键修复：确保数组是连续的（C-contiguous）
             detection_image = np.ascontiguousarray(detection_image)
             # 计算标签的宽高比
+            h, w = detection_image.shape[:2]
             label_width = self.detection_label.width()
             label_height = self.detection_label.height()
             label_ratio = label_width / label_height

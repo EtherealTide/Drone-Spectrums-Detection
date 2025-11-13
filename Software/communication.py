@@ -19,7 +19,7 @@ class Communication:
         # 数据缓冲区
         self.buffer = bytearray()
         self.expected_fft_length = self.state.fft_length  # FFT长度
-        self.bytes_per_sample = self.state.fft_length // self.state.packet_size
+        self.bytes_per_sample = 4  # float32固定4字节
 
         # 包同步参数
         self.PACKET_MAGIC = 0xAABBCCDD  # 包起始魔数
@@ -173,10 +173,10 @@ class Communication:
             # 帧不完整，检测丢包
             missing_bytes = expected_size - len(frame_data)
             missing_packets = missing_bytes // (128 * self.bytes_per_sample)
-            # logging.warning(
-            #     f"帧不完整: 缺少 {missing_bytes} 字节 "
-            #     f"(约{missing_packets}个包)，丢弃该帧"
-            # )
+            logging.warning(
+                f"帧不完整: 缺少 {missing_bytes} 字节 "
+                f"(约{missing_packets}个包)，丢弃该帧"
+            )
             return
 
         # 解析为numpy数组

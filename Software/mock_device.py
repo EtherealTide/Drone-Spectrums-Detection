@@ -113,7 +113,7 @@ class MockDevice:
             try:
                 # 生成一帧完整的FFT数据
                 fft_data = self._generate_fft_data()
-
+                logging.info(f"生成一帧FFT数据，长度: {len(fft_data)}")
                 # 分包发送
                 num_packets = self.fft_length // self.packet_size
 
@@ -135,7 +135,7 @@ class MockDevice:
                     self.client_socket.sendall(header + packet_data)
                     # time.sleep(0.001)
 
-                logging.info(f"已发送一帧 ({num_packets} 个包)")
+                # logging.info(f"已发送一帧 ({num_packets} 个包)")
 
                 # 等待下一帧
                 # time.sleep(self.send_interval)

@@ -22,9 +22,13 @@ class Component:
         return combobox
 
     # 创建卡片并设置高度和水平
-    def create_card(self, parent: QWidget, height=100, layout_type="QHBoxLayout"):
+    def create_card(
+        self, parent: QWidget, height=100, width=None, layout_type="QHBoxLayout"
+    ):
         card = CardWidget(parent)
         card.setFixedHeight(height)
+        if width is not None:
+            card.setFixedWidth(width)
         if layout_type == "QHBoxLayout":
             layout = QHBoxLayout(card)
         elif layout_type == "QVBoxLayout":

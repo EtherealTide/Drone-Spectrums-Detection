@@ -128,8 +128,7 @@ class DroneDetector:
                     continue
 
                 # 步骤2: YOLO检测
-                self.conf_threshold = self.state.conf_threshold  # 首先更新检测参数
-                self.iou_threshold = self.state.iou_threshold
+
                 results = self.model(
                     input_image,
                     conf=self.conf_threshold,
@@ -269,76 +268,11 @@ class DroneDetector:
 
     # ==================== 配置接口 ====================
 
-    def set_confidence_threshold(self, conf):
-        """设置置信度阈值
-
-        Args:
-            conf: float, 0-1之间
-        """
-        self.conf_threshold = max(0.0, min(1.0, conf))
-        logging.info(f"置信度阈值已设置为: {self.conf_threshold}")
-
-    def set_iou_threshold(self, iou):
-        """设置NMS IoU阈值
-
-        Args:
-            iou: float, 0-1之间
-        """
-        self.iou_threshold = max(0.0, min(1.0, iou))
-        logging.info(f"IoU阈值已设置为: {self.iou_threshold}")
-
-    def load_model(self, model_path):
-        """重新加载模型
-
-        Args:
-            model_path: str, 模型文件路径
-        """
-        try:
-            logging.info(f"正在加载新模型: {model_path}")
-            self.model = YOLO(model_path)
-            self.model_path = model_path
-            logging.info("✓ 模型加载成功")
-            return True
-        except Exception as e:
-            logging.error(f"模型加载失败: {e}")
-            return False
-
-
-# ==================== 使用示例 ====================
-if __name__ == "__main__":
-    # 配置日志
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    )
-
-    # 模拟State和DataProcessor
-    class MockState:
-        def __init__(self):
-            self.detection_thread = False
-
-    class MockDataProcessor:
-        def get_waterfall_image(self):
-            # 返回模拟图像
-            return np.random.randint(0, 255, (512, 512, 3), dtype=np.uint8)
-
-    # 创建检测器
-    state = MockState()
-    data_processor = MockDataProcessor()
-    detector = DroneDetector(state, data_processor, model_path="yolov8n.pt")
-
-    # 启动检测
-    detector.start_detection()
-
-    # 运行10秒
-    try:
-        time.sleep(10)
-    except KeyboardInterrupt:
-        pass
-
-    # 停止检测
-    detector.stop_detection()
-
-    # 打印统计
-    stats = detector.get_detection_stats()
-    print(f"检测统计: {stats}")
+    def update_detection_parameters(self):
+        """更新检测参数"""
+        self.conf_threshold = self.state.conf_threshold
+        self.iou_threshold = self.state.iou_threshold
+        logging.info(
+            f"检测参数已更新: conf_threshold={self.conf_threshold}, "
+            f"iou_threshold={self.iou_threshold}"
+        )

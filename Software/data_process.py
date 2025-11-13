@@ -275,10 +275,3 @@ class DataProcessor:
             self.waterfall_image = np.zeros(
                 (self.waterfall_height, self.waterfall_width, 3), dtype=np.uint8
             )
-
-    def set_averaging(self, enable, count=10):
-        """设置移动平均（可选功能）"""
-        self.enable_averaging = enable
-        self.averaging_count = count
-        self.history_buffer = deque(maxlen=count)
-        logging.info(f"移动平均: {'启用' if enable else '禁用'}, 窗口: {count}")

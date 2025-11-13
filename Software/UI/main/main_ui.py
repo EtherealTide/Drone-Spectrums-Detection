@@ -55,7 +55,7 @@ class Window(FluentWindow):
             state=self.state,
             detector=self.detector,
         )
-        self.configInterface = ConfigInterface(self)
+        # self.configInterface = ConfigInterface(self)
         self.visualizationInterface = VisualizationInterface(self)
         self.settingInterface = Widget("Setting Interface", self)
         self.albumInterface = Widget("Album Interface", self)
@@ -87,9 +87,9 @@ class Window(FluentWindow):
     def initNavigation(self):
         self.addSubInterface(self.homeInterface, FIF.HOME, "Home")
 
-        self.addSubInterface(
-            self.configInterface, MyFluentIcon.CONFIG, "Config Interface"
-        )
+        # self.addSubInterface(
+        #     self.configInterface, MyFluentIcon.CONFIG, "Config Interface"
+        # )
         self.addSubInterface(
             self.visualizationInterface,
             MyFluentIcon.VISUALIZATION,
@@ -112,7 +112,7 @@ class Window(FluentWindow):
         )
 
     def initWindow(self, my_logo_path):
-        self.resize(1440, 900)
+        self.resize(1440, 720)
         # 将logo改为自定义图标
 
         self.setWindowIcon(QIcon(str(my_logo_path)))
@@ -129,6 +129,8 @@ class Window(FluentWindow):
             }
         """
         )
+        # 设置最小窗口尺寸
+        self.setMinimumSize(1080, 600)
 
 
 from PyQt6.QtWidgets import QApplication

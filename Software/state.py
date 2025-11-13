@@ -46,8 +46,8 @@ class State(QObject):
     def _get_default_parameters(self) -> dict:
         """返回默认参数"""
         return {
-            "FFT": {
-                "Length": 512,
+            "Receiver": {
+                "FFT_Length": 512,
                 "Decimation_factor": 100,
                 "Centre_frequency(MHz)": 2400.0,
                 "bandwidth(MHz)": 100.0,
@@ -80,7 +80,7 @@ class State(QObject):
         """获取单个参数值
 
         Args:
-            group: 参数组名（如 "FFT", "UI"）
+            group: 参数组名（如 "Receiver", "UI"）
             name: 参数名（如 "Length", "spectum_left_freq(MHz)"）
             default: 默认值
 
@@ -118,22 +118,22 @@ class State(QObject):
     @property
     def fft_length(self):  # 访问方法示例：直接 state.fft_length
         """FFT长度"""
-        return self.get_parameter("FFT", "Length", 512)
+        return self.get_parameter("Receiver", "FFT_Length", 512)
 
     @property
     def decimation_factor(self):
         """抽取因子"""
-        return self.get_parameter("FFT", "Decimation_factor", 100)
+        return self.get_parameter("Receiver", "Decimation_factor", 100)
 
     @property
     def center_frequency(self):
         """中心频率 (MHz)"""
-        return self.get_parameter("FFT", "Centre_frequency(MHz)", 2400.0)
+        return self.get_parameter("Receiver", "Centre_frequency(MHz)", 2400.0)
 
     @property
     def bandwidth(self):
         """带宽 (MHz)"""
-        return self.get_parameter("FFT", "bandwidth(MHz)", 100.0)
+        return self.get_parameter("Receiver", "bandwidth(MHz)", 100.0)
 
     @property
     def spectrum_left_freq(self):

@@ -96,32 +96,33 @@ class ConfigInterface(QWidget):
         receiver_item = QTreeWidgetItem(["Receiver"])
         self.config_tree.addTopLevelItem(receiver_item)
 
-        fft_item = QTreeWidgetItem(["FFT"])
-        receiver_item.addChild(fft_item)
-
         # 从state读取初始值
         self.add_parameter(
-            fft_item,
-            "FFT",
+            receiver_item,
+            "Receiver",
             "Length",
             self.state.fft_length,
             ["128", "256", "512", "1024", "2048", "4096", "8192"],
         )
 
         self.add_parameter(
-            fft_item,
-            "FFT",
+            receiver_item,
+            "Receiver",
             "Decimation_factor",
             self.state.decimation_factor,
             ["4", "8", "16", "32", "64", "128", "256", "512", "1024"],
         )
 
         self.add_parameter(
-            fft_item, "FFT", "Centre_frequency(MHz)", self.state.center_frequency, None
+            receiver_item,
+            "Receiver",
+            "Centre_frequency(MHz)",
+            self.state.center_frequency,
+            None,
         )
 
         self.add_parameter(
-            fft_item, "FFT", "bandwidth(MHz)", self.state.bandwidth, None
+            receiver_item, "Receiver", "bandwidth(MHz)", self.state.bandwidth, None
         )
 
         # 3. UI 节点

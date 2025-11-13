@@ -101,20 +101,10 @@ class DroneDetectionSystem:
             # 根据参数类型执行特定操作
             if group == "FFT":
                 if name == "Length":
-                    # 更新数据处理层的FFT长度
-                    if hasattr(self.data_processor, "set_fft_length"):
-                        self.data_processor.set_fft_length(value)
-                        logger.info(f"✓ FFT长度已更新: {value}")
-
-                elif name == "Decimation_factor":
-                    # 更新抽取因子（可能需要重启通信）
-                    logger.info(f"✓ 抽取因子已更新: {value}")
-
-            elif group == "UI":
-                # UI参数更新后，可视化界面会在下次刷新时自动使用新值
-                # 无需额外操作
-                logger.info(f"✓ UI参数已更新: {name} = {value}")
-
+                    # 更新FFT长度（需要重置数据处理）
+                    self.data_processor.set_fft_length(value)
+            elif group == "Detection":
+                self.detector.update_detection_parameters()
             logger.info("✓ 参数更新完成")
 
         except Exception as e:
