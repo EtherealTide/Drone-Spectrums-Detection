@@ -32,7 +32,7 @@ class State(QObject):
 
     def _load_parameters(self) -> dict:
         """从JSON文件加载参数"""
-        config_path = Path(__file__).parent / "UI" / "config" / "parameters.json"
+        config_path = Path(__file__).parent / "parameters.json"
 
         try:
             if config_path.exists():

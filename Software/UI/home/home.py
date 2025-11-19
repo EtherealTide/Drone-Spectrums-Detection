@@ -1,11 +1,9 @@
 # home界面的整体布局
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QSplitter
-from qfluentwidgets import CardWidget, BodyLabel, setFont
-from qfluentwidgets import FluentIcon as FIF
 from .config_interface import ConfigInterface
 from .visualization import HomeVisualizationCard
-from ..utils.component import Component
+from ..settings.theme_manager import get_theme_manager
 
 
 class HomeInterface(QWidget):
@@ -15,14 +13,17 @@ class HomeInterface(QWidget):
         self.state = state
         self.detector = detector
         self.setObjectName("HomeInterface")
+        self.theme_manager = get_theme_manager()
         self.setup_ui()
+        self.theme_manager.paletteChanged.connect(self.apply_palette)
+        self.apply_palette(self.theme_manager.palette)
 
     def setup_ui(self):
         main_layout = QHBoxLayout(self)
         main_layout.setContentsMargins(10, 10, 10, 10)
         main_layout.setSpacing(10)
 
-        splitter = QSplitter(Qt.Orientation.Horizontal)
+        self.splitter = QSplitter(Qt.Orientation.Horizontal)
 
         # 左侧：可视化卡片
         self.visualization_card = HomeVisualizationCard(
@@ -31,29 +32,33 @@ class HomeInterface(QWidget):
             detector=self.detector,
             state=self.state,
         )
-        splitter.addWidget(self.visualization_card)
+        self.splitter.addWidget(self.visualization_card)
 
         # 右侧：配置界面
         self.config_interface = ConfigInterface(
             parent=self,
             state=self.state,
         )
-        splitter.addWidget(self.config_interface)
+        self.splitter.addWidget(self.config_interface)
         # 设置左右面板的拉伸比例为5:3
-        splitter.setStretchFactor(0, 1)
-        splitter.setStretchFactor(1, 1)
+        self.splitter.setStretchFactor(0, 1)
+        self.splitter.setStretchFactor(1, 1)
 
-        main_layout.addWidget(splitter)
+        main_layout.addWidget(self.splitter)
 
+    def apply_palette(self, palette: dict):
         self.setStyleSheet(
-            """
-            #HomeInterface { 
-                background: white; 
-            }
-            QSplitter::handle {
-                background-color: #E0E0E0;
+            f"""
+            #HomeInterface {{
+                background-color: {palette['window_bg']};
+            }}
+            QSplitter::handle {{
+                background-color: {palette['card_border']};
                 width: 2px;
-            }
+            }}
+            QSplitter::handle:hover {{
+                background-color: {palette['nav_hover']};
+            }}
             """
         )
 

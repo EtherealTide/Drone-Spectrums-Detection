@@ -2,15 +2,6 @@
 from pyecharts import options as opts
 from pyecharts.charts import Line, Bar, Pie
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
-from qfluentwidgets import (
-    CardWidget,
-    PushButton,
-    LineEdit,
-    setCustomStyleSheet,
-    SwitchButton,
-    BodyLabel,
-    QColor,
-)
 from PyQt6.QtCore import Qt
 from pyecharts.globals import CurrentConfig
 

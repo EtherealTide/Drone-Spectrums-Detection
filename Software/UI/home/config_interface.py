@@ -4,27 +4,19 @@ from PyQt6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
+    QTreeWidget,
     QTreeWidgetItem,
-    QLabel,
+    QComboBox,
+    QLineEdit,
+    QPushButton,
 )
-from qfluentwidgets import (
-    CardWidget,
-    BodyLabel,
-    TreeWidget,
-    ComboBox,
-    SpinBox,
-    LineEdit,
-    PushButton,
-    SwitchButton,
-    setCustomStyleSheet,
-)
-from qfluentwidgets import FluentIcon as FIF
 from ..utils.component import Component
 from ..utils.custom_style import CONFIRM_BUTTON_STYLE
 import json
 import os
 from PyQt6.QtCore import QSize
 import logging
+from ..settings.theme_manager import get_theme_manager
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +32,8 @@ class ConfigInterface(QWidget):
         self.component = Component()
         self.state = state
         self.connection_switch = None
+        self.theme_manager = get_theme_manager()
+        self._value_label_widgets = []
         self.setup_ui()
 
         # 监听状态变化
@@ -47,6 +41,9 @@ class ConfigInterface(QWidget):
             self.state.connection_changed.connect(self.on_connection_state_changed)
             # UI层监听参数变化只是为了更新显示值
             self.state.parameters_changed.connect(self.on_parameters_updated)
+
+        self.theme_manager.paletteChanged.connect(self.apply_palette)
+        self.apply_palette(self.theme_manager.palette)
 
     def setup_ui(self):
         layout = QVBoxLayout(self)
@@ -56,7 +53,7 @@ class ConfigInterface(QWidget):
         config_layout, config_card = self.component.create_card(self, height=600)
 
         # 创建树状控件
-        self.config_tree = TreeWidget(config_card)
+        self.config_tree = QTreeWidget(config_card)
         self.config_tree.setHeaderHidden(True)
         self.config_tree.setColumnCount(2)
         self.config_tree.setColumnWidth(0, 250)
@@ -170,33 +167,31 @@ class ConfigInterface(QWidget):
         value_label = self.component.create_label(
             param_widget,
             str(current_value),
-            "#000000",
-            "#E8F4F8",
+            None,
+            None,
             alignment=Qt.AlignmentFlag.AlignCenter,
         )
         value_label.setFixedWidth(60)
-        value_label.setStyleSheet(
-            "background-color: #E8F4F8; border-radius: 3px; padding: 3px;"
-        )
         param_layout.addWidget(value_label)
+        self._value_label_widgets.append(value_label)
 
         # 输入控件
         if options:
-            input_widget = ComboBox(param_widget)
+            input_widget = QComboBox(param_widget)
             input_widget.addItems(options)
             input_widget.setCurrentText(str(current_value))
             input_widget.setFixedWidth(100)
         else:
-            input_widget = LineEdit(param_widget)
+            input_widget = QLineEdit(param_widget)
             input_widget.setText(str(current_value))
             input_widget.setFixedWidth(100)
 
         param_layout.addWidget(input_widget)
 
         # Set按钮
-        set_button = PushButton("Set", param_widget)
+        set_button = QPushButton("Set", param_widget)
         set_button.setFixedWidth(50)
-        setCustomStyleSheet(set_button, CONFIRM_BUTTON_STYLE, CONFIRM_BUTTON_STYLE)
+        set_button.setStyleSheet(CONFIRM_BUTTON_STYLE)
 
         def update_value():
             """发送参数更新请求"""
@@ -230,6 +225,48 @@ class ConfigInterface(QWidget):
         if not hasattr(self, "_value_labels"):
             self._value_labels = {}
         self._value_labels[f"{param_group}.{param_name}"] = value_label
+
+    def apply_palette(self, palette: dict):
+        self.setStyleSheet(
+            f"""
+            #ConfigInterface {{
+                background-color: {palette['stack_bg']};
+            }}
+            """
+        )
+
+        tree_style = f"""
+            QTreeWidget {{
+                background-color: {palette['card_bg']};
+                border: none;
+                color: {palette['text_primary']};
+                outline: 0;
+            }}
+            QTreeWidget::item {{
+                margin: 2px 0;
+                border-radius: 6px;
+            }}
+            QTreeWidget::item:selected {{
+                background-color: {palette['nav_selected']};
+                color: {palette['nav_text']};
+            }}
+            QTreeWidget::item:hover {{
+                background-color: {palette['nav_hover']};
+            }}
+        """
+        self.config_tree.setStyleSheet(tree_style)
+
+        chip_style = f"""
+            QLabel {{
+                background-color: {palette['panel_bg']};
+                border-radius: 6px;
+                padding: 4px 6px;
+                color: {palette['text_primary']};
+                font-weight: 600;
+            }}
+        """
+        for label in self._value_label_widgets:
+            label.setStyleSheet(chip_style)
 
     def on_parameters_updated(self, change_info):
         """参数更新后，刷新UI显示值"""

@@ -1,10 +1,9 @@
 from PyQt6.QtCore import Qt, QTimer, QPointF
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QSplitter, QSizePolicy
 from PyQt6.QtCharts import QChart, QChartView, QLineSeries, QValueAxis
-from PyQt6.QtGui import QPainter, QColor, QImage, QPixmap
-from qfluentwidgets import CardWidget, BodyLabel
-from qfluentwidgets import FluentIcon as FIF
-from ..utils.component import Component
+from PyQt6.QtGui import QPainter, QColor, QImage, QPixmap, QBrush
+from ..utils.component import Component, BodyLabel
+from ..settings.theme_manager import get_theme_manager
 import numpy as np
 from collections import deque
 import matplotlib.pyplot as plt
@@ -16,6 +15,7 @@ class HomeVisualizationCard(QWidget):
         super().__init__(parent)
         self.setObjectName("HomeVisualizationCard")
         self.component = Component()
+        self.theme_manager = get_theme_manager()
 
         # 引用
         self.data_processor = data_processor
@@ -28,6 +28,8 @@ class HomeVisualizationCard(QWidget):
         self.update_count = 0
 
         self.setup_ui()
+        self.theme_manager.paletteChanged.connect(self.apply_palette)
+        self.apply_palette(self.theme_manager.palette)
 
         # 定时器用于更新可视化
         self.update_timer = QTimer(self)
@@ -70,7 +72,7 @@ class HomeVisualizationCard(QWidget):
         )
 
         # 创建水平分割器
-        bottom_splitter = QSplitter(Qt.Orientation.Horizontal)
+        self.bottom_splitter = QSplitter(Qt.Orientation.Horizontal)
 
         # 左侧：检测结果图像
         detection_widget = QWidget()
@@ -86,7 +88,7 @@ class HomeVisualizationCard(QWidget):
         )
         detection_layout.addWidget(self.detection_label)
 
-        bottom_splitter.addWidget(detection_widget)
+        self.bottom_splitter.addWidget(detection_widget)
 
         # 右侧：检测统计信息
         stats_widget = QWidget()
@@ -107,33 +109,64 @@ class HomeVisualizationCard(QWidget):
         stats_layout.addWidget(self.detection_stats_label)
         stats_layout.addStretch()  # 底部添加弹性空间
 
-        bottom_splitter.addWidget(stats_widget)
+        self.bottom_splitter.addWidget(stats_widget)
 
         # 设置初始比例 7:3
-        bottom_splitter.setStretchFactor(0, 7)
-        bottom_splitter.setStretchFactor(1, 3)
+        self.bottom_splitter.setStretchFactor(0, 7)
+        self.bottom_splitter.setStretchFactor(1, 3)
 
-        bottom_chart_layout.addWidget(bottom_splitter)
+        bottom_chart_layout.addWidget(self.bottom_splitter)
         layout.addWidget(bottom_chart_card)
 
         # 设置上下比例 - 让它们根据内容自适应
-        layout.setStretch(0, 1)  # 功率谱
-        layout.setStretch(1, 1)  # 检测结果
+        layout.setStretch(0, 1)
+        layout.setStretch(1, 1)
 
+    def apply_palette(self, palette: dict):
         self.setStyleSheet(
-            """
-            #HomeVisualizationCard { 
-                background: white; 
-            }
-            QSplitter::handle {
-                background-color: #D0D0D0;
+            f"""
+            #HomeVisualizationCard {{
+                background-color: {palette['window_bg']};
+            }}
+            QSplitter::handle {{
+                background-color: {palette['card_border']};
                 width: 2px;
-            }
-            QSplitter::handle:hover {
-                background-color: #A0A0A0;
-            }
+            }}
+            QSplitter::handle:hover {{
+                background-color: {palette['nav_hover']};
+            }}
         """
         )
+        if hasattr(self, 'spectrum_chart'):
+            card_color = QColor(palette['card_bg'])
+            plot_color = QColor(palette['stack_bg'])
+            self.spectrum_chart.setBackgroundBrush(QBrush(card_color))
+            self.spectrum_chart.setPlotAreaBackgroundBrush(QBrush(plot_color))
+            self.spectrum_chart.setPlotAreaBackgroundVisible(True)
+            self.spectrum_chart.legend().setLabelBrush(
+                QBrush(QColor(palette['text_primary']))
+            )
+            self.spectrum_series.setColor(QColor(palette['accent']))
+            if hasattr(self, 'axis_x'):
+                self.axis_x.setLabelsColor(QColor(palette['text_primary']))
+                self.axis_x.setTitleBrush(QBrush(QColor(palette['text_secondary'])))
+                self.axis_x.setLinePenColor(QColor(palette['text_primary']))
+                self.axis_x.setGridLineColor(QColor(palette['panel_bg']))
+            if hasattr(self, 'axis_y'):
+                self.axis_y.setLabelsColor(QColor(palette['text_primary']))
+                self.axis_y.setTitleBrush(QBrush(QColor(palette['text_secondary'])))
+                self.axis_y.setLinePenColor(QColor(palette['text_primary']))
+                self.axis_y.setGridLineColor(QColor(palette['panel_bg']))
+            if hasattr(self, 'spectrum_chart_view'):
+                self.spectrum_chart_view.setStyleSheet(
+                    f"background-color: {palette['card_bg']}; border-radius: 12px;"
+                )
+
+        if hasattr(self, 'detection_stats_label'):
+            self.detection_stats_label.setStyleSheet(
+                f"color: {palette['text_primary']};"
+            )
+
 
     def create_spectrum_chart(self):
         """创建功率谱图表"""
@@ -156,6 +189,7 @@ class HomeVisualizationCard(QWidget):
         axis_x.setLabelFormat("%.1f")
         chart.addAxis(axis_x, Qt.AlignmentFlag.AlignBottom)
         self.spectrum_series.attachAxis(axis_x)
+        self.axis_x = axis_x
         # 创建Y轴（功率轴）
         axis_y = QValueAxis()
         axis_y.setTitleText("归一化功率 ")
@@ -163,6 +197,7 @@ class HomeVisualizationCard(QWidget):
         axis_y.setLabelFormat("%.0f")
         chart.addAxis(axis_y, Qt.AlignmentFlag.AlignLeft)
         self.spectrum_series.attachAxis(axis_y)
+        self.axis_y = axis_y
 
         return chart
 
