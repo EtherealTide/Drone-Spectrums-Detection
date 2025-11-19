@@ -84,13 +84,13 @@ class Communication:
                     logging.error("无法同步到魔数，退出接收")
                     break
 
-                # 2. 读取包头：[packet_id(4)] + [data_length(4)]
-                header = self._recv_exact(8)
+                # 2. 读取包头：[frame_id(4)]+[packet_id(4)] + [data_length(4)]
+                header = self._recv_exact(12)
                 if not header:
                     logging.error("接收包头失败")
                     continue
 
-                packet_id, data_length = struct.unpack(">II", header)
+                frame_id, packet_id, data_length = struct.unpack(">III", header)
 
                 # 3. 接收实际数据
                 data = self._recv_exact(data_length)
@@ -123,6 +123,8 @@ class Communication:
 
                 # 7. 检查帧是否完整
                 if len(self.current_frame_buffer) >= frame_size:
+                    self.state.sent_frames = frame_id
+                    self.state.received_frames += 1
                     self._process_frame(self.current_frame_buffer[:frame_size])
                     # 重置状态
                     self.current_frame_buffer = bytearray()
@@ -193,6 +195,7 @@ class Communication:
                 }
             )
             self.frame_count += 1
+            # logging.info(f"接收完整FFT帧 #{self.frame_count}, 长度: {len(fft_data)}")
         except queue.Full:
             logging.warning("FFT数据队列已满，丢弃最旧数据")
             try:
@@ -228,3 +231,7 @@ class Communication:
                 logging.error(f"接收数据错误: {e}")
                 return None
         return bytes(data)
+
+    def set_fft_length(self):
+        """更新FFT长度"""
+        self.expected_fft_length = self.state.fft_length

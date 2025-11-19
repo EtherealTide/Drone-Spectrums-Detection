@@ -20,6 +20,10 @@ class State(QObject):
         self.detection_thread = False
         self.data_queue_status = "idle"
         self.packet_size = 128
+        # 发送帧数
+        self.sent_frames = 0
+        # 接收帧数
+        self.received_frames = 0
         # 系统配置参数（从文件加载）
         self._parameters = self._load_parameters()
         # 兼容旧代码的属性

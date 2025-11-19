@@ -2,15 +2,14 @@
   "Receiver": {
     "FFT_Length": 512,
     "Decimation_factor": 32,
-    "Centre_frequency(MHz)": 2000,
-    "bandwidth(MHz)": 10
-  },
-  "Detection": {
-    "conf_threshold": 0.25,
-    "iou_threshold": 0.45
+    "Centre_frequency(MHz)": 2400.0,
+    "bandwidth(MHz)": 100.0
   },
   "UI": {
     "spectum_left_freq(MHz)": 0,
-    "spectum_right_freq(MHz)": 400
+    "spectum_right_freq(MHz)": 200
+  },
+  "Detection": {
+    "conf_threshold": 0.4
   }
 }

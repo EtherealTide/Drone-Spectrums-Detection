@@ -113,7 +113,12 @@ class MockDevice:
             try:
                 # 生成一帧完整的FFT数据
                 fft_data = self._generate_fft_data()
-                logging.info(f"生成一帧FFT数据，长度: {len(fft_data)}")
+                # 帧id
+                try:
+                    frame_id += 1
+                except:
+                    frame_id = 0
+                # logging.info(f"生成一帧FFT数据，长度: {len(fft_data)}")
                 # 分包发送
                 num_packets = self.fft_length // self.packet_size
 
@@ -123,10 +128,11 @@ class MockDevice:
                     end_idx = start_idx + self.packet_size
                     packet_data = fft_data[start_idx:end_idx].tobytes()
 
-                    # 构造数据包: [magic(4)] + [packet_id(4)] + [data_length(4)] + [data]
+                    # 构造数据包: [magic(4)] + [frame_id(4)] + [packet_id(4)] + [data_length(4)] + [data]
                     header = struct.pack(
-                        ">III",
+                        ">IIII",
                         0xAABBCCDD,  # 魔数
+                        frame_id,  # 帧ID
                         i,  # 包ID（帧内序号，从0开始）
                         len(packet_data),  # 数据长度
                     )
@@ -134,7 +140,8 @@ class MockDevice:
                     # 发送
                     self.client_socket.sendall(header + packet_data)
                     # time.sleep(0.001)
-
+                if frame_id % 4000 == 0:
+                    logging.info(f"已发送 {frame_id} 帧数据")
                 # logging.info(f"已发送一帧 ({num_packets} 个包)")
 
                 # 等待下一帧

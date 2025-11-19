@@ -51,7 +51,7 @@ class ConfigInterface(QWidget):
     def setup_ui(self):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(5, 5, 5, 5)
-
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)  # 顶部对齐
         # 创建参数配置卡片
         config_layout, config_card = self.component.create_card(self, height=600)
 
@@ -100,7 +100,7 @@ class ConfigInterface(QWidget):
         self.add_parameter(
             receiver_item,
             "Receiver",
-            "Length",
+            "FFT_Length",
             self.state.fft_length,
             ["128", "256", "512", "1024", "2048", "4096", "8192"],
         )

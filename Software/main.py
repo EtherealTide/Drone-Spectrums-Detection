@@ -99,10 +99,13 @@ class DroneDetectionSystem:
             self.state.set_parameter(group, name, value)
 
             # 根据参数类型执行特定操作
-            if group == "FFT":
-                if name == "Length":
+            if group == "Receiver":
+                if name == "FFT_Length":
                     # 更新FFT长度（需要重置数据处理）
                     self.data_processor.set_fft_length(value)
+                    self.communication.set_fft_length()
+            if group == "UI":
+                self.main_window.homeInterface.visualization_card.update_config()
             elif group == "Detection":
                 self.detector.update_detection_parameters()
             logger.info("✓ 参数更新完成")

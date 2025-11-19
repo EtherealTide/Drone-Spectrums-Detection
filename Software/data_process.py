@@ -118,12 +118,9 @@ class DataProcessor:
                     # fft_data = 20 * np.log10(fft_data + 1e-10)  # 加1e-10避免log(0)
                     # 确保数据长度匹配
                     if len(fft_data) != self.fft_length:
-                        logging.warning(
-                            f"FFT数据长度不匹配: 期望{self.fft_length}, 实际{len(fft_data)}"
-                        )
                         # 裁剪或填充
                         if len(fft_data) > self.fft_length:
-                            fft_data = fft_data[: self.fft_length]
+                            fft_data = fft_data[: self.fft_length]  # 裁剪
                         else:
                             padded = np.zeros(self.fft_length, dtype=fft_data.dtype)
                             padded[: len(fft_data)] = fft_data
