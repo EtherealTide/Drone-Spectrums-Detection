@@ -61,7 +61,7 @@ class State(QObject):
 
     def save_parameters(self):
         """保存参数到JSON文件"""
-        config_path = Path(__file__).parent / "UI" / "config" / "parameters.json"
+        config_path = Path(__file__).parent / "parameters.json"
 
         try:
             config_path.parent.mkdir(parents=True, exist_ok=True)
@@ -163,6 +163,11 @@ class State(QObject):
     def iou_threshold(self):
         """YOLO IOU阈值"""
         return self.get_parameter("Detection", "iou_threshold", 0.45)
+
+    @property
+    def image_size(self):
+        """YOLO输入图像尺寸"""
+        return self.get_parameter("Detection", "image_size", 640)
 
     # ==================== 连接状态管理 ====================
 

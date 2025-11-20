@@ -28,8 +28,10 @@ class HomeVisualizationCard(QWidget):
         self.update_count = 0
 
         self.setup_ui()
-        self.theme_manager.paletteChanged.connect(self.apply_palette)
-        self.apply_palette(self.theme_manager.palette)
+        self.theme_manager.paletteChanged.connect(
+            self.apply_palette
+        )  # 监听主题变化信号：paletteChanged
+        self.apply_palette(self.theme_manager.palette)  # 应用初始主题
 
         # 定时器用于更新可视化
         self.update_timer = QTimer(self)
@@ -137,36 +139,35 @@ class HomeVisualizationCard(QWidget):
             }}
         """
         )
-        if hasattr(self, 'spectrum_chart'):
-            card_color = QColor(palette['card_bg'])
-            plot_color = QColor(palette['stack_bg'])
+        if hasattr(self, "spectrum_chart"):
+            card_color = QColor(palette["card_bg"])
+            plot_color = QColor(palette["stack_bg"])
             self.spectrum_chart.setBackgroundBrush(QBrush(card_color))
             self.spectrum_chart.setPlotAreaBackgroundBrush(QBrush(plot_color))
             self.spectrum_chart.setPlotAreaBackgroundVisible(True)
             self.spectrum_chart.legend().setLabelBrush(
-                QBrush(QColor(palette['text_primary']))
+                QBrush(QColor(palette["text_primary"]))
             )
-            self.spectrum_series.setColor(QColor(palette['accent']))
-            if hasattr(self, 'axis_x'):
-                self.axis_x.setLabelsColor(QColor(palette['text_primary']))
-                self.axis_x.setTitleBrush(QBrush(QColor(palette['text_secondary'])))
-                self.axis_x.setLinePenColor(QColor(palette['text_primary']))
-                self.axis_x.setGridLineColor(QColor(palette['panel_bg']))
-            if hasattr(self, 'axis_y'):
-                self.axis_y.setLabelsColor(QColor(palette['text_primary']))
-                self.axis_y.setTitleBrush(QBrush(QColor(palette['text_secondary'])))
-                self.axis_y.setLinePenColor(QColor(palette['text_primary']))
-                self.axis_y.setGridLineColor(QColor(palette['panel_bg']))
-            if hasattr(self, 'spectrum_chart_view'):
+            self.spectrum_series.setColor(QColor(palette["accent"]))
+            if hasattr(self, "axis_x"):
+                self.axis_x.setLabelsColor(QColor(palette["text_primary"]))
+                self.axis_x.setTitleBrush(QBrush(QColor(palette["text_secondary"])))
+                self.axis_x.setLinePenColor(QColor(palette["text_primary"]))
+                self.axis_x.setGridLineColor(QColor(palette["panel_bg"]))
+            if hasattr(self, "axis_y"):
+                self.axis_y.setLabelsColor(QColor(palette["text_primary"]))
+                self.axis_y.setTitleBrush(QBrush(QColor(palette["text_secondary"])))
+                self.axis_y.setLinePenColor(QColor(palette["text_primary"]))
+                self.axis_y.setGridLineColor(QColor(palette["panel_bg"]))
+            if hasattr(self, "spectrum_chart_view"):
                 self.spectrum_chart_view.setStyleSheet(
                     f"background-color: {palette['card_bg']}; border-radius: 12px;"
                 )
 
-        if hasattr(self, 'detection_stats_label'):
+        if hasattr(self, "detection_stats_label"):
             self.detection_stats_label.setStyleSheet(
                 f"color: {palette['text_primary']};"
             )
-
 
     def create_spectrum_chart(self):
         """创建功率谱图表"""

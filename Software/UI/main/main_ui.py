@@ -121,23 +121,26 @@ class Window(QMainWindow):
         self.albumInterface = Widget("Album Interface", self)
         self.albumInterface1 = Widget("Album Interface 1", self)
 
-        self._add_page("Home", self.homeInterface, QIcon.fromTheme("go-home"))
+        self._add_page("Home", self.homeInterface, "🏠")
         self._add_page(
             "Visualization Interface",
             self.visualizationInterface,
-            QIcon.fromTheme("view-statistics"),
+            "📊",
         )
-        self._add_page("Albums", self.albumInterface, QIcon.fromTheme("folder-pictures"))
-        self._add_page("Album 1", self.albumInterface1, QIcon.fromTheme("folder"))
-        self._add_page("Settings", self.settingInterface, QIcon.fromTheme("settings"))
+        self._add_page("Albums", self.albumInterface, "🖥️")
+        self._add_page("Album 1", self.albumInterface1, "📂")
+        self._add_page("Settings", self.settingInterface, "⚙️")
 
         self.navigation_list.currentRowChanged.connect(self.stack.setCurrentIndex)
         if self.navigation_list.count():
             self.navigation_list.setCurrentRow(0)
 
-    def _add_page(self, title: str, widget: QWidget, icon: QIcon):
+    def _add_page(self, title: str, widget: QWidget, icon_text: str = ""):
+        """添加页面，使用文本图标"""
         self.stack.addWidget(widget)
-        item = QListWidgetItem(icon if not icon.isNull() else QIcon(), title)
+
+        # 创建自定义item
+        item = QListWidgetItem(f"{icon_text}  {title}")
         item.setSizeHint(QSize(200, 46))
         self.navigation_list.addItem(item)
 

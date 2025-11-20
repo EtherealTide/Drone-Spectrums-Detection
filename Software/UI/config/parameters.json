@@ -10,6 +10,8 @@
     "spectum_right_freq(MHz)": 200
   },
   "Detection": {
-    "conf_threshold": 0.4
+    "conf_threshold": 0.4,
+    "iou_thresholds": 0.5,
+    "image_size": 512
   }
 }

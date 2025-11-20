@@ -25,6 +25,7 @@ from PyQt6.QtWidgets import (
 
 from ..settings.theme_manager import get_theme_manager
 
+
 class CardWidget(QFrame):
     """Card styled container that mimics the Fluent look."""
 
@@ -181,7 +182,9 @@ class SwitchButton(QWidget):
 
         track_height = 22
         track_width = 46
-        track_rect = QRectF(0, (rect.height() - track_height) / 2, track_width, track_height)
+        track_rect = QRectF(
+            0, (rect.height() - track_height) / 2, track_width, track_height
+        )
         radius = track_height / 2
 
         background = self._track_on if self._checked else self._track_off
@@ -258,7 +261,12 @@ class Component:
         self, parent: QWidget, height=100, width=None, layout_type="QHBoxLayout"
     ):
         card = CardWidget(parent)
-        card.setFixedHeight(height)
+        if height is not None:
+            card.setFixedHeight(height)
+        else:  # 设置为自适应高度
+            card.setSizePolicy(
+                QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
+            )
         if width is not None:
             card.setFixedWidth(width)
 

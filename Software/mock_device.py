@@ -4,6 +4,7 @@ import numpy as np
 import time
 import threading
 import logging
+import json
 from pathlib import Path
 
 logging.basicConfig(level=logging.INFO)
@@ -19,6 +20,7 @@ class MockDevice:
         self.client_socket = None
         self.running = False
         self.send_thread = None
+        self.command_thread = None  # 新增：指令接收线程
 
         # FFT参数
         self.fft_length = 512
@@ -30,6 +32,8 @@ class MockDevice:
         self.npy_files = sorted(self.data_dir.glob("*.npy"))
         self._current_file_idx = 0
         self._buffer = np.array([], dtype=np.float32)
+        # 发送帧数
+        self.frame_id = 0
 
     def start(self):
         """启动模拟设备"""
@@ -50,6 +54,12 @@ class MockDevice:
             self.send_thread = threading.Thread(target=self._send_loop, daemon=True)
             self.send_thread.start()
 
+            # 启动指令接收线程
+            self.command_thread = threading.Thread(
+                target=self._command_loop, daemon=True
+            )
+            self.command_thread.start()
+
         except Exception as e:
             logging.error(f"启动失败: {e}")
 
@@ -58,11 +68,61 @@ class MockDevice:
         self.running = False
         if self.send_thread:
             self.send_thread.join(timeout=2)
+        if self.command_thread:
+            self.command_thread.join(timeout=2)
         if self.client_socket:
             self.client_socket.close()
         if self.server_socket:
             self.server_socket.close()
         logging.info("模拟设备已停止")
+
+    def _command_loop(self):
+        """指令接收循环"""
+        logging.info("📡 指令接收线程已启动")
+
+        while self.running:
+            try:
+                # 接收指令码（1字节）
+                code_data = self._recv_exact(1)
+                if not code_data:
+                    break
+
+                code = struct.unpack(">B", code_data)[0]
+
+                # 根据code解析参数
+                if code == 0x01:  # SET_FFT_LENGTH
+                    value_data = self._recv_exact(4)
+                    if not value_data:
+                        break
+                    new_length = struct.unpack(">I", value_data)[0]
+
+                    self.fft_length = new_length
+                    logging.info(f"✓ 接收到指令: SET_FFT_LENGTH = {new_length}")
+
+                else:
+                    logging.warning(f"⚠ 未知指令码: 0x{code:02X}")
+
+            except Exception as e:
+                if self.running:
+                    logging.error(f"指令接收异常: {e}", exc_info=True)
+                break
+
+        logging.info("指令接收线程已退出")
+
+    def _recv_exact(self, num_bytes):
+        """精确接收指定字节数"""
+        data = bytearray()
+        while len(data) < num_bytes:
+            try:
+                packet = self.client_socket.recv(num_bytes - len(data))
+                if not packet:
+                    return None
+                data.extend(packet)
+            except Exception as e:
+                if self.running:
+                    logging.error(f"接收数据错误: {e}")
+                return None
+        return bytes(data)
 
     def _generate_fft_data(self):
         """从指定目录中读取npy文件并转换为数据流"""
@@ -113,12 +173,8 @@ class MockDevice:
             try:
                 # 生成一帧完整的FFT数据
                 fft_data = self._generate_fft_data()
-                # 帧id
-                try:
-                    frame_id += 1
-                except:
-                    frame_id = 0
-                # logging.info(f"生成一帧FFT数据，长度: {len(fft_data)}")
+                self.frame_id += 1
+
                 # 分包发送
                 num_packets = self.fft_length // self.packet_size
 
@@ -132,25 +188,22 @@ class MockDevice:
                     header = struct.pack(
                         ">IIII",
                         0xAABBCCDD,  # 魔数
-                        frame_id,  # 帧ID
+                        self.frame_id,  # 帧ID
                         i,  # 包ID（帧内序号，从0开始）
                         len(packet_data),  # 数据长度
                     )
 
                     # 发送
                     self.client_socket.sendall(header + packet_data)
-                    # time.sleep(0.001)
-                if frame_id % 4000 == 0:
-                    logging.info(f"已发送 {frame_id} 帧数据")
-                # logging.info(f"已发送一帧 ({num_packets} 个包)")
 
-                # 等待下一帧
-                # time.sleep(self.send_interval)
+                if self.frame_id % 4000 == 0:
+                    logging.info(f"已发送 {self.frame_id} 帧数据")
 
             except Exception as e:
                 if self.running:
                     logging.error(f"发送数据异常: {e}", exc_info=True)
                 break
+
         # 重新初始化连接
         self.start()
         logging.info("发送线程已退出")

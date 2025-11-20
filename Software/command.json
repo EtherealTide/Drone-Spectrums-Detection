@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "commands": {
+    "SET_FFT_LENGTH": {
+      "code": "0x01",
+      "description": "设置FFT长度"
+    },
+    "SET_SAMPLE_RATE": {
+      "code": "0x02",
+      "description": "设置采样率(Hz)"
+    },
+    "SET_CENTER_FREQ": {
+      "code": "0x03",
+      "description": "设置中心频率(Hz)"
+    },
+    "SET_GAIN": {
+      "code": "0x04",
+      "description": "设置增益(dB)"
+    }
+  }
+}

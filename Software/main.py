@@ -13,6 +13,7 @@ from data_process import DataProcessor
 from UI.main.main_ui import Window
 from algorithms import DroneDetector
 from state import State
+import time
 
 # 配置日志
 logging.basicConfig(
@@ -99,11 +100,18 @@ class DroneDetectionSystem:
             self.state.set_parameter(group, name, value)
 
             # 根据参数类型执行特定操作
-            if group == "Receiver":
-                if name == "FFT_Length":
-                    # 更新FFT长度（需要重置数据处理）
-                    self.data_processor.set_fft_length(value)
-                    self.communication.set_fft_length()
+            if group == "Receiver" and name == "FFT_Length":
+                if not self.state.communication_thread:
+                    logger.warning("通信未连接，无法更新FFT长度参数，请先连接设备")
+                    return
+                # 发送指令
+                self.communication.send_command("SET_FFT_LENGTH", value)
+
+                # 3. 通信层更新 FFT 长度
+                self.communication.set_fft_length()
+                # 4. 更新数据处理层
+                self.data_processor.set_fft_length(value)
+
             if group == "UI":
                 self.main_window.homeInterface.visualization_card.update_config()
             elif group == "Detection":
@@ -132,7 +140,8 @@ class DroneDetectionSystem:
 
             if self.state.communication_thread:
                 logger.info("✓ 设备连接成功")
-
+                # 同步下位机参数
+                self.communication.send_command("SET_FFT_LENGTH", self.state.fft_length)
                 # 启动数据处理线程
                 self.data_processor.start_processing()
                 logger.info("✓ 数据处理线程已启动")

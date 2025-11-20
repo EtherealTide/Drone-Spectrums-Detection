@@ -59,7 +59,7 @@ class DroneDetector:
         # 检测参数
         self.conf_threshold = self.state.conf_threshold  # 置信度阈值
         self.iou_threshold = self.state.iou_threshold  # NMS IoU阈值
-
+        self.image_size = 640  # 输入图像尺寸
         logging.info("算法层初始化完成")
 
     def _warmup_model(self):
@@ -133,6 +133,7 @@ class DroneDetector:
                     input_image,
                     conf=self.conf_threshold,
                     iou=self.iou_threshold,
+                    imgsz=self.image_size,
                     verbose=False,  # 关闭详细输出
                 )
 
@@ -272,7 +273,7 @@ class DroneDetector:
         """更新检测参数"""
         self.conf_threshold = self.state.conf_threshold
         self.iou_threshold = self.state.iou_threshold
-        logging.info(
-            f"检测参数已更新: conf_threshold={self.conf_threshold}, "
-            f"iou_threshold={self.iou_threshold}"
-        )
+        if self.state.image_size == "default":
+            self.image_size = 640
+        else:
+            self.image_size = self.state.image_size

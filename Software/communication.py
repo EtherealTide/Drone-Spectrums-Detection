@@ -5,6 +5,8 @@ import logging
 import struct
 import numpy as np
 import time
+import json
+from pathlib import Path
 
 logging.basicConfig(level=logging.INFO)
 
@@ -29,6 +31,19 @@ class Communication:
         )
         self.last_packet_id = -1  # 上一个包的ID
         self.frame_count = 0  # 接收到的完整帧计数
+
+        # 加载指令协议
+        self.command_protocol = self._load_command_protocol()
+
+    def _load_command_protocol(self):
+        """加载指令协议"""
+        protocol_path = Path(__file__).parent / "command.json"
+        try:
+            with open(protocol_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            logging.error(f"加载指令协议失败: {e}")
+            return None
 
     def connect(self, ip, port):
         try:
@@ -56,28 +71,48 @@ class Communication:
             self.socket = None
         logging.info("连接已断开")
 
-    def send_command(self, command):
-        """发送命令到下位机"""
-        if not self.state.communication_thread:
-            logging.warning("未连接，无法发送命令")
-            return False
+    def send_command(self, command_name, value):
+        """发送命令到下位机
 
+        Args:
+            command_name: 命令名称（如 "SET_FFT_LENGTH"）
+            value: 命令参数值
+
+        Returns:
+            bool: 发送是否成功
+        """
         try:
-            data = command.encode("utf-8")
-            header = struct.pack(">I", len(data))
-            self.socket.sendall(header + data)
-            logging.info(f"发送命令: {command}")
+            cmd_info = self.command_protocol["commands"].get(
+                command_name
+            )  # 获取命令信息
+            if not cmd_info:
+                logging.error(f"未知命令: {command_name}")
+                return False
+
+            # 解析16进制code
+            code = int(cmd_info["code"], 16)
+
+            # 统一为4字节
+            packet = struct.pack(">BI", code, value)
+            self.socket.sendall(packet)
+
+            logging.info(
+                f"✓ 发送命令: {command_name}(code={cmd_info['code']}) = {value}"
+            )
             return True
+
         except Exception as e:
             logging.error(f"发送命令失败: {e}")
             return False
 
     def _receive_loop(self):
         """接收数据循环 - 通过魔数同步包边界"""
-        frame_size = self.expected_fft_length * self.bytes_per_sample
-        logging.info(f"接收线程启动，期待FFT帧大小: {frame_size} 字节")
+        logging.info("接收线程启动")
 
         while self.state.communication_thread:
+            # ✅ 每次循环都动态获取最新的帧大小
+            frame_size = self.expected_fft_length * self.bytes_per_sample
+
             try:
                 # 1. 搜索魔数，确保包同步
                 if not self._sync_to_magic():
@@ -100,9 +135,20 @@ class Communication:
 
                 # 4. 检测新帧（packet_id从0开始）
                 if packet_id == 0:
-                    # 如果有上一帧数据，先处理
+                    # 如果缓冲区有数据，先处理上一帧
                     if len(self.current_frame_buffer) > 0:
-                        self._process_frame(self.current_frame_buffer)
+                        if len(self.current_frame_buffer) >= frame_size:
+                            # 只取需要的长度，多余的丢弃
+                            self.state.sent_frames = frame_id - 1  # 上一帧的ID
+                            self.state.received_frames += 1
+                            self._process_frame(self.current_frame_buffer[:frame_size])
+
+                            excess = len(self.current_frame_buffer) - frame_size
+                            if excess > 0:
+                                logging.debug(f"丢弃上一帧多余数据: {excess} 字节")
+                        else:
+                            # 帧不完整，丢弃
+                            pass
 
                     # 重置当前帧状态
                     self.current_frame_buffer = bytearray()
@@ -112,7 +158,7 @@ class Communication:
                 if self.last_packet_id != -1 and packet_id != self.last_packet_id + 1:
                     lost_packets = packet_id - self.last_packet_id - 1
                     logging.warning(
-                        f"丢失 {lost_packets} 个包 "
+                        f"帧{frame_id}丢失 {lost_packets} 个包 "
                         f"(上一个包: {self.last_packet_id}, 当前包: {packet_id})"
                     )
 
@@ -120,15 +166,6 @@ class Communication:
 
                 # 6. 添加到当前帧缓冲
                 self.current_frame_buffer.extend(data)
-
-                # 7. 检查帧是否完整
-                if len(self.current_frame_buffer) >= frame_size:
-                    self.state.sent_frames = frame_id
-                    self.state.received_frames += 1
-                    self._process_frame(self.current_frame_buffer[:frame_size])
-                    # 重置状态
-                    self.current_frame_buffer = bytearray()
-                    self.last_packet_id = -1
 
             except Exception as e:
                 if self.state.communication_thread:
@@ -141,12 +178,12 @@ class Communication:
         """搜索魔数以同步包边界"""
         magic_bytes = struct.pack(">I", self.PACKET_MAGIC)
         sync_buffer = bytearray()
-
         while self.state.communication_thread:
             try:
                 # 逐字节读取
                 byte = self.socket.recv(1)
                 if not byte:
+                    logging.error("Socket连接已关闭")
                     return False
 
                 sync_buffer.append(byte[0])
@@ -157,9 +194,12 @@ class Communication:
 
                 # 检查是否匹配魔数
                 if len(sync_buffer) == 4 and bytes(sync_buffer) == magic_bytes:
+                    # 恢复阻塞模式
+                    self.socket.settimeout(None)
                     return True
 
             except socket.timeout:
+                logging.warning("同步魔数超时，继续尝试...")
                 continue
             except Exception as e:
                 logging.error(f"同步魔数失败: {e}")
@@ -233,5 +273,17 @@ class Communication:
         return bytes(data)
 
     def set_fft_length(self):
-        """更新FFT长度"""
+        """更新FFT长度并发送指令到下位机"""
+        # 清空接收缓冲区
+        # if hasattr(self, "socket") and self.socket:
+        #     self.socket.setblocking(False)
+        #     try:
+        #         while True:
+        #             self.socket.recv(4096)
+        #     except:
+        #         pass
+        #     self.socket.setblocking(True)
+
+        # 更新本地参数
         self.expected_fft_length = self.state.fft_length
+        logging.info(f"通信层更新FFT长度为: {self.expected_fft_length}")

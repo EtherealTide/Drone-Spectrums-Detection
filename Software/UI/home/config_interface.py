@@ -42,8 +42,10 @@ class ConfigInterface(QWidget):
             # UI层监听参数变化只是为了更新显示值
             self.state.parameters_changed.connect(self.on_parameters_updated)
 
-        self.theme_manager.paletteChanged.connect(self.apply_palette)
-        self.apply_palette(self.theme_manager.palette)
+        self.theme_manager.paletteChanged.connect(
+            self.apply_palette
+        )  # 监听主题变化信号：paletteChanged
+        self.apply_palette(self.theme_manager.palette)  # 应用初始主题
 
     def setup_ui(self):
         layout = QVBoxLayout(self)
@@ -150,6 +152,13 @@ class ConfigInterface(QWidget):
         self.add_parameter(
             detection_item, "Detection", "iou_threshold", self.state.iou_threshold, None
         )
+        self.add_parameter(
+            detection_item,
+            "Detection",
+            "image_size",
+            self.state.image_size,
+            ["default", "512", "1024", "1280", "1600", "1920", "2048", "2560"],
+        )
 
     def add_parameter(
         self, parent_item, param_group, param_name, current_value, options
@@ -197,11 +206,14 @@ class ConfigInterface(QWidget):
             """发送参数更新请求"""
             new_value = input_widget.currentText() if options else input_widget.text()
             try:
-                # 转换为数值
-                numeric_value = float(new_value)
-                if numeric_value.is_integer():
-                    numeric_value = int(numeric_value)
-
+                # 如果是数字，则转换为数值，否则保持字符串
+                if new_value == "default":
+                    numeric_value = new_value
+                else:
+                    # 转换为数值
+                    numeric_value = float(new_value)
+                    if numeric_value.is_integer():
+                        numeric_value = int(numeric_value)
                 # 发射信号给main处理
                 self.parameter_change_request.emit(
                     param_group, param_name, numeric_value
