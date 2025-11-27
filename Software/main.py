@@ -20,11 +20,10 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler("drone_detection.log", encoding="utf-8"),
-        logging.StreamHandler(),
+        logging.StreamHandler(sys.stdout),  # 输出到控制台
+        logging.FileHandler("drone_detection.log", encoding="utf-8"),  # 输出到文件
     ],
 )
-
 logger = logging.getLogger(__name__)
 
 

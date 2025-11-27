@@ -8,7 +8,7 @@ import time
 import json
 from pathlib import Path
 
-logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class Communication:
@@ -42,7 +42,7 @@ class Communication:
             with open(protocol_path, "r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception as e:
-            logging.error(f"加载指令协议失败: {e}")
+            logger.error(f"加载指令协议失败: {e}")
             return None
 
     def connect(self, ip, port):
@@ -57,10 +57,10 @@ class Communication:
             )
             self.receive_thread.start()
             self.state.communication_thread = True  # 这会触发信号
-            logging.info(f"已连接到 {ip}:{port}")
+            logger.info(f"已连接到 {ip}:{port}")
             return True
         except Exception as e:
-            logging.error(f"连接失败: {e}")
+            logger.error(f"连接失败: {e}")
             self.state.communication_thread = False  # 这会触发信号
             return False
 
@@ -69,7 +69,7 @@ class Communication:
         if self.socket:
             self.socket.close()
             self.socket = None
-        logging.info("连接已断开")
+        logger.info("连接已断开")
 
     def send_command(self, command_name, value):
         """发送命令到下位机
@@ -86,7 +86,7 @@ class Communication:
                 command_name
             )  # 获取命令信息
             if not cmd_info:
-                logging.error(f"未知命令: {command_name}")
+                logger.error(f"未知命令: {command_name}")
                 return False
 
             # 解析16进制code
@@ -96,18 +96,18 @@ class Communication:
             packet = struct.pack(">BI", code, value)
             self.socket.sendall(packet)
 
-            logging.info(
+            logger.info(
                 f"✓ 发送命令: {command_name}(code={cmd_info['code']}) = {value}"
             )
             return True
 
         except Exception as e:
-            logging.error(f"发送命令失败: {e}")
+            logger.error(f"发送命令失败: {e}")
             return False
 
     def _receive_loop(self):
         """接收数据循环 - 通过魔数同步包边界"""
-        logging.info("接收线程启动")
+        logger.info("接收线程启动")
 
         while self.state.communication_thread:
             # ✅ 每次循环都动态获取最新的帧大小
@@ -116,13 +116,13 @@ class Communication:
             try:
                 # 1. 搜索魔数，确保包同步
                 if not self._sync_to_magic():
-                    logging.error("无法同步到魔数，退出接收")
+                    logger.error("无法同步到魔数，退出接收")
                     break
 
                 # 2. 读取包头：[frame_id(4)]+[packet_id(4)] + [data_length(4)]
                 header = self._recv_exact(12)
                 if not header:
-                    logging.error("接收包头失败")
+                    logger.error("接收包头失败")
                     continue
 
                 frame_id, packet_id, data_length = struct.unpack(">III", header)
@@ -130,7 +130,7 @@ class Communication:
                 # 3. 接收实际数据
                 data = self._recv_exact(data_length)
                 if not data:
-                    logging.error("接收数据失败")
+                    logger.error("接收数据失败")
                     continue
 
                 # 4. 检测新帧（packet_id从0开始）
@@ -145,7 +145,7 @@ class Communication:
 
                             excess = len(self.current_frame_buffer) - frame_size
                             if excess > 0:
-                                logging.debug(f"丢弃上一帧多余数据: {excess} 字节")
+                                logger.debug(f"丢弃上一帧多余数据: {excess} 字节")
                         else:
                             # 帧不完整，丢弃
                             pass
@@ -157,7 +157,7 @@ class Communication:
                 # 5. 检测丢包
                 if self.last_packet_id != -1 and packet_id != self.last_packet_id + 1:
                     lost_packets = packet_id - self.last_packet_id - 1
-                    logging.warning(
+                    logger.warning(
                         f"帧{frame_id}丢失 {lost_packets} 个包 "
                         f"(上一个包: {self.last_packet_id}, 当前包: {packet_id})"
                     )
@@ -169,10 +169,10 @@ class Communication:
 
             except Exception as e:
                 if self.state.communication_thread:
-                    logging.error(f"接收数据异常: {e}", exc_info=True)
+                    logger.error(f"接收数据异常: {e}", exc_info=True)
                 break
 
-        logging.info("接收线程已退出")
+        logger.info("接收线程已退出")
 
     def _sync_to_magic(self):
         """搜索魔数以同步包边界"""
@@ -183,7 +183,7 @@ class Communication:
                 # 逐字节读取
                 byte = self.socket.recv(1)
                 if not byte:
-                    logging.error("Socket连接已关闭")
+                    logger.error("Socket连接已关闭")
                     return False
 
                 sync_buffer.append(byte[0])
@@ -199,10 +199,10 @@ class Communication:
                     return True
 
             except socket.timeout:
-                logging.warning("同步魔数超时，继续尝试...")
+                logger.warning("同步魔数超时，继续尝试...")
                 continue
             except Exception as e:
-                logging.error(f"同步魔数失败: {e}")
+                logger.error(f"同步魔数失败: {e}")
                 return False
 
         return False
@@ -215,7 +215,7 @@ class Communication:
             # 帧不完整，检测丢包
             missing_bytes = expected_size - len(frame_data)
             missing_packets = missing_bytes // (128 * self.bytes_per_sample)
-            logging.warning(
+            logger.warning(
                 f"帧不完整: 缺少 {missing_bytes} 字节 "
                 f"(约{missing_packets}个包)，丢弃该帧"
             )
@@ -235,9 +235,9 @@ class Communication:
                 }
             )
             self.frame_count += 1
-            # logging.info(f"接收完整FFT帧 #{self.frame_count}, 长度: {len(fft_data)}")
+            # logger.info(f"接收完整FFT帧 #{self.frame_count}, 长度: {len(fft_data)}")
         except queue.Full:
-            logging.warning("FFT数据队列已满，丢弃最旧数据")
+            logger.warning("FFT数据队列已满，丢弃最旧数据")
             try:
                 self.fft_data_queue.get_nowait()
                 self.fft_data_queue.put_nowait(
@@ -259,31 +259,19 @@ class Communication:
             try:
                 packet = self.socket.recv(num_bytes - len(data))
                 if not packet:
-                    logging.error(
+                    logger.error(
                         f"Socket接收返回空数据，已接收 {len(data)}/{num_bytes} 字节"
                     )
                     return None
                 data.extend(packet)
             except socket.timeout:
-                logging.warning("Socket接收超时，继续等待...")
+                logger.warning("Socket接收超时，继续等待...")
                 continue
             except Exception as e:
-                logging.error(f"接收数据错误: {e}")
+                logger.error(f"接收数据错误: {e}")
                 return None
         return bytes(data)
 
     def set_fft_length(self):
-        """更新FFT长度并发送指令到下位机"""
-        # 清空接收缓冲区
-        # if hasattr(self, "socket") and self.socket:
-        #     self.socket.setblocking(False)
-        #     try:
-        #         while True:
-        #             self.socket.recv(4096)
-        #     except:
-        #         pass
-        #     self.socket.setblocking(True)
-
-        # 更新本地参数
         self.expected_fft_length = self.state.fft_length
-        logging.info(f"通信层更新FFT长度为: {self.expected_fft_length}")
+        logger.info(f"通信层更新FFT长度为: {self.expected_fft_length}")

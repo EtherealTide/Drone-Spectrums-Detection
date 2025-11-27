@@ -7,7 +7,7 @@ from ultralytics import YOLO
 import cv2
 import pathlib
 
-logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class DroneDetector:
@@ -46,21 +46,21 @@ class DroneDetector:
         # 获取算法层绝对路径，yolo和算法层在同一目录下
         self.algorithm_path = pathlib.Path(__file__).parent.absolute()
         try:
-            logging.info(f"正在加载YOLO模型: {model_path}")
+            logger.info(f"正在加载YOLO模型: {model_path}")
             model_path = str(self.algorithm_path / model_path)
             self.model = YOLO(model_path)
-            logging.info("✓ YOLO模型加载成功")
+            logger.info("✓ YOLO模型加载成功")
             # 预热模型
             self._warmup_model()
         except Exception as e:
-            logging.error(f"YOLO模型加载失败: {e}")
+            logger.error(f"YOLO模型加载失败: {e}")
             self.model = None
 
         # 检测参数
         self.conf_threshold = self.state.conf_threshold  # 置信度阈值
         self.iou_threshold = self.state.iou_threshold  # NMS IoU阈值
         self.image_size = 640  # 输入图像尺寸
-        logging.info("算法层初始化完成")
+        logger.info("算法层初始化完成")
 
     def _warmup_model(self):
         """预热模型，加速首次推理"""
@@ -68,7 +68,7 @@ class DroneDetector:
             return
 
         try:
-            logging.info("🔥 预热YOLO模型...")
+            logger.info("🔥 预热YOLO模型...")
             # 创建假图像进行预热
             dummy_image = np.random.randint(
                 0,
@@ -79,15 +79,15 @@ class DroneDetector:
 
             # 执行一次推理（不保存结果）
             _ = self.model(dummy_image, verbose=False)
-            logging.info("✓ 模型预热完成")
+            logger.info("✓ 模型预热完成")
 
         except Exception as e:
-            logging.warning(f"模型预热失败: {e}，将在首次检测时初始化")
+            logger.warning(f"模型预热失败: {e}，将在首次检测时初始化")
 
     def start_detection(self):
         """启动检测线程"""
         if self.model is None:
-            logging.error("YOLO模型未加载，无法启动检测")
+            logger.error("YOLO模型未加载，无法启动检测")
             return
 
         if not self.detect_thread or not self.detect_thread.is_alive():
@@ -96,18 +96,18 @@ class DroneDetector:
                 target=self._detection_loop, daemon=True
             )
             self.detect_thread.start()
-            logging.info("✓ 检测线程已启动")
+            logger.info("✓ 检测线程已启动")
 
     def stop_detection(self):
         """停止检测线程"""
         self.state.detection_thread = False
         if self.detect_thread:
             self.detect_thread.join(timeout=3)
-        logging.info("检测线程已停止")
+        logger.info("检测线程已停止")
 
     def _detection_loop(self):
         """检测主循环（运行在独立线程）"""
-        logging.info("检测循环开始运行...")
+        logger.info("检测循环开始运行...")
 
         while self.state.detection_thread:
             try:
@@ -117,13 +117,13 @@ class DroneDetector:
                 input_image = self.data_processor.get_waterfall_image()
 
                 if input_image is None or input_image.size == 0:
-                    logging.debug("未获取到有效图像，跳过此次检测")
+                    logger.debug("未获取到有效图像，跳过此次检测")
                     time.sleep(0.01)
                     continue
 
                 # 检查图像格式
                 if len(input_image.shape) != 3 or input_image.shape[2] != 3:
-                    logging.warning(f"图像格式不正确: {input_image.shape}")
+                    logger.warning(f"图像格式不正确: {input_image.shape}")
                     time.sleep(0.01)
                     continue
 
@@ -222,10 +222,10 @@ class DroneDetector:
                 # 无延迟，立即进行下一次检测
 
             except Exception as e:
-                logging.error(f"检测异常: {e}", exc_info=True)
+                logger.error(f"检测异常: {e}", exc_info=True)
                 time.sleep(0.1)  # 异常时稍微延迟
 
-        logging.info("检测循环已退出")
+        logger.info("检测循环已退出")
 
     # ==================== 对外接口 ====================
 

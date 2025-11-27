@@ -1,6 +1,6 @@
 {
   "Receiver": {
-    "FFT_Length": 512,
+    "FFT_Length": 1024,
     "Decimation_factor": 32,
     "Centre_frequency(MHz)": 2400.0,
     "bandwidth(MHz)": 100.0
@@ -10,8 +10,8 @@
     "spectum_right_freq(MHz)": 200
   },
   "Detection": {
-    "conf_threshold": 0.4,
+    "conf_threshold": 0.3,
     "iou_thresholds": 0.5,
-    "image_size": "default"
+    "image_size": 1280
   }
 }

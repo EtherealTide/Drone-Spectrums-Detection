@@ -26,7 +26,7 @@ if str(root_dir) not in sys.path:
 from UI.home.home import HomeInterface
 from UI.settings.settings_interface import SettingsInterface
 from UI.settings.theme_manager import get_theme_manager
-from UI.visualization.visualization_interface import VisualizationInterface
+from UI.waterfall.visualization import VisualizationInterface
 
 
 class Widget(QFrame):
@@ -49,8 +49,25 @@ class Widget(QFrame):
 class Window(QMainWindow):
     """Main application window fully based on PyQt6 widgets."""
 
-    def __init__(self, dataprocessor=None, state=None, detector=None):
+    def __init__(self, dataprocessor, state, detector):
         super().__init__()
+
+        # 设置窗口大小 - 修改为更合理的尺寸
+        from PyQt6.QtWidgets import QApplication
+
+        screen = QApplication.primaryScreen().availableGeometry()
+
+        # 使用屏幕可用区域的 90%，避免超出屏幕
+        width = int(screen.width() * 0.9)
+        height = int(screen.height() * 0.9)
+
+        self.resize(width, height)
+
+        # 居中显示
+        x = (screen.width() - width) // 2
+        y = (screen.height() - height) // 2
+        self.move(x, y)
+
         self.data_processor = dataprocessor
         self.state = state
         self.detector = detector

@@ -6,6 +6,8 @@ import logging
 import queue
 import matplotlib.pyplot as plt
 
+logger = logging.getLogger(__name__)
+
 
 class DataProcessor:
     def __init__(self, state):
@@ -64,7 +66,7 @@ class DataProcessor:
                 target=self._process_loop, daemon=True
             )
             self.process_thread.start()
-            logging.info("数据处理线程已启动")
+            logger.info("数据处理线程已启动")
 
         # 启动图像转换线程
         if not self.image_thread or not self.image_thread.is_alive():
@@ -72,7 +74,7 @@ class DataProcessor:
                 target=self._image_conversion_loop, daemon=True
             )
             self.image_thread.start()
-            logging.info("图像转换线程已启动")
+            logger.info("图像转换线程已启动")
 
     def stop_processing(self):
         """停止数据处理和图像转换线程"""
@@ -84,7 +86,7 @@ class DataProcessor:
         if self.image_thread:
             self.image_thread.join(timeout=2)
 
-        logging.info("数据处理和图像转换线程已停止")
+        logger.info("数据处理和图像转换线程已停止")
 
     def _process_loop(self):
         """数据处理主循环 - 批量获取并全局归一化"""
@@ -143,7 +145,7 @@ class DataProcessor:
                 else:
                     normalized_batch = np.zeros_like(batch_array)
 
-                logging.debug(
+                logger.debug(
                     f"归一化范围: [{global_min:.6e}, {global_max:.6e}] -> [0, 1]"
                 )
 
@@ -167,7 +169,7 @@ class DataProcessor:
                 self.state.data_queue_status = "processing"
 
             except Exception as e:
-                logging.error(f"数据处理异常: {e}", exc_info=True)
+                logger.error(f"数据处理异常: {e}", exc_info=True)
                 self.state.data_queue_status = "error"
                 time.sleep(0.1)
 
@@ -202,10 +204,10 @@ class DataProcessor:
                 with self.image_lock:
                     self.waterfall_image = rgb_image
 
-                logging.debug("瀑布图RGB图像已更新")
+                logger.debug("瀑布图RGB图像已更新")
 
             except Exception as e:
-                logging.error(f"图像转换异常: {e}", exc_info=True)
+                logger.error(f"图像转换异常: {e}", exc_info=True)
                 time.sleep(0.1)
 
     # ==================== 对外接口 ====================
@@ -265,7 +267,7 @@ class DataProcessor:
                 maxlen=self.waterfall_height,
             )
 
-            logging.info(f"FFT长度已设置为: {length}, 瀑布图尺寸: {length}x{length}")
+            logger.info(f"FFT长度已设置为: {length}, 瀑布图尺寸: {length}x{length}")
 
         # 重新初始化图像数组
         with self.image_lock:

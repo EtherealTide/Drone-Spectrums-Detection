@@ -1,0 +1,402 @@
+2025-11-20 17:45:43,484 - __main__ - INFO - ============================================================
+2025-11-20 17:45:43,484 - __main__ - INFO - 初始化无人机检测系统...
+2025-11-20 17:45:43,484 - state - INFO - ✓ 参数已从 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json 加载
+2025-11-20 17:45:43,495 - __main__ - INFO - ✓ 系统状态初始化完成
+2025-11-20 17:45:43,495 - __main__ - INFO - ✓ 通信层初始化完成
+2025-11-20 17:45:43,500 - __main__ - INFO - ✓ 数据处理层初始化完成
+2025-11-20 17:45:43,502 - algorithms - INFO - 正在加载YOLO模型: best.pt
+2025-11-20 17:45:43,946 - algorithms - INFO - ✓ YOLO模型加载成功
+2025-11-20 17:45:43,946 - algorithms - INFO - 🔥 预热YOLO模型...
+2025-11-20 17:45:46,491 - algorithms - INFO - ✓ 模型预热完成
+2025-11-20 17:45:46,491 - algorithms - INFO - 算法层初始化完成
+2025-11-20 17:45:46,491 - __main__ - INFO - ✓ 算法层初始化完成
+2025-11-20 17:45:49,195 - __main__ - INFO - ✓ 用户界面初始化完成
+2025-11-20 17:45:49,195 - __main__ - INFO - ✓ 信号连接设置完成
+2025-11-20 17:45:49,195 - __main__ - INFO - 系统初始化完成！
+2025-11-20 17:45:49,195 - __main__ - INFO - ============================================================
+2025-11-20 17:45:49,197 - __main__ - INFO - 启动系统UI...
+2025-11-20 17:46:15,669 - UI.home.config_interface - INFO - 连接开关被切换: True
+2025-11-20 17:46:15,669 - __main__ - INFO - 收到连接请求...
+2025-11-20 17:46:15,669 - communication - INFO - 接收线程启动
+2025-11-20 17:46:15,669 - state - INFO - 连接状态变化: True
+2025-11-20 17:46:15,669 - communication - INFO - 已连接到 127.0.0.1:5000
+2025-11-20 17:46:15,669 - __main__ - INFO - ✓ 设备连接成功
+2025-11-20 17:46:15,669 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-11-20 17:46:15,669 - data_process - INFO - 数据处理线程已启动
+2025-11-20 17:46:15,669 - data_process - INFO - 图像转换线程已启动
+2025-11-20 17:46:15,669 - __main__ - INFO - ✓ 数据处理线程已启动
+2025-11-20 17:46:15,669 - algorithms - INFO - 检测循环开始运行...
+2025-11-20 17:46:15,669 - algorithms - INFO - ✓ 检测线程已启动
+2025-11-20 17:46:15,669 - __main__ - INFO - ✓ yolo检测线程已启动
+2025-11-20 17:46:15,669 - __main__ - INFO - ✓ Home界面可视化已启动
+2025-11-20 17:46:19,183 - __main__ - INFO - 处理参数更新请求: Receiver.FFT_Length = 1024
+2025-11-20 17:46:19,183 - state - INFO - 参数更新: Receiver.FFT_Length = 1024 (旧值: 512)
+2025-11-20 17:46:19,183 - state - INFO - ✓ 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-20 17:46:19,183 - UI.home.config_interface - INFO - UI显示已更新: Receiver.FFT_Length = 1024
+2025-11-20 17:46:19,183 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 1024
+2025-11-20 17:46:19,183 - communication - INFO - 通信层更新FFT长度为: 1024
+2025-11-20 17:46:19,195 - data_process - INFO - FFT长度已设置为: 1024, 瀑布图尺寸: 1024x1024
+2025-11-20 17:46:19,195 - __main__ - INFO - ✓ 参数更新完成
+2025-11-20 17:46:19,195 - UI.home.config_interface - INFO - 请求更新参数: Receiver.FFT_Length = 1024
+2025-11-20 17:46:35,074 - __main__ - INFO - 处理参数更新请求: Detection.image_size = 1280
+2025-11-20 17:46:35,074 - state - INFO - 参数更新: Detection.image_size = 1280 (旧值: default)
+2025-11-20 17:46:35,074 - state - INFO - ✓ 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-20 17:46:35,074 - UI.home.config_interface - INFO - UI显示已更新: Detection.image_size = 1280
+2025-11-20 17:46:35,074 - __main__ - INFO - ✓ 参数更新完成
+2025-11-20 17:46:35,074 - UI.home.config_interface - INFO - 请求更新参数: Detection.image_size = 1280
+2025-11-20 17:46:44,108 - __main__ - INFO - 处理参数更新请求: Detection.conf_threshold = 0.3
+2025-11-20 17:46:44,108 - state - INFO - 参数更新: Detection.conf_threshold = 0.3 (旧值: 0.4)
+2025-11-20 17:46:44,108 - state - INFO - ✓ 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-20 17:46:44,108 - UI.home.config_interface - INFO - UI显示已更新: Detection.conf_threshold = 0.3
+2025-11-20 17:46:44,113 - __main__ - INFO - ✓ 参数更新完成
+2025-11-20 17:46:44,113 - UI.home.config_interface - INFO - 请求更新参数: Detection.conf_threshold = 0.3
+2025-11-20 17:46:47,519 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:46:47,540 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:46:49,318 - __main__ - INFO - 处理参数更新请求: Detection.image_size = default
+2025-11-20 17:46:49,320 - state - INFO - 参数更新: Detection.image_size = default (旧值: 1280)
+2025-11-20 17:46:49,320 - state - INFO - ✓ 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-20 17:46:49,322 - UI.home.config_interface - INFO - UI显示已更新: Detection.image_size = default
+2025-11-20 17:46:49,322 - __main__ - INFO - ✓ 参数更新完成
+2025-11-20 17:46:49,322 - UI.home.config_interface - INFO - 请求更新参数: Detection.image_size = default
+2025-11-20 17:46:57,971 - __main__ - INFO - 处理参数更新请求: Detection.image_size = 1024
+2025-11-20 17:46:57,971 - state - INFO - 参数更新: Detection.image_size = 1024 (旧值: default)
+2025-11-20 17:46:57,971 - state - INFO - ✓ 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-20 17:46:57,971 - UI.home.config_interface - INFO - UI显示已更新: Detection.image_size = 1024
+2025-11-20 17:46:57,971 - __main__ - INFO - ✓ 参数更新完成
+2025-11-20 17:46:57,971 - UI.home.config_interface - INFO - 请求更新参数: Detection.image_size = 1024
+2025-11-20 17:47:03,369 - __main__ - INFO - 处理参数更新请求: Receiver.FFT_Length = 512
+2025-11-20 17:47:03,369 - state - INFO - 参数更新: Receiver.FFT_Length = 512 (旧值: 1024)
+2025-11-20 17:47:03,374 - state - INFO - ✓ 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-20 17:47:03,374 - UI.home.config_interface - INFO - UI显示已更新: Receiver.FFT_Length = 512
+2025-11-20 17:47:03,374 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-11-20 17:47:03,374 - communication - INFO - 通信层更新FFT长度为: 512
+2025-11-20 17:47:03,374 - data_process - INFO - FFT长度已设置为: 512, 瀑布图尺寸: 512x512
+2025-11-20 17:47:03,374 - __main__ - INFO - ✓ 参数更新完成
+2025-11-20 17:47:03,374 - UI.home.config_interface - INFO - 请求更新参数: Receiver.FFT_Length = 512
+2025-11-20 17:47:03,386 - data_process - ERROR - 图像转换异常: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (512,) + inhomogeneous part.
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\data_process.py", line 192, in _image_conversion_loop
+    waterfall_array = np.array(waterfall_list, dtype=np.float32)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (512,) + inhomogeneous part.
+2025-11-20 17:47:04,678 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:47:06,391 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:47:06,591 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:47:06,668 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:47:07,002 - __main__ - INFO - 处理参数更新请求: Detection.image_size = 512
+2025-11-20 17:47:07,002 - state - INFO - 参数更新: Detection.image_size = 512 (旧值: 1024)
+2025-11-20 17:47:07,002 - state - INFO - ✓ 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-20 17:47:07,002 - UI.home.config_interface - INFO - UI显示已更新: Detection.image_size = 512
+2025-11-20 17:47:07,002 - __main__ - INFO - ✓ 参数更新完成
+2025-11-20 17:47:07,002 - UI.home.config_interface - INFO - 请求更新参数: Detection.image_size = 512
+2025-11-20 17:48:02,846 - UI.home.config_interface - INFO - 连接开关被切换: False
+2025-11-20 17:48:02,846 - __main__ - INFO - 收到断开请求...
+2025-11-20 17:48:02,846 - __main__ - INFO - 正在断开设备连接...
+2025-11-20 17:48:02,871 - algorithms - INFO - 检测循环已退出
+2025-11-20 17:48:02,871 - algorithms - INFO - 检测线程已停止
+2025-11-20 17:48:02,871 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:02,878 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:02,878 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:02,878 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:02,878 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:02,878 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-20 17:48:02,878 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:02,878 - state - INFO - 连接状态变化: False
+2025-11-20 17:48:02,878 - communication - INFO - 接收线程已退出
+2025-11-20 17:48:02,878 - communication - INFO - 连接已断开
+2025-11-20 17:48:02,878 - __main__ - INFO - ✓ 设备已断开
+2025-11-20 17:48:12,727 - UI.home.config_interface - INFO - 连接开关被切换: True
+2025-11-20 17:48:12,727 - __main__ - INFO - 收到连接请求...
+2025-11-20 17:48:12,741 - communication - INFO - 接收线程启动
+2025-11-20 17:48:12,741 - state - INFO - 连接状态变化: True
+2025-11-20 17:48:12,741 - communication - INFO - 已连接到 127.0.0.1:5000
+2025-11-20 17:48:12,741 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:12,741 - __main__ - INFO - ✓ 设备连接成功
+2025-11-20 17:48:12,741 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:12,741 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-11-20 17:48:12,741 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:12,741 - data_process - INFO - 数据处理线程已启动
+2025-11-20 17:48:12,741 - data_process - INFO - 图像转换线程已启动
+2025-11-20 17:48:12,741 - __main__ - INFO - ✓ 数据处理线程已启动
+2025-11-20 17:48:12,741 - algorithms - INFO - 检测循环开始运行...
+2025-11-20 17:48:12,741 - algorithms - INFO - ✓ 检测线程已启动
+2025-11-20 17:48:12,741 - __main__ - INFO - ✓ yolo检测线程已启动
+2025-11-20 17:48:12,741 - __main__ - INFO - ✓ Home界面可视化已启动
+2025-11-20 17:48:15,359 - UI.home.config_interface - INFO - 连接开关被切换: False
+2025-11-20 17:48:15,359 - __main__ - INFO - 收到断开请求...
+2025-11-20 17:48:15,359 - __main__ - INFO - 正在断开设备连接...
+2025-11-20 17:48:15,420 - algorithms - INFO - 检测循环已退出
+2025-11-20 17:48:15,422 - algorithms - INFO - 检测线程已停止
+2025-11-20 17:48:15,422 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:15,422 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:15,422 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:15,422 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:15,422 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:15,422 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:15,422 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:15,422 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-20 17:48:15,422 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:15,422 - state - INFO - 连接状态变化: False
+2025-11-20 17:48:15,422 - communication - INFO - 接收线程已退出
+2025-11-20 17:48:15,428 - communication - INFO - 连接已断开
+2025-11-20 17:48:15,428 - __main__ - INFO - ✓ 设备已断开
+2025-11-20 17:48:19,034 - UI.home.config_interface - INFO - 连接开关被切换: True
+2025-11-20 17:48:19,034 - __main__ - INFO - 收到连接请求...
+2025-11-20 17:48:19,034 - communication - INFO - 接收线程启动
+2025-11-20 17:48:19,034 - state - INFO - 连接状态变化: True
+2025-11-20 17:48:19,034 - communication - INFO - 已连接到 127.0.0.1:5000
+2025-11-20 17:48:19,034 - __main__ - INFO - ✓ 设备连接成功
+2025-11-20 17:48:19,034 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:19,034 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-11-20 17:48:19,034 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:19,049 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:19,049 - data_process - INFO - 数据处理线程已启动
+2025-11-20 17:48:19,049 - data_process - INFO - 图像转换线程已启动
+2025-11-20 17:48:19,049 - __main__ - INFO - ✓ 数据处理线程已启动
+2025-11-20 17:48:19,049 - algorithms - INFO - 检测循环开始运行...
+2025-11-20 17:48:19,049 - algorithms - INFO - ✓ 检测线程已启动
+2025-11-20 17:48:19,049 - __main__ - INFO - ✓ yolo检测线程已启动
+2025-11-20 17:48:19,049 - __main__ - INFO - ✓ Home界面可视化已启动
+2025-11-20 17:48:20,468 - UI.home.config_interface - INFO - 连接开关被切换: False
+2025-11-20 17:48:20,468 - __main__ - INFO - 收到断开请求...
+2025-11-20 17:48:20,468 - __main__ - INFO - 正在断开设备连接...
+2025-11-20 17:48:20,486 - algorithms - INFO - 检测循环已退出
+2025-11-20 17:48:20,486 - algorithms - INFO - 检测线程已停止
+2025-11-20 17:48:20,486 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:20,486 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:20,486 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:20,486 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:20,486 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:20,486 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:20,486 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:20,486 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:20,486 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:20,486 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-20 17:48:20,486 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-20 17:48:20,486 - state - INFO - 连接状态变化: False
+2025-11-20 17:48:20,486 - communication - INFO - 接收线程已退出
+2025-11-20 17:48:20,500 - communication - INFO - 连接已断开
+2025-11-20 17:48:20,500 - __main__ - INFO - ✓ 设备已断开
+2025-11-20 17:48:22,535 - __main__ - INFO - 清理系统资源...
+2025-11-20 17:48:22,535 - __main__ - INFO - 正在断开设备连接...
+2025-11-20 17:48:22,535 - algorithms - INFO - 检测线程已停止
+2025-11-20 17:48:22,535 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-20 17:48:22,535 - communication - INFO - 连接已断开
+2025-11-20 17:48:22,535 - __main__ - INFO - ✓ 设备已断开
+2025-11-20 17:48:22,535 - __main__ - INFO - ✓ 系统已关闭
+2025-11-23 15:25:30,820 - __main__ - INFO - ============================================================
+2025-11-23 15:25:30,820 - __main__ - INFO - 初始化无人机检测系统...
+2025-11-23 15:25:30,841 - state - INFO - ✓ 参数已从 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json 加载
+2025-11-23 15:25:30,843 - __main__ - INFO - ✓ 系统状态初始化完成
+2025-11-23 15:25:30,859 - __main__ - INFO - ✓ 通信层初始化完成
+2025-11-23 15:25:30,860 - __main__ - INFO - ✓ 数据处理层初始化完成
+2025-11-23 15:25:30,861 - algorithms - INFO - 正在加载YOLO模型: best.pt
+2025-11-23 15:25:31,365 - algorithms - INFO - ✓ YOLO模型加载成功
+2025-11-23 15:25:31,365 - algorithms - INFO - 🔥 预热YOLO模型...
+2025-11-23 15:25:34,093 - algorithms - INFO - ✓ 模型预热完成
+2025-11-23 15:25:34,093 - algorithms - INFO - 算法层初始化完成
+2025-11-23 15:25:34,093 - __main__ - INFO - ✓ 算法层初始化完成
+2025-11-23 15:25:37,895 - __main__ - INFO - ✓ 用户界面初始化完成
+2025-11-23 15:25:37,895 - __main__ - INFO - ✓ 信号连接设置完成
+2025-11-23 15:25:37,895 - __main__ - INFO - 系统初始化完成！
+2025-11-23 15:25:37,895 - __main__ - INFO - ============================================================
+2025-11-23 15:25:37,895 - __main__ - INFO - 启动系统UI...
+2025-11-23 15:26:03,973 - UI.home.config_interface - INFO - 连接开关被切换: True
+2025-11-23 15:26:03,989 - __main__ - INFO - 收到连接请求...
+2025-11-23 15:26:03,989 - communication - INFO - 接收线程启动
+2025-11-23 15:26:03,989 - state - INFO - 连接状态变化: True
+2025-11-23 15:26:03,989 - communication - INFO - 已连接到 127.0.0.1:5000
+2025-11-23 15:26:03,989 - __main__ - INFO - ✓ 设备连接成功
+2025-11-23 15:26:03,998 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-11-23 15:26:04,000 - data_process - INFO - 数据处理线程已启动
+2025-11-23 15:26:04,004 - data_process - INFO - 图像转换线程已启动
+2025-11-23 15:26:04,005 - __main__ - INFO - ✓ 数据处理线程已启动
+2025-11-23 15:26:04,007 - algorithms - INFO - 检测循环开始运行...
+2025-11-23 15:26:04,007 - algorithms - INFO - ✓ 检测线程已启动
+2025-11-23 15:26:04,011 - __main__ - INFO - ✓ yolo检测线程已启动
+2025-11-23 15:26:04,013 - __main__ - INFO - ✓ Home界面可视化已启动
+2025-11-23 15:27:12,396 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:27:12,396 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:28:51,857 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:29:10,802 - __main__ - INFO - 处理参数更新请求: UI.spectum_right_freq(MHz) = 400
+2025-11-23 15:29:10,802 - state - INFO - 参数更新: UI.spectum_right_freq(MHz) = 400 (旧值: 200)
+2025-11-23 15:29:10,802 - state - INFO - ✓ 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-23 15:29:10,806 - UI.home.config_interface - INFO - UI显示已更新: UI.spectum_right_freq(MHz) = 400
+2025-11-23 15:29:10,806 - __main__ - INFO - ✓ 参数更新完成
+2025-11-23 15:29:10,808 - UI.home.config_interface - INFO - 请求更新参数: UI.spectum_right_freq(MHz) = 400
+2025-11-23 15:29:16,420 - __main__ - INFO - 处理参数更新请求: UI.spectum_right_freq(MHz) = 200
+2025-11-23 15:29:16,420 - state - INFO - 参数更新: UI.spectum_right_freq(MHz) = 200 (旧值: 400)
+2025-11-23 15:29:16,420 - state - INFO - ✓ 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-23 15:29:16,420 - UI.home.config_interface - INFO - UI显示已更新: UI.spectum_right_freq(MHz) = 200
+2025-11-23 15:29:16,420 - __main__ - INFO - ✓ 参数更新完成
+2025-11-23 15:29:16,420 - UI.home.config_interface - INFO - 请求更新参数: UI.spectum_right_freq(MHz) = 200
+2025-11-23 15:30:40,380 - __main__ - INFO - 处理参数更新请求: Receiver.FFT_Length = 1024
+2025-11-23 15:30:40,380 - state - INFO - 参数更新: Receiver.FFT_Length = 1024 (旧值: 512)
+2025-11-23 15:30:40,380 - state - INFO - ✓ 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-23 15:30:40,380 - UI.home.config_interface - INFO - UI显示已更新: Receiver.FFT_Length = 1024
+2025-11-23 15:30:40,380 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 1024
+2025-11-23 15:30:40,380 - communication - INFO - 通信层更新FFT长度为: 1024
+2025-11-23 15:30:40,380 - communication - WARNING - 帧不完整: 缺少 2048 字节 (约4个包)，丢弃该帧
+2025-11-23 15:30:40,380 - data_process - INFO - FFT长度已设置为: 1024, 瀑布图尺寸: 1024x1024
+2025-11-23 15:30:40,380 - __main__ - INFO - ✓ 参数更新完成
+2025-11-23 15:30:40,380 - UI.home.config_interface - INFO - 请求更新参数: Receiver.FFT_Length = 1024
+2025-11-23 15:33:59,402 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:33:59,408 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:34:41,327 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,085 - UI.home.config_interface - INFO - 连接开关被切换: False
+2025-11-23 15:35:31,085 - __main__ - INFO - 收到断开请求...
+2025-11-23 15:35:31,085 - __main__ - INFO - 正在断开设备连接...
+2025-11-23 15:35:31,145 - algorithms - INFO - 检测循环已退出
+2025-11-23 15:35:31,145 - algorithms - INFO - 检测线程已停止
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,145 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,152 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,152 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,152 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,153 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,153 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,153 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,153 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,153 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,153 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-23 15:35:31,153 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:31,153 - state - INFO - 连接状态变化: False
+2025-11-23 15:35:31,153 - communication - INFO - 接收线程已退出
+2025-11-23 15:35:31,153 - communication - INFO - 连接已断开
+2025-11-23 15:35:31,153 - __main__ - INFO - ✓ 设备已断开
+2025-11-23 15:35:38,434 - UI.home.config_interface - INFO - 连接开关被切换: True
+2025-11-23 15:35:38,434 - __main__ - INFO - 收到连接请求...
+2025-11-23 15:35:38,442 - communication - INFO - 接收线程启动
+2025-11-23 15:35:38,442 - state - INFO - 连接状态变化: True
+2025-11-23 15:35:38,442 - communication - INFO - 已连接到 127.0.0.1:5000
+2025-11-23 15:35:38,442 - __main__ - INFO - ✓ 设备连接成功
+2025-11-23 15:35:38,442 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:38,442 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 1024
+2025-11-23 15:35:38,442 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-23 15:35:38,442 - data_process - INFO - 数据处理线程已启动
+2025-11-23 15:35:38,442 - data_process - INFO - 图像转换线程已启动
+2025-11-23 15:35:38,442 - __main__ - INFO - ✓ 数据处理线程已启动
+2025-11-23 15:35:38,442 - algorithms - INFO - 检测循环开始运行...
+2025-11-23 15:35:38,442 - algorithms - INFO - ✓ 检测线程已启动
+2025-11-23 15:35:38,442 - __main__ - INFO - ✓ yolo检测线程已启动
+2025-11-23 15:35:38,442 - __main__ - INFO - ✓ Home界面可视化已启动
+2025-11-23 15:35:39,089 - UI.home.config_interface - INFO - 连接开关被切换: False
+2025-11-23 15:35:39,090 - __main__ - INFO - 收到断开请求...
+2025-11-23 15:35:39,090 - __main__ - INFO - 正在断开设备连接...
+2025-11-23 15:35:39,167 - algorithms - INFO - 检测循环已退出
+2025-11-23 15:35:39,167 - algorithms - INFO - 检测线程已停止
+2025-11-23 15:35:39,169 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-23 15:35:39,169 - communication - INFO - 接收线程已退出
+2025-11-23 15:35:39,170 - state - INFO - 连接状态变化: False
+2025-11-23 15:35:39,173 - communication - INFO - 连接已断开
+2025-11-23 15:35:39,173 - __main__ - INFO - ✓ 设备已断开
+2025-11-27 19:00:37,452 - __main__ - INFO - ============================================================
+2025-11-27 19:00:37,452 - __main__ - INFO - 初始化无人机检测系统...
+2025-11-27 19:00:37,452 - state - INFO - ✓ 参数已从 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json 加载
+2025-11-27 19:00:37,452 - __main__ - INFO - ✓ 系统状态初始化完成
+2025-11-27 19:00:37,478 - __main__ - INFO - ✓ 通信层初始化完成
+2025-11-27 19:00:37,486 - __main__ - INFO - ✓ 数据处理层初始化完成
+2025-11-27 19:00:37,486 - algorithms - INFO - 正在加载YOLO模型: best.pt
+2025-11-27 19:00:38,154 - algorithms - INFO - ✓ YOLO模型加载成功
+2025-11-27 19:00:38,154 - algorithms - INFO - 🔥 预热YOLO模型...
+2025-11-27 19:00:42,094 - algorithms - INFO - ✓ 模型预热完成
+2025-11-27 19:00:42,094 - algorithms - INFO - 算法层初始化完成
+2025-11-27 19:00:42,094 - __main__ - INFO - ✓ 算法层初始化完成
+2025-11-27 19:00:46,843 - __main__ - INFO - ✓ 用户界面初始化完成
+2025-11-27 19:00:46,843 - __main__ - INFO - ✓ 信号连接设置完成
+2025-11-27 19:00:46,843 - __main__ - INFO - 系统初始化完成！
+2025-11-27 19:00:46,843 - __main__ - INFO - ============================================================
+2025-11-27 19:00:46,843 - __main__ - INFO - 启动系统UI...
+2025-11-27 19:01:02,669 - UI.home.config_interface - INFO - 连接开关被切换: True
+2025-11-27 19:01:02,671 - __main__ - INFO - 收到连接请求...
+2025-11-27 19:01:02,671 - communication - INFO - 接收线程启动
+2025-11-27 19:01:02,671 - state - INFO - 连接状态变化: True
+2025-11-27 19:01:02,671 - communication - INFO - 已连接到 127.0.0.1:5000
+2025-11-27 19:01:02,671 - __main__ - INFO - ✓ 设备连接成功
+2025-11-27 19:01:02,671 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 1024
+2025-11-27 19:01:02,671 - data_process - INFO - 数据处理线程已启动
+2025-11-27 19:01:02,671 - data_process - INFO - 图像转换线程已启动
+2025-11-27 19:01:02,671 - __main__ - INFO - ✓ 数据处理线程已启动
+2025-11-27 19:01:02,671 - algorithms - INFO - 检测循环开始运行...
+2025-11-27 19:01:02,671 - algorithms - INFO - ✓ 检测线程已启动
+2025-11-27 19:01:02,671 - __main__ - INFO - ✓ yolo检测线程已启动
+2025-11-27 19:01:02,671 - __main__ - INFO - ✓ Home界面可视化已启动
+2025-11-27 19:01:06,395 - __main__ - INFO - 处理参数更新请求: Receiver.FFT_Length = 512
+2025-11-27 19:01:06,395 - state - INFO - 参数更新: Receiver.FFT_Length = 512 (旧值: 1024)
+2025-11-27 19:01:06,395 - state - INFO - ✓ 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 19:01:06,395 - UI.home.config_interface - INFO - UI显示已更新: Receiver.FFT_Length = 512
+2025-11-27 19:01:06,395 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-11-27 19:01:06,403 - communication - INFO - 通信层更新FFT长度为: 512
+2025-11-27 19:01:06,406 - data_process - INFO - FFT长度已设置为: 512, 瀑布图尺寸: 512x512
+2025-11-27 19:01:06,406 - __main__ - INFO - ✓ 参数更新完成
+2025-11-27 19:01:06,406 - UI.home.config_interface - INFO - 请求更新参数: Receiver.FFT_Length = 512
+2025-11-27 19:01:45,117 - __main__ - INFO - 处理参数更新请求: Detection.image_size = default
+2025-11-27 19:01:45,117 - state - INFO - 参数更新: Detection.image_size = default (旧值: 512)
+2025-11-27 19:01:45,133 - state - INFO - ✓ 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 19:01:45,134 - UI.home.config_interface - INFO - UI显示已更新: Detection.image_size = default
+2025-11-27 19:01:45,134 - __main__ - INFO - ✓ 参数更新完成
+2025-11-27 19:01:45,135 - UI.home.config_interface - INFO - 请求更新参数: Detection.image_size = default
+2025-11-27 19:01:53,758 - __main__ - INFO - 处理参数更新请求: Receiver.FFT_Length = 1024
+2025-11-27 19:01:53,758 - state - INFO - 参数更新: Receiver.FFT_Length = 1024 (旧值: 512)
+2025-11-27 19:01:53,774 - state - INFO - ✓ 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 19:01:53,774 - UI.home.config_interface - INFO - UI显示已更新: Receiver.FFT_Length = 1024
+2025-11-27 19:01:53,774 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 1024
+2025-11-27 19:01:53,774 - communication - INFO - 通信层更新FFT长度为: 1024
+2025-11-27 19:01:53,774 - data_process - INFO - FFT长度已设置为: 1024, 瀑布图尺寸: 1024x1024
+2025-11-27 19:01:53,774 - __main__ - INFO - ✓ 参数更新完成
+2025-11-27 19:01:53,774 - UI.home.config_interface - INFO - 请求更新参数: Receiver.FFT_Length = 1024
+2025-11-27 19:01:57,514 - __main__ - INFO - 处理参数更新请求: Detection.image_size = 1280
+2025-11-27 19:01:57,514 - state - INFO - 参数更新: Detection.image_size = 1280 (旧值: default)
+2025-11-27 19:01:57,514 - state - INFO - ✓ 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 19:01:57,514 - UI.home.config_interface - INFO - UI显示已更新: Detection.image_size = 1280
+2025-11-27 19:01:57,514 - __main__ - INFO - ✓ 参数更新完成
+2025-11-27 19:01:57,514 - UI.home.config_interface - INFO - 请求更新参数: Detection.image_size = 1280
+2025-11-27 19:02:13,908 - UI.home.config_interface - INFO - 连接开关被切换: False
+2025-11-27 19:02:13,908 - __main__ - INFO - 收到断开请求...
+2025-11-27 19:02:13,908 - __main__ - INFO - 正在断开设备连接...
+2025-11-27 19:02:14,020 - algorithms - INFO - 检测循环已退出
+2025-11-27 19:02:14,020 - algorithms - INFO - 检测线程已停止
+2025-11-27 19:02:14,023 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:02:14,023 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:02:14,023 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:02:14,023 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:02:14,023 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:02:14,023 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:02:14,023 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:02:14,023 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:02:14,023 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:02:14,023 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:02:14,026 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-27 19:02:14,026 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:02:14,027 - state - INFO - 连接状态变化: False
+2025-11-27 19:02:14,027 - communication - INFO - 接收线程已退出
+2025-11-27 19:02:14,029 - communication - INFO - 连接已断开
+2025-11-27 19:02:14,029 - __main__ - INFO - ✓ 设备已断开
+2025-11-27 19:02:15,792 - __main__ - INFO - 清理系统资源...
+2025-11-27 19:02:15,792 - __main__ - INFO - 正在断开设备连接...
+2025-11-27 19:02:15,792 - algorithms - INFO - 检测线程已停止
+2025-11-27 19:02:15,792 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-27 19:02:15,795 - communication - INFO - 连接已断开
+2025-11-27 19:02:15,795 - __main__ - INFO - ✓ 设备已断开
+2025-11-27 19:02:15,795 - __main__ - INFO - ✓ 系统已关闭
