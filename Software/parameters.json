@@ -1,17 +1,20 @@
 {
   "Receiver": {
-    "FFT_Length": 1024,
-    "Decimation_factor": 32,
+    "FFT_Length": 512,
+    "Decimation_factor": 4,
     "Centre_frequency(MHz)": 2400.0,
     "bandwidth(MHz)": 100.0
   },
-  "UI": {
-    "spectum_left_freq(MHz)": 0,
-    "spectum_right_freq(MHz)": 200
-  },
   "Detection": {
-    "conf_threshold": 0.3,
-    "iou_thresholds": 0.5,
-    "image_size": 1280
+    "conf_threshold": 0.25,
+    "iou_threshold": 0.45,
+    "image_size": "default"
+  },
+  "UI_Spectrum": {
+    "spectrum_left_freq(MHz)": 0.0,
+    "spectrum_right_freq(MHz)": 1000
+  },
+  "UI_Waterfall": {
+    "waterfall_height": 512
   }
 }

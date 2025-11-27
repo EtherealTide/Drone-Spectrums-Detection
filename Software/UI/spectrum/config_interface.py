@@ -18,15 +18,15 @@ from ..settings.theme_manager import get_theme_manager
 logger = logging.getLogger(__name__)
 
 
-class WaterfallConfigInterface(QWidget):
-    """Config panel for the waterfall view."""
+class SpectrumConfigInterface(QWidget):
+    """Config panel for the spectrum view."""
 
-    connection_request = pyqtSignal(bool)
-    parameter_change_request = pyqtSignal(str, str, object)
+    connection_request = pyqtSignal(bool)  # True=connect, False=disconnect
+    parameter_change_request = pyqtSignal(str, str, object)  # (group, name, value)
 
     def __init__(self, parent=None, state=None):
         super().__init__(parent)
-        self.setObjectName("WaterfallConfigInterface")
+        self.setObjectName("ConfigInterface")
         self.component = Component()
         self.state = state
         self.connection_switch = None
@@ -93,13 +93,14 @@ class WaterfallConfigInterface(QWidget):
         for name, value, options in receiver_params:
             self.add_parameter(receiver_item, "Receiver", name, value, options)
 
-        waterfall_item = QTreeWidgetItem(["UI_Waterfall"])
-        self.config_tree.addTopLevelItem(waterfall_item)
-        waterfall_params = [
-            ("waterfall_height", self.state.waterfall_height, None),
+        spectrum_item = QTreeWidgetItem(["UI_Spectrum"])
+        self.config_tree.addTopLevelItem(spectrum_item)
+        spectrum_params = [
+            ("spectrum_left_freq(MHz)", self.state.spectrum_left_freq, None),
+            ("spectrum_right_freq(MHz)", self.state.spectrum_right_freq, None),
         ]
-        for name, value, options in waterfall_params:
-            self.add_parameter(waterfall_item, "UI_Waterfall", name, value, options)
+        for name, value, options in spectrum_params:
+            self.add_parameter(spectrum_item, "UI_Spectrum", name, value, options)
 
         detection_item = QTreeWidgetItem(["Detection"])
         self.config_tree.addTopLevelItem(detection_item)
@@ -171,7 +172,7 @@ class WaterfallConfigInterface(QWidget):
     def apply_palette(self, palette: dict):
         self.setStyleSheet(
             f"""
-            #WaterfallConfigInterface {{
+            #ConfigInterface {{
                 background-color: {palette['stack_bg']};
             }}
             """
@@ -238,7 +239,7 @@ if __name__ == "__main__":
     import sys
 
     app = QApplication(sys.argv)
-    window = WaterfallConfigInterface()
+    window = SpectrumConfigInterface()
     window.resize(600, 800)
     window.show()
     sys.exit(app.exec())

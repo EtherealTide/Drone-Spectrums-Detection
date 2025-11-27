@@ -400,3 +400,460 @@ ValueError: setting an array element with a sequence. The requested array has an
 2025-11-27 19:02:15,795 - communication - INFO - 连接已断开
 2025-11-27 19:02:15,795 - __main__ - INFO - ✓ 设备已断开
 2025-11-27 19:02:15,795 - __main__ - INFO - ✓ 系统已关闭
+2025-11-27 19:41:53,669 - __main__ - INFO - ============================================================
+2025-11-27 19:41:53,670 - __main__ - INFO - Initializing drone detection system...
+2025-11-27 19:41:53,671 - state - ERROR - 加载参数失败: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)，使用默认参数
+2025-11-27 19:41:53,671 - __main__ - INFO - System state initialized
+2025-11-27 19:41:53,671 - __main__ - INFO - Communication layer ready
+2025-11-27 19:41:53,673 - __main__ - INFO - Data processor ready
+2025-11-27 19:41:53,674 - algorithms - INFO - 正在加载YOLO模型: best.pt
+2025-11-27 19:41:54,046 - algorithms - INFO - ✓ YOLO模型加载成功
+2025-11-27 19:41:54,046 - algorithms - INFO - 🔥 预热YOLO模型...
+2025-11-27 19:41:56,340 - algorithms - INFO - ✓ 模型预热完成
+2025-11-27 19:41:56,340 - algorithms - INFO - 算法层初始化完成
+2025-11-27 19:41:56,340 - __main__ - INFO - Detector ready
+2025-11-27 19:41:59,068 - __main__ - INFO - UI ready
+2025-11-27 19:41:59,068 - __main__ - INFO - Signal wiring complete
+2025-11-27 19:41:59,068 - __main__ - INFO - System initialization complete
+2025-11-27 19:41:59,070 - __main__ - INFO - ============================================================
+2025-11-27 19:41:59,070 - __main__ - INFO - Launching UI...
+2025-11-27 19:42:12,734 - UI.spectrum.config_interface - INFO - Connection toggle changed: True
+2025-11-27 19:42:12,734 - __main__ - INFO - Received connect request...
+2025-11-27 19:42:14,760 - communication - ERROR - 连接失败: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+2025-11-27 19:42:14,760 - __main__ - ERROR - Device connection failed
+2025-11-27 19:42:16,291 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-11-27 19:42:16,291 - __main__ - INFO - Received connect request...
+2025-11-27 19:42:18,326 - communication - ERROR - 连接失败: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+2025-11-27 19:42:18,328 - __main__ - ERROR - Device connection failed
+2025-11-27 19:42:19,933 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-11-27 19:42:19,940 - __main__ - INFO - Received disconnect request...
+2025-11-27 19:42:19,940 - __main__ - INFO - Disconnecting device...
+2025-11-27 19:42:19,940 - algorithms - INFO - 检测线程已停止
+2025-11-27 19:42:19,940 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-27 19:42:19,940 - communication - INFO - 连接已断开
+2025-11-27 19:42:19,940 - __main__ - INFO - Device disconnected
+2025-11-27 19:42:29,539 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-11-27 19:42:29,539 - __main__ - INFO - Received connect request...
+2025-11-27 19:42:29,543 - communication - INFO - 接收线程启动
+2025-11-27 19:42:29,543 - state - INFO - 连接状态变更: True
+2025-11-27 19:42:29,543 - communication - INFO - 已连接到 127.0.0.1:5000
+2025-11-27 19:42:29,543 - __main__ - INFO - Device connected
+2025-11-27 19:42:29,543 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-11-27 19:42:29,543 - data_process - INFO - 数据处理线程已启动
+2025-11-27 19:42:29,548 - data_process - INFO - 图像转换线程已启动
+2025-11-27 19:42:29,548 - __main__ - INFO - Data processing thread started
+2025-11-27 19:42:29,548 - algorithms - INFO - 检测循环开始运行...
+2025-11-27 19:42:29,548 - algorithms - INFO - ✓ 检测线程已启动
+2025-11-27 19:42:29,552 - __main__ - INFO - Detection thread started
+2025-11-27 19:42:29,552 - __main__ - INFO - Waterfall visualization started
+2025-11-27 19:42:29,555 - __main__ - INFO - Spectrum visualization started
+2025-11-27 19:42:56,574 - __main__ - INFO - Handling parameter update: Receiver.FFT_Length = 1024
+2025-11-27 19:42:56,574 - state - INFO - 参数更新: Receiver.FFT_Length = 1024 (旧值 512)
+2025-11-27 19:42:56,574 - state - INFO - 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 19:42:56,574 - UI.spectrum.config_interface - INFO - UI display refreshed: Receiver.FFT_Length = 1024
+2025-11-27 19:42:56,574 - UI.waterfall.config_interface - INFO - UI display refreshed: Receiver.FFT_Length = 1024
+2025-11-27 19:42:56,579 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 1024
+2025-11-27 19:42:56,579 - communication - INFO - 通信层更新FFT长度为: 1024
+2025-11-27 19:42:56,582 - data_process - INFO - FFT长度已设置为: 1024, 瀑布图尺寸 1024x512
+2025-11-27 19:42:56,582 - __main__ - INFO - Parameter update handled
+2025-11-27 19:42:56,582 - UI.waterfall.config_interface - INFO - Request parameter update: Receiver.FFT_Length = 1024
+2025-11-27 19:43:11,803 - __main__ - INFO - Handling parameter update: Detection.image_size = default
+2025-11-27 19:43:11,803 - state - INFO - 参数更新: Detection.image_size = default (旧值 640)
+2025-11-27 19:43:11,803 - state - INFO - 参数已保存到 c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 19:43:11,803 - UI.spectrum.config_interface - INFO - UI display refreshed: Detection.image_size = default
+2025-11-27 19:43:11,803 - UI.waterfall.config_interface - INFO - UI display refreshed: Detection.image_size = default
+2025-11-27 19:43:11,803 - __main__ - INFO - Parameter update handled
+2025-11-27 19:43:11,808 - UI.spectrum.config_interface - INFO - Request parameter update: Detection.image_size = default
+2025-11-27 19:43:32,932 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-11-27 19:43:32,932 - __main__ - INFO - Received disconnect request...
+2025-11-27 19:43:32,932 - __main__ - INFO - Disconnecting device...
+2025-11-27 19:43:32,957 - algorithms - INFO - 检测循环已退出
+2025-11-27 19:43:32,957 - algorithms - INFO - 检测线程已停止
+2025-11-27 19:43:32,957 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-27 19:43:32,957 - state - INFO - 连接状态变更: False
+2025-11-27 19:43:32,957 - communication - ERROR - 无法同步到魔数，退出接收
+2025-11-27 19:43:32,957 - communication - INFO - 接收线程已退出
+2025-11-27 19:43:32,957 - communication - INFO - 连接已断开
+2025-11-27 19:43:32,957 - __main__ - INFO - Device disconnected
+2025-11-27 19:43:33,473 - __main__ - INFO - Cleaning up system resources...
+2025-11-27 19:43:33,473 - __main__ - INFO - Disconnecting device...
+2025-11-27 19:43:33,474 - algorithms - INFO - 检测线程已停止
+2025-11-27 19:43:33,474 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-27 19:43:33,474 - communication - INFO - 连接已断开
+2025-11-27 19:43:33,474 - __main__ - INFO - Device disconnected
+2025-11-27 19:43:33,474 - __main__ - INFO - System shutdown complete
+2025-11-27 19:49:33,404 - __main__ - INFO - ============================================================
+2025-11-27 19:49:33,404 - __main__ - INFO - Initializing drone detection system...
+2025-11-27 19:49:33,431 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 19:49:33,431 - __main__ - INFO - System state initialized
+2025-11-27 19:49:33,432 - __main__ - INFO - Communication layer ready
+2025-11-27 19:49:33,436 - __main__ - INFO - Data processor ready
+2025-11-27 19:49:33,436 - algorithms - INFO - 正在加载YOLO模型: best.pt
+2025-11-27 19:49:33,940 - algorithms - INFO - ✓ YOLO模型加载成功
+2025-11-27 19:49:33,942 - algorithms - INFO - 🔥 预热YOLO模型...
+2025-11-27 19:49:36,788 - algorithms - INFO - ✓ 模型预热完成
+2025-11-27 19:49:36,790 - algorithms - INFO - 算法层初始化完成
+2025-11-27 19:49:36,790 - __main__ - INFO - Detector ready
+2025-11-27 19:49:39,162 - __main__ - INFO - UI ready
+2025-11-27 19:49:39,162 - __main__ - INFO - Signal wiring complete
+2025-11-27 19:49:39,163 - __main__ - INFO - System initialization complete
+2025-11-27 19:49:39,163 - __main__ - INFO - ============================================================
+2025-11-27 19:49:39,163 - __main__ - INFO - Launching UI...
+2025-11-27 19:49:54,607 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-11-27 19:49:54,607 - __main__ - INFO - Received connect request...
+2025-11-27 19:49:54,607 - communication - INFO - 接收线程启动
+2025-11-27 19:49:54,616 - state - INFO - connection status changed: True
+2025-11-27 19:49:54,616 - communication - INFO - 已连接到 127.0.0.1:5000
+2025-11-27 19:49:54,616 - __main__ - INFO - Device connected
+2025-11-27 19:49:54,616 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 1024
+2025-11-27 19:49:54,616 - data_process - INFO - 数据处理线程已启动
+2025-11-27 19:49:54,621 - data_process - INFO - 图像转换线程已启动
+2025-11-27 19:49:54,621 - __main__ - INFO - Data processing thread started
+2025-11-27 19:49:54,621 - algorithms - INFO - 检测循环开始运行...
+2025-11-27 19:49:54,621 - algorithms - INFO - ✓ 检测线程已启动
+2025-11-27 19:49:54,623 - __main__ - INFO - Detection thread started
+2025-11-27 19:49:54,623 - __main__ - INFO - Waterfall visualization started
+2025-11-27 19:49:54,623 - __main__ - INFO - Spectrum visualization started
+2025-11-27 19:50:24,379 - __main__ - INFO - Handling parameter update: Receiver.FFT_Length = 512
+2025-11-27 19:50:24,381 - state - INFO - parameter updated: Receiver.FFT_Length = 512 (old 1024)
+2025-11-27 19:50:24,381 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 19:50:24,381 - UI.spectrum.config_interface - INFO - UI display refreshed: Receiver.FFT_Length = 512
+2025-11-27 19:50:24,381 - UI.waterfall.config_interface - INFO - UI display refreshed: Receiver.FFT_Length = 512
+2025-11-27 19:50:24,381 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-11-27 19:50:24,381 - communication - INFO - 通信层更新FFT长度为: 512
+2025-11-27 19:50:24,381 - data_process - INFO - FFT长度已设置为: 512, 瀑布图尺寸 512x512
+2025-11-27 19:50:24,381 - __main__ - INFO - Parameter update handled
+2025-11-27 19:50:24,381 - UI.waterfall.config_interface - INFO - Request parameter update: Receiver.FFT_Length = 512
+2025-11-27 19:50:41,275 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-11-27 19:50:41,275 - __main__ - INFO - Received disconnect request...
+2025-11-27 19:50:41,275 - __main__ - INFO - Disconnecting device...
+2025-11-27 19:50:41,292 - algorithms - INFO - 检测循环已退出
+2025-11-27 19:50:41,292 - algorithms - INFO - 检测线程已停止
+2025-11-27 19:50:41,292 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-27 19:50:41,292 - communication - ERROR - 无法同步到魔数，退出接收
+2025-11-27 19:50:41,292 - state - INFO - connection status changed: False
+2025-11-27 19:50:41,292 - communication - INFO - 接收线程已退出
+2025-11-27 19:50:41,292 - communication - INFO - 连接已断开
+2025-11-27 19:50:41,292 - __main__ - INFO - Device disconnected
+2025-11-27 19:50:43,209 - __main__ - INFO - Cleaning up system resources...
+2025-11-27 19:50:43,211 - __main__ - INFO - Disconnecting device...
+2025-11-27 19:50:43,211 - algorithms - INFO - 检测线程已停止
+2025-11-27 19:50:43,211 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-27 19:50:43,211 - communication - INFO - 连接已断开
+2025-11-27 19:50:43,211 - __main__ - INFO - Device disconnected
+2025-11-27 19:50:43,213 - __main__ - INFO - System shutdown complete
+2025-11-27 19:55:27,443 - __main__ - INFO - ============================================================
+2025-11-27 19:55:27,443 - __main__ - INFO - Initializing drone detection system...
+2025-11-27 19:55:27,446 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 19:55:27,446 - __main__ - INFO - System state initialized
+2025-11-27 19:55:27,446 - __main__ - INFO - Communication layer ready
+2025-11-27 19:55:27,446 - __main__ - INFO - Data processor ready
+2025-11-27 19:55:27,446 - algorithms - INFO - 正在加载YOLO模型: best.pt
+2025-11-27 19:55:27,876 - algorithms - INFO - ✓ YOLO模型加载成功
+2025-11-27 19:55:27,876 - algorithms - INFO - 🔥 预热YOLO模型...
+2025-11-27 19:55:30,376 - algorithms - INFO - ✓ 模型预热完成
+2025-11-27 19:55:30,377 - algorithms - INFO - 算法层初始化完成
+2025-11-27 19:55:30,377 - __main__ - INFO - Detector ready
+2025-11-27 19:55:32,782 - __main__ - INFO - UI ready
+2025-11-27 19:55:32,782 - __main__ - INFO - Signal wiring complete
+2025-11-27 19:55:32,782 - __main__ - INFO - System initialization complete
+2025-11-27 19:55:32,782 - __main__ - INFO - ============================================================
+2025-11-27 19:55:32,782 - __main__ - INFO - Launching UI...
+2025-11-27 19:55:42,683 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-11-27 19:55:42,683 - __main__ - INFO - Received connect request...
+2025-11-27 19:55:42,685 - communication - INFO - 接收线程启动
+2025-11-27 19:55:42,687 - state - INFO - connection status changed: True
+2025-11-27 19:55:42,687 - communication - INFO - 已连接到 127.0.0.1:5000
+2025-11-27 19:55:42,687 - __main__ - INFO - Device connected
+2025-11-27 19:55:42,687 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-11-27 19:55:42,689 - data_process - INFO - 数据处理线程已启动
+2025-11-27 19:55:42,690 - data_process - INFO - 图像转换线程已启动
+2025-11-27 19:55:42,690 - __main__ - INFO - Data processing thread started
+2025-11-27 19:55:42,690 - algorithms - INFO - 检测循环开始运行...
+2025-11-27 19:55:42,690 - algorithms - INFO - ✓ 检测线程已启动
+2025-11-27 19:55:42,690 - __main__ - INFO - Detection thread started
+2025-11-27 19:55:42,690 - __main__ - INFO - Waterfall visualization started
+2025-11-27 19:55:42,690 - __main__ - INFO - Spectrum visualization started
+2025-11-27 19:55:56,077 - __main__ - INFO - Handling parameter update: UI_Spectrum.spectrum_right_freq(MHz) = 100
+2025-11-27 19:55:56,077 - state - INFO - parameter updated: UI_Spectrum.spectrum_right_freq(MHz) = 100 (old 200.0)
+2025-11-27 19:55:56,077 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 19:55:56,077 - UI.spectrum.config_interface - INFO - UI display refreshed: UI_Spectrum.spectrum_right_freq(MHz) = 100
+2025-11-27 19:55:56,077 - __main__ - INFO - Parameter update handled
+2025-11-27 19:55:56,077 - UI.spectrum.config_interface - INFO - Request parameter update: UI_Spectrum.spectrum_right_freq(MHz) = 100
+2025-11-27 19:55:58,376 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:56:09,830 - __main__ - INFO - Handling parameter update: Receiver.Decimation_factor = 4
+2025-11-27 19:56:09,830 - state - INFO - parameter updated: Receiver.Decimation_factor = 4 (old 100)
+2025-11-27 19:56:09,838 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 19:56:09,838 - UI.spectrum.config_interface - INFO - UI display refreshed: Receiver.Decimation_factor = 4
+2025-11-27 19:56:09,838 - UI.waterfall.config_interface - INFO - UI display refreshed: Receiver.Decimation_factor = 4
+2025-11-27 19:56:09,838 - __main__ - INFO - Parameter update handled
+2025-11-27 19:56:09,838 - UI.spectrum.config_interface - INFO - Request parameter update: Receiver.Decimation_factor = 4
+2025-11-27 19:56:22,567 - __main__ - INFO - Handling parameter update: UI_Spectrum.spectrum_right_freq(MHz) = 500
+2025-11-27 19:56:22,568 - state - INFO - parameter updated: UI_Spectrum.spectrum_right_freq(MHz) = 500 (old 100)
+2025-11-27 19:56:22,568 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 19:56:22,568 - UI.spectrum.config_interface - INFO - UI display refreshed: UI_Spectrum.spectrum_right_freq(MHz) = 500
+2025-11-27 19:56:22,573 - __main__ - INFO - Parameter update handled
+2025-11-27 19:56:22,573 - UI.spectrum.config_interface - INFO - Request parameter update: UI_Spectrum.spectrum_right_freq(MHz) = 500
+2025-11-27 19:56:26,111 - __main__ - INFO - Handling parameter update: UI_Spectrum.spectrum_right_freq(MHz) = 1000
+2025-11-27 19:56:26,111 - state - INFO - parameter updated: UI_Spectrum.spectrum_right_freq(MHz) = 1000 (old 500)
+2025-11-27 19:56:26,111 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 19:56:26,120 - UI.spectrum.config_interface - INFO - UI display refreshed: UI_Spectrum.spectrum_right_freq(MHz) = 1000
+2025-11-27 19:56:26,122 - __main__ - INFO - Parameter update handled
+2025-11-27 19:56:26,122 - UI.spectrum.config_interface - INFO - Request parameter update: UI_Spectrum.spectrum_right_freq(MHz) = 1000
+2025-11-27 19:56:50,571 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:56:52,354 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-11-27 19:56:52,354 - __main__ - INFO - Received disconnect request...
+2025-11-27 19:56:52,354 - __main__ - INFO - Disconnecting device...
+2025-11-27 19:56:52,428 - algorithms - INFO - 检测循环已退出
+2025-11-27 19:56:52,428 - algorithms - INFO - 检测线程已停止
+2025-11-27 19:56:52,428 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:56:52,428 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:56:52,428 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:56:52,428 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:56:52,428 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:56:52,428 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:56:52,428 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:56:52,428 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:56:52,428 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:56:52,428 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-27 19:56:52,436 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 19:56:52,437 - state - INFO - connection status changed: False
+2025-11-27 19:56:52,437 - communication - INFO - 接收线程已退出
+2025-11-27 19:56:52,439 - communication - INFO - 连接已断开
+2025-11-27 19:56:52,439 - __main__ - INFO - Device disconnected
+2025-11-27 19:59:57,584 - __main__ - INFO - ============================================================
+2025-11-27 19:59:57,584 - __main__ - INFO - Initializing drone detection system...
+2025-11-27 19:59:57,607 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 19:59:57,607 - __main__ - INFO - System state initialized
+2025-11-27 19:59:57,608 - __main__ - INFO - Communication layer ready
+2025-11-27 19:59:57,612 - __main__ - INFO - Data processor ready
+2025-11-27 19:59:57,612 - algorithms - INFO - 正在加载YOLO模型: best.pt
+2025-11-27 19:59:58,087 - algorithms - INFO - ✓ YOLO模型加载成功
+2025-11-27 19:59:58,087 - algorithms - INFO - 🔥 预热YOLO模型...
+2025-11-27 20:00:00,733 - algorithms - INFO - ✓ 模型预热完成
+2025-11-27 20:00:00,733 - algorithms - INFO - 算法层初始化完成
+2025-11-27 20:00:00,741 - __main__ - INFO - Detector ready
+2025-11-27 20:00:03,131 - __main__ - INFO - UI ready
+2025-11-27 20:00:03,131 - __main__ - INFO - Signal wiring complete
+2025-11-27 20:00:03,131 - __main__ - INFO - System initialization complete
+2025-11-27 20:00:03,131 - __main__ - INFO - ============================================================
+2025-11-27 20:00:03,131 - __main__ - INFO - Launching UI...
+2025-11-27 20:00:08,469 - UI.spectrum.config_interface - INFO - Connection toggle changed: True
+2025-11-27 20:00:08,469 - __main__ - INFO - Received connect request...
+2025-11-27 20:00:08,477 - communication - INFO - 接收线程启动
+2025-11-27 20:00:08,477 - state - INFO - connection status changed: True
+2025-11-27 20:00:08,477 - communication - INFO - 已连接到 127.0.0.1:5000
+2025-11-27 20:00:08,477 - __main__ - INFO - Device connected
+2025-11-27 20:00:08,479 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-11-27 20:00:08,480 - data_process - INFO - 数据处理线程已启动
+2025-11-27 20:00:08,480 - data_process - INFO - 图像转换线程已启动
+2025-11-27 20:00:08,480 - __main__ - INFO - Data processing thread started
+2025-11-27 20:00:08,480 - algorithms - INFO - 检测循环开始运行...
+2025-11-27 20:00:08,480 - algorithms - INFO - ✓ 检测线程已启动
+2025-11-27 20:00:08,480 - __main__ - INFO - Detection thread started
+2025-11-27 20:00:08,485 - __main__ - INFO - Waterfall visualization started
+2025-11-27 20:00:08,485 - __main__ - INFO - Spectrum visualization started
+2025-11-27 20:00:35,392 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-11-27 20:00:35,392 - __main__ - INFO - Received disconnect request...
+2025-11-27 20:00:35,392 - __main__ - INFO - Disconnecting device...
+2025-11-27 20:00:35,462 - algorithms - INFO - 检测循环已退出
+2025-11-27 20:00:35,462 - algorithms - INFO - 检测线程已停止
+2025-11-27 20:00:35,470 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:00:35,470 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:00:35,470 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:00:35,470 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:00:35,470 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:00:35,470 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:00:35,470 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-27 20:00:35,470 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:00:35,474 - state - INFO - connection status changed: False
+2025-11-27 20:00:35,474 - communication - INFO - 接收线程已退出
+2025-11-27 20:00:35,478 - communication - INFO - 连接已断开
+2025-11-27 20:00:35,478 - __main__ - INFO - Device disconnected
+2025-11-27 20:05:11,667 - __main__ - INFO - Cleaning up system resources...
+2025-11-27 20:05:11,669 - __main__ - INFO - Disconnecting device...
+2025-11-27 20:05:11,669 - algorithms - INFO - 检测线程已停止
+2025-11-27 20:05:11,669 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-27 20:05:11,669 - communication - INFO - 连接已断开
+2025-11-27 20:05:11,669 - __main__ - INFO - Device disconnected
+2025-11-27 20:05:11,669 - __main__ - INFO - System shutdown complete
+2025-11-27 20:05:18,424 - __main__ - INFO - ============================================================
+2025-11-27 20:05:18,424 - __main__ - INFO - Initializing drone detection system...
+2025-11-27 20:05:18,424 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 20:05:18,424 - __main__ - INFO - System state initialized
+2025-11-27 20:05:18,424 - __main__ - INFO - Communication layer ready
+2025-11-27 20:05:18,424 - __main__ - INFO - Data processor ready
+2025-11-27 20:05:18,424 - algorithms - INFO - 正在加载YOLO模型: best.pt
+2025-11-27 20:05:18,710 - algorithms - INFO - ✓ YOLO模型加载成功
+2025-11-27 20:05:18,710 - algorithms - INFO - 🔥 预热YOLO模型...
+2025-11-27 20:05:20,259 - algorithms - INFO - ✓ 模型预热完成
+2025-11-27 20:05:20,259 - algorithms - INFO - 算法层初始化完成
+2025-11-27 20:05:20,259 - __main__ - INFO - Detector ready
+2025-11-27 20:05:22,399 - __main__ - INFO - UI ready
+2025-11-27 20:05:22,407 - __main__ - INFO - Signal wiring complete
+2025-11-27 20:05:22,407 - __main__ - INFO - System initialization complete
+2025-11-27 20:05:22,407 - __main__ - INFO - ============================================================
+2025-11-27 20:05:22,407 - __main__ - INFO - Launching UI...
+2025-11-27 20:05:31,931 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-11-27 20:05:31,931 - __main__ - INFO - Received connect request...
+2025-11-27 20:05:31,931 - communication - INFO - 接收线程启动
+2025-11-27 20:05:31,931 - state - INFO - connection status changed: True
+2025-11-27 20:05:31,931 - communication - INFO - 已连接到 127.0.0.1:5000
+2025-11-27 20:05:31,931 - __main__ - INFO - Device connected
+2025-11-27 20:05:31,931 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-11-27 20:05:31,931 - data_process - INFO - 数据处理线程已启动
+2025-11-27 20:05:31,931 - data_process - INFO - 图像转换线程已启动
+2025-11-27 20:05:31,931 - __main__ - INFO - Data processing thread started
+2025-11-27 20:05:31,931 - algorithms - INFO - 检测循环开始运行...
+2025-11-27 20:05:31,931 - algorithms - INFO - ✓ 检测线程已启动
+2025-11-27 20:05:31,931 - __main__ - INFO - Detection thread started
+2025-11-27 20:05:31,931 - __main__ - INFO - Waterfall visualization started
+2025-11-27 20:05:31,931 - __main__ - INFO - Spectrum visualization started
+2025-11-27 20:06:31,700 - __main__ - INFO - Handling parameter update: UI_Waterfall.waterfall_height = 1024
+2025-11-27 20:06:31,700 - state - INFO - parameter updated: UI_Waterfall.waterfall_height = 1024 (old 512)
+2025-11-27 20:06:31,700 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 20:06:31,700 - UI.waterfall.config_interface - INFO - UI display refreshed: UI_Waterfall.waterfall_height = 1024
+2025-11-27 20:06:31,715 - data_process - INFO - 瀑布图参数更新 height=1024
+2025-11-27 20:06:31,715 - __main__ - INFO - Parameter update handled
+2025-11-27 20:06:31,715 - UI.waterfall.config_interface - INFO - Request parameter update: UI_Waterfall.waterfall_height = 1024
+2025-11-27 20:06:40,348 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:40,370 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:57,992 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-11-27 20:06:57,992 - __main__ - INFO - Received disconnect request...
+2025-11-27 20:06:57,996 - __main__ - INFO - Disconnecting device...
+2025-11-27 20:06:58,017 - algorithms - INFO - 检测循环已退出
+2025-11-27 20:06:58,017 - algorithms - INFO - 检测线程已停止
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,017 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,027 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-27 20:06:58,027 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:06:58,027 - state - INFO - connection status changed: False
+2025-11-27 20:06:58,027 - communication - INFO - 接收线程已退出
+2025-11-27 20:06:58,027 - communication - INFO - 连接已断开
+2025-11-27 20:06:58,027 - __main__ - INFO - Device disconnected
+2025-11-27 20:07:02,701 - __main__ - INFO - Cleaning up system resources...
+2025-11-27 20:07:02,702 - __main__ - INFO - Disconnecting device...
+2025-11-27 20:07:02,702 - algorithms - INFO - 检测线程已停止
+2025-11-27 20:07:02,702 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-27 20:07:02,702 - communication - INFO - 连接已断开
+2025-11-27 20:07:02,704 - __main__ - INFO - Device disconnected
+2025-11-27 20:07:02,704 - __main__ - INFO - System shutdown complete
+2025-11-27 20:09:20,125 - __main__ - INFO - ============================================================
+2025-11-27 20:09:20,125 - __main__ - INFO - Initializing drone detection system...
+2025-11-27 20:09:20,148 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 20:09:20,150 - __main__ - INFO - System state initialized
+2025-11-27 20:09:20,150 - __main__ - INFO - Communication layer ready
+2025-11-27 20:09:20,158 - __main__ - INFO - Data processor ready
+2025-11-27 20:09:20,158 - algorithms - INFO - 正在加载YOLO模型: best.pt
+2025-11-27 20:09:20,671 - algorithms - INFO - ✓ YOLO模型加载成功
+2025-11-27 20:09:20,671 - algorithms - INFO - 🔥 预热YOLO模型...
+2025-11-27 20:09:23,146 - algorithms - INFO - ✓ 模型预热完成
+2025-11-27 20:09:23,148 - algorithms - INFO - 算法层初始化完成
+2025-11-27 20:09:23,148 - __main__ - INFO - Detector ready
+2025-11-27 20:09:25,596 - __main__ - INFO - UI ready
+2025-11-27 20:09:25,596 - __main__ - INFO - Signal wiring complete
+2025-11-27 20:09:25,596 - __main__ - INFO - System initialization complete
+2025-11-27 20:09:25,596 - __main__ - INFO - ============================================================
+2025-11-27 20:09:25,596 - __main__ - INFO - Launching UI...
+2025-11-27 20:09:30,509 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-11-27 20:09:30,510 - __main__ - INFO - Received connect request...
+2025-11-27 20:09:30,510 - communication - INFO - 接收线程启动
+2025-11-27 20:09:30,510 - state - INFO - connection status changed: True
+2025-11-27 20:09:30,510 - communication - INFO - 已连接到 127.0.0.1:5000
+2025-11-27 20:09:30,510 - __main__ - INFO - Device connected
+2025-11-27 20:09:30,515 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-11-27 20:09:30,515 - data_process - INFO - 数据处理线程已启动
+2025-11-27 20:09:30,517 - data_process - INFO - 图像转换线程已启动
+2025-11-27 20:09:30,518 - __main__ - INFO - Data processing thread started
+2025-11-27 20:09:30,518 - algorithms - INFO - 检测循环开始运行...
+2025-11-27 20:09:30,518 - algorithms - INFO - ✓ 检测线程已启动
+2025-11-27 20:09:30,521 - __main__ - INFO - Detection thread started
+2025-11-27 20:09:30,521 - __main__ - INFO - Waterfall visualization started
+2025-11-27 20:09:30,522 - __main__ - INFO - Spectrum visualization started
+2025-11-27 20:09:44,339 - __main__ - INFO - Handling parameter update: UI_Waterfall.waterfall_height = 512
+2025-11-27 20:09:44,339 - state - INFO - parameter updated: UI_Waterfall.waterfall_height = 512 (old 1024)
+2025-11-27 20:09:44,339 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 20:09:44,339 - UI.waterfall.config_interface - INFO - UI display refreshed: UI_Waterfall.waterfall_height = 512
+2025-11-27 20:09:44,339 - data_process - INFO - 瀑布图参数更新 height=512
+2025-11-27 20:09:44,339 - __main__ - INFO - Parameter update handled
+2025-11-27 20:09:44,339 - UI.waterfall.config_interface - INFO - Request parameter update: UI_Waterfall.waterfall_height = 512
+2025-11-27 20:09:57,650 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-11-27 20:09:57,650 - __main__ - INFO - Received disconnect request...
+2025-11-27 20:09:57,650 - __main__ - INFO - Disconnecting device...
+2025-11-27 20:09:57,677 - algorithms - INFO - 检测循环已退出
+2025-11-27 20:09:57,679 - algorithms - INFO - 检测线程已停止
+2025-11-27 20:09:57,680 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:09:57,680 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-11-27 20:09:57,682 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-27 20:09:57,682 - state - INFO - connection status changed: False
+2025-11-27 20:09:57,684 - communication - INFO - 连接已断开
+2025-11-27 20:09:57,684 - __main__ - INFO - Device disconnected
+2025-11-27 20:09:57,684 - communication - INFO - 接收线程已退出
+2025-11-27 20:11:09,960 - __main__ - INFO - ============================================================
+2025-11-27 20:11:09,960 - __main__ - INFO - Initializing drone detection system...
+2025-11-27 20:11:09,960 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-11-27 20:11:09,962 - __main__ - INFO - System state initialized
+2025-11-27 20:11:09,963 - __main__ - INFO - Communication layer ready
+2025-11-27 20:11:09,963 - __main__ - INFO - Data processor ready
+2025-11-27 20:11:09,963 - algorithms - INFO - 正在加载YOLO模型: best.pt
+2025-11-27 20:11:10,235 - algorithms - INFO - ✓ YOLO模型加载成功
+2025-11-27 20:11:10,235 - algorithms - INFO - 🔥 预热YOLO模型...
+2025-11-27 20:11:11,707 - algorithms - INFO - ✓ 模型预热完成
+2025-11-27 20:11:11,707 - algorithms - INFO - 算法层初始化完成
+2025-11-27 20:11:11,707 - __main__ - INFO - Detector ready
+2025-11-27 20:11:13,833 - __main__ - INFO - UI ready
+2025-11-27 20:11:13,833 - __main__ - INFO - Signal wiring complete
+2025-11-27 20:11:13,833 - __main__ - INFO - System initialization complete
+2025-11-27 20:11:13,833 - __main__ - INFO - ============================================================
+2025-11-27 20:11:13,833 - __main__ - INFO - Launching UI...
+2025-11-27 20:11:18,599 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-11-27 20:11:18,599 - __main__ - INFO - Received connect request...
+2025-11-27 20:11:18,599 - communication - INFO - 接收线程启动
+2025-11-27 20:11:18,599 - state - INFO - connection status changed: True
+2025-11-27 20:11:18,599 - communication - INFO - 已连接到 127.0.0.1:5000
+2025-11-27 20:11:18,599 - __main__ - INFO - Device connected
+2025-11-27 20:11:18,599 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-11-27 20:11:18,615 - data_process - INFO - 数据处理线程已启动
+2025-11-27 20:11:18,615 - data_process - INFO - 图像转换线程已启动
+2025-11-27 20:11:18,615 - __main__ - INFO - Data processing thread started
+2025-11-27 20:11:18,615 - algorithms - INFO - 检测循环开始运行...
+2025-11-27 20:11:18,615 - algorithms - INFO - ✓ 检测线程已启动
+2025-11-27 20:11:18,615 - __main__ - INFO - Detection thread started
+2025-11-27 20:11:18,615 - __main__ - INFO - Waterfall visualization started
+2025-11-27 20:11:18,615 - __main__ - INFO - Spectrum visualization started
+2025-11-27 20:12:05,323 - UI.spectrum.config_interface - INFO - Connection toggle changed: False
+2025-11-27 20:12:05,324 - __main__ - INFO - Received disconnect request...
+2025-11-27 20:12:05,324 - __main__ - INFO - Disconnecting device...
+2025-11-27 20:12:05,333 - algorithms - INFO - 检测循环已退出
+2025-11-27 20:12:05,333 - algorithms - INFO - 检测线程已停止
+2025-11-27 20:12:05,333 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-27 20:12:05,349 - communication - INFO - 接收线程已退出
+2025-11-27 20:12:05,349 - state - INFO - connection status changed: False
+2025-11-27 20:12:05,351 - communication - INFO - 连接已断开
+2025-11-27 20:12:05,351 - __main__ - INFO - Device disconnected
+2025-11-27 20:12:06,758 - __main__ - INFO - Cleaning up system resources...
+2025-11-27 20:12:06,758 - __main__ - INFO - Disconnecting device...
+2025-11-27 20:12:06,762 - algorithms - INFO - 检测线程已停止
+2025-11-27 20:12:06,762 - data_process - INFO - 数据处理和图像转换线程已停止
+2025-11-27 20:12:06,762 - communication - INFO - 连接已断开
+2025-11-27 20:12:06,762 - __main__ - INFO - Device disconnected
+2025-11-27 20:12:06,762 - __main__ - INFO - System shutdown complete

@@ -23,10 +23,10 @@ root_dir = Path(__file__).parent.parent.parent
 if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 
-from UI.home.home import HomeInterface
+from UI.spectrum.home import SpectrumInterface
 from UI.settings.settings_interface import SettingsInterface
 from UI.settings.theme_manager import get_theme_manager
-from UI.waterfall.visualization import VisualizationInterface
+from UI.waterfall.waterfall_ui import WaterfallInterface
 
 
 class Widget(QFrame):
@@ -127,21 +127,23 @@ class Window(QMainWindow):
         layout.addWidget(self.stack, 1)
 
         # Build sub interfaces
-        self.homeInterface = HomeInterface(
+        self.spectrumInterface = SpectrumInterface(
             self,
             data_processor=self.data_processor,
             state=self.state,
             detector=self.detector,
         )
-        self.visualizationInterface = VisualizationInterface(self)
+        self.waterfallInterface = WaterfallInterface(
+            self, data_processor=self.data_processor, detector=self.detector, state=self.state
+        )
         self.settingInterface = SettingsInterface(self, self.theme_manager)
         self.albumInterface = Widget("Album Interface", self)
         self.albumInterface1 = Widget("Album Interface 1", self)
 
-        self._add_page("Home", self.homeInterface, "🏠")
+        self._add_page("Spectrum", self.spectrumInterface, "🏠")
         self._add_page(
-            "Visualization Interface",
-            self.visualizationInterface,
+            "Waterfall",
+            self.waterfallInterface,
             "📊",
         )
         self._add_page("Albums", self.albumInterface, "🖥️")
