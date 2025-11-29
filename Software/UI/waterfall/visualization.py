@@ -47,11 +47,16 @@ class WaterfallVisualizationCard(QWidget):
         viz_layout.addWidget(self.result_label)
         layout.addWidget(viz_card)
 
+        # 统计卡片
         stats_layout, stats_card = self.component.create_card(self, height=260)
+
         self.stats_label = BodyLabel(stats_card)
         self.stats_label.setWordWrap(True)
-        self.stats_label.setMinimumHeight(180)
+        self.stats_label.setAlignment(
+            Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft
+        )
         stats_layout.addWidget(self.stats_label)
+
         layout.addWidget(stats_card)
 
         layout.setStretch(0, 3)
@@ -69,12 +74,18 @@ class WaterfallVisualizationCard(QWidget):
             #WaterfallVisualizationCard {{
                 background-color: {palette['window_bg']};
             }}
-            QLabel {{
-                color: {palette['text_primary']};
-            }}
             """
         )
-        self.stats_label.setStyleSheet(f"color: {palette['text_primary']};")
+
+        # 为统计标签设置样式
+        stats_label_style = f"""
+            QLabel {{
+                color: {palette['text_primary']};
+                background-color: {palette['card_bg']};
+                padding: 5px;
+            }}
+        """
+        self.stats_label.setStyleSheet(stats_label_style)
 
     def update_visualization(self):
         try:
@@ -96,7 +107,9 @@ class WaterfallVisualizationCard(QWidget):
                 self._update_label(self.result_label, detection_image)
                 self.frame_displayed += 1
 
-            processor_stats = self.data_processor.get_stats() if self.data_processor else {}
+            processor_stats = (
+                self.data_processor.get_stats() if self.data_processor else {}
+            )
             self._update_stats(processor_stats, detection_stats)
 
         except Exception as e:
@@ -127,31 +140,35 @@ class WaterfallVisualizationCard(QWidget):
         sent_frames = getattr(self.state, "sent_frames", 0) if self.state else 0
         received_frames = getattr(self.state, "received_frames", 0) if self.state else 0
         processed_frames = stats.get("frame_id", 0)
-        detection_frames = detection_stats.get("detection_count", 0) if detection_stats else 0
+        detection_frames = (
+            detection_stats.get("detection_count", 0) if detection_stats else 0
+        )
         detection_fps = detection_stats.get("fps", 0.0) if detection_stats else 0.0
         batch_size = stats.get("batch_size", 0)
 
-        left_col = [
-            f"发送帧数: {sent_frames}",
-            f"接收帧数: {received_frames}",
-            f"数据处理帧数: {processed_frames}",
-            f"检测帧数: {detection_frames}",
-        ]
-        right_col = [
-            f"检测FPS: {detection_fps:.2f}",
-            f"显示帧数: {self.frame_displayed}",
-            f"批处理帧数: {batch_size}",
-        ]
+        # 基本统计信息 - 3列布局
+        stats_table = f"""
+        <table cellpadding='4' cellspacing='0' width='100%'>
+            <tr>
+                <td width='33%'>发送帧数: {sent_frames}</td>
+                <td width='33%'>接收帧数: {received_frames}</td>
+                <td width='34%'>数据处理帧数: {processed_frames}</td>
+            </tr>
+            <tr>
+                <td>检测帧数: {detection_frames}</td>
+                <td>检测FPS: {detection_fps:.2f}</td>
+                <td>显示帧数: {self.frame_displayed}</td>
+            </tr>
+            <tr>
+                <td>批处理帧数: {batch_size}</td>
+                <td colspan='2'></td>
+            </tr>
+        </table>
+        """
 
-        table_rows = []
-        max_rows = max(len(left_col), len(right_col))
-        for i in range(max_rows):
-            lval = left_col[i] if i < len(left_col) else ""
-            rval = right_col[i] if i < len(right_col) else ""
-            table_rows.append(f"<tr><td>{lval}</td><td>{rval}</td></tr>")
+        html_parts = [stats_table]
 
-        html_parts = ["<table cellpadding='2' cellspacing='2'>", *table_rows, "</table>"]
-
+        # 检测结果 - 多列显示
         if detection_stats and self.detector:
             try:
                 detection_results = self.detector.get_detection_results()
@@ -159,16 +176,31 @@ class WaterfallVisualizationCard(QWidget):
                 detection_results = []
 
             if detection_results:
-                html_parts.append("<p><b>检测结果:</b></p>")
-                for i, result in enumerate(detection_results[:3]):
-                    html_parts.append(
-                        f"<p>&nbsp;&nbsp;{i+1}. {result.get('class_name', '未知')} "
-                        f"{result.get('confidence', 0):.2f}</p>"
-                    )
-                if len(detection_results) > 3:
-                    html_parts.append(f"<p>&nbsp;&nbsp;... 还有 {len(detection_results)-3} 个</p>")
+                html_parts.append("<p style='margin-top: 10px;'><b>检测结果:</b></p>")
+
+                # 将检测结果分为多列显示（每列最多显示3个）
+                cols = 3  # 显示列数
+                rows = []
+                for i in range(0, len(detection_results), cols):
+                    row_items = detection_results[i : i + cols]
+                    row_html = "<tr>"
+                    for result in row_items:
+                        class_name = result.get("class_name", "未知")
+                        confidence = result.get("confidence", 0)
+                        row_html += f"<td width='{100//cols}%'>{class_name} {confidence:.2f}</td>"
+                    # 填充空单元格
+                    for _ in range(cols - len(row_items)):
+                        row_html += f"<td width='{100//cols}%'></td>"
+                    row_html += "</tr>"
+                    rows.append(row_html)
+
+                html_parts.append(
+                    "<table cellpadding='2' cellspacing='0' width='100%'>"
+                )
+                html_parts.extend(rows)
+                html_parts.append("</table>")
             else:
-                html_parts.append("<p><b>当前无目标</b></p>")
+                html_parts.append("<p style='margin-top: 10px;'><b>当前无目标</b></p>")
 
         self.stats_label.setText("".join(html_parts))
 

@@ -1,9 +1,9 @@
 {
   "Receiver": {
     "FFT_Length": 512,
-    "Decimation_factor": 4,
+    "Decimation_factor": 100,
     "Centre_frequency(MHz)": 2400.0,
-    "bandwidth(MHz)": 100.0
+    "SPAN(MHz)": 100.0
   },
   "Detection": {
     "conf_threshold": 0.25,
@@ -12,7 +12,7 @@
   },
   "UI_Spectrum": {
     "spectrum_left_freq(MHz)": 0.0,
-    "spectrum_right_freq(MHz)": 1000
+    "spectrum_right_freq(MHz)": 200.0
   },
   "UI_Waterfall": {
     "waterfall_height": 512

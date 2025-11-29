@@ -85,10 +85,18 @@ class WaterfallConfigInterface(QWidget):
         receiver_item = QTreeWidgetItem(["Receiver"])
         self.config_tree.addTopLevelItem(receiver_item)
         receiver_params = [
-            ("FFT_Length", self.state.fft_length, ["128", "256", "512", "1024", "2048", "4096", "8192"]),
-            ("Decimation_factor", self.state.decimation_factor, ["4", "8", "16", "32", "64", "128", "256", "512", "1024"]),
+            (
+                "FFT_Length",
+                self.state.fft_length,
+                ["128", "256", "512", "1024", "2048", "4096", "8192"],
+            ),
+            (
+                "Decimation_factor",
+                self.state.decimation_factor,
+                ["4", "8", "16", "32", "64", "128", "256", "512", "1024"],
+            ),
             ("Centre_frequency(MHz)", self.state.center_frequency, None),
-            ("bandwidth(MHz)", self.state.bandwidth, None),
+            ("SPAN(MHz)", self.state.span, None),
         ]
         for name, value, options in receiver_params:
             self.add_parameter(receiver_item, "Receiver", name, value, options)
@@ -115,7 +123,9 @@ class WaterfallConfigInterface(QWidget):
         for name, value, options in detection_params:
             self.add_parameter(detection_item, "Detection", name, value, options)
 
-    def add_parameter(self, parent_item, param_group, param_name, current_value, options):
+    def add_parameter(
+        self, parent_item, param_group, param_name, current_value, options
+    ):
         param_item = QTreeWidgetItem([param_name])
         parent_item.addChild(param_item)
 
@@ -125,7 +135,11 @@ class WaterfallConfigInterface(QWidget):
         param_layout.setSpacing(5)
 
         value_label = self.component.create_label(
-            param_widget, str(current_value), None, None, alignment=Qt.AlignmentFlag.AlignCenter
+            param_widget,
+            str(current_value),
+            None,
+            None,
+            alignment=Qt.AlignmentFlag.AlignCenter,
         )
         value_label.setFixedWidth(80)
         param_layout.addWidget(value_label)
@@ -155,8 +169,12 @@ class WaterfallConfigInterface(QWidget):
                     numeric_value = float(new_value)
                     if numeric_value.is_integer():
                         numeric_value = int(numeric_value)
-                self.parameter_change_request.emit(param_group, param_name, numeric_value)
-                logger.info(f"Request parameter update: {param_group}.{param_name} = {numeric_value}")
+                self.parameter_change_request.emit(
+                    param_group, param_name, numeric_value
+                )
+                logger.info(
+                    f"Request parameter update: {param_group}.{param_name} = {numeric_value}"
+                )
             except ValueError:
                 logger.error(f"Invalid parameter value {param_name} = {new_value}")
 
@@ -168,7 +186,7 @@ class WaterfallConfigInterface(QWidget):
         self.config_tree.setItemWidget(param_item, 1, param_widget)
         self._value_labels[f"{param_group}.{param_name}"] = value_label
 
-    def apply_palette(self, palette: dict):
+    def apply_palette(self, palette: dict):  # 用于应用主题调色板
         self.setStyleSheet(
             f"""
             #WaterfallConfigInterface {{
@@ -216,14 +234,16 @@ class WaterfallConfigInterface(QWidget):
             self._value_labels[key].setText(str(change_info["value"]))
             logger.info(f"UI display refreshed: {key} = {change_info['value']}")
 
-    def on_connection_state_changed(self, is_connected):
+    def on_connection_state_changed(
+        self, is_connected
+    ):  # 更新连接状态，在state变化时调用
         if self.connection_switch:
             self.connection_switch.blockSignals(True)
-            self.connection_switch.setChecked(is_connected)
+            self.connection_switch.setChecked(is_connected)  # 更新开关状态
             self.connection_switch.blockSignals(False)
             self.connection_switch.setEnabled(True)
 
-    def on_switch_toggled(self, checked):
+    def on_switch_toggled(self, checked):  # 切换连接状态，在用户操作时发出连接请求信号
         logger.info(f"Connection toggle changed: {checked}")
         self.connection_switch.setEnabled(False)
         self.connection_request.emit(checked)

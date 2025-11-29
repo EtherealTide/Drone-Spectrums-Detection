@@ -1,0 +1,4 @@
+Noise
+WiFi/bluetooth
+Video-transmission signal
+Flight-control signal

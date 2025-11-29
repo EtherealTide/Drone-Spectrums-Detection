@@ -85,10 +85,18 @@ class SpectrumConfigInterface(QWidget):
         receiver_item = QTreeWidgetItem(["Receiver"])
         self.config_tree.addTopLevelItem(receiver_item)
         receiver_params = [
-            ("FFT_Length", self.state.fft_length, ["128", "256", "512", "1024", "2048", "4096", "8192"]),
-            ("Decimation_factor", self.state.decimation_factor, ["4", "8", "16", "32", "64", "128", "256", "512", "1024"]),
+            (
+                "FFT_Length",
+                self.state.fft_length,
+                ["128", "256", "512", "1024", "2048", "4096", "8192"],
+            ),
+            (
+                "Decimation_factor",
+                self.state.decimation_factor,
+                ["4", "8", "16", "32", "64", "128", "256", "512", "1024"],
+            ),
             ("Centre_frequency(MHz)", self.state.center_frequency, None),
-            ("bandwidth(MHz)", self.state.bandwidth, None),
+            ("SPAN(MHz)", self.state.span, None),
         ]
         for name, value, options in receiver_params:
             self.add_parameter(receiver_item, "Receiver", name, value, options)
@@ -116,7 +124,9 @@ class SpectrumConfigInterface(QWidget):
         for name, value, options in detection_params:
             self.add_parameter(detection_item, "Detection", name, value, options)
 
-    def add_parameter(self, parent_item, param_group, param_name, current_value, options):
+    def add_parameter(
+        self, parent_item, param_group, param_name, current_value, options
+    ):
         param_item = QTreeWidgetItem([param_name])
         parent_item.addChild(param_item)
 
@@ -126,7 +136,11 @@ class SpectrumConfigInterface(QWidget):
         param_layout.setSpacing(5)
 
         value_label = self.component.create_label(
-            param_widget, str(current_value), None, None, alignment=Qt.AlignmentFlag.AlignCenter
+            param_widget,
+            str(current_value),
+            None,
+            None,
+            alignment=Qt.AlignmentFlag.AlignCenter,
         )
         value_label.setFixedWidth(80)
         param_layout.addWidget(value_label)
@@ -156,8 +170,12 @@ class SpectrumConfigInterface(QWidget):
                     numeric_value = float(new_value)
                     if numeric_value.is_integer():
                         numeric_value = int(numeric_value)
-                self.parameter_change_request.emit(param_group, param_name, numeric_value)
-                logger.info(f"Request parameter update: {param_group}.{param_name} = {numeric_value}")
+                self.parameter_change_request.emit(
+                    param_group, param_name, numeric_value
+                )
+                logger.info(
+                    f"Request parameter update: {param_group}.{param_name} = {numeric_value}"
+                )
             except ValueError:
                 logger.error(f"Invalid parameter value {param_name} = {new_value}")
 

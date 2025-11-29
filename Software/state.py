@@ -44,7 +44,7 @@ class State(QObject):
                 "FFT_Length": 512,
                 "Decimation_factor": 100,
                 "Centre_frequency(MHz)": 2400.0,
-                "bandwidth(MHz)": 100.0,
+                "SPAN(MHz)": 100.0,
             },
             "Detection": {
                 "conf_threshold": 0.25,
@@ -109,8 +109,8 @@ class State(QObject):
         return self.get_parameter("Receiver", "Centre_frequency(MHz)", 2400.0)
 
     @property
-    def bandwidth(self):
-        return self.get_parameter("Receiver", "bandwidth(MHz)", 100.0)
+    def span(self):
+        return self.get_parameter("Receiver", "SPAN(MHz)", 100.0)
 
     @property
     def spectrum_left_freq(self):

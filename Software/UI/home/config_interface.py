@@ -121,7 +121,7 @@ class ConfigInterface(QWidget):
         )
 
         self.add_parameter(
-            receiver_item, "Receiver", "bandwidth(MHz)", self.state.bandwidth, None
+            receiver_item, "Receiver", "SPAN(MHz)", self.state.span, None
         )
 
         # 3. UI 节点
