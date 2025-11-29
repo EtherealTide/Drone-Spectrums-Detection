@@ -156,50 +156,77 @@ class DroneDetector:
             return self._detect_pytorch(image)
 
     def _detect_openvino(self, image):
-        """OpenVINO推理"""
+        """OpenVINO推理 - 优化版本，与示例代码逻辑一致"""
         orig_h, orig_w = image.shape[:2]
 
-        # 预处理
+        # 预处理（与示例代码一致）
         resized = cv2.resize(image, (self.input_shape[3], self.input_shape[2]))
         img_rgb = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)
-        input_tensor = (
-            np.transpose(img_rgb, (2, 0, 1))[np.newaxis].astype(np.float32) / 255.0
-        )
+        img_normalized = img_rgb.astype(np.float32) / 255.0
+        img_transposed = np.transpose(img_normalized, (2, 0, 1))
+        input_tensor = np.expand_dims(img_transposed, axis=0)
 
         # 推理
         results = self.compiled_model({self.input_layer.any_name: input_tensor})
-        output = list(results.values())[0][0].T  # 转置
+        output = results[self.compiled_model.output(0)]
 
-        # 后处理
+        # 后处理（与示例代码完全一致）
+        pred = output[0].T  # [N, num_classes+4]
+
+        # 提取坐标和类别分数
+        boxes = pred[:, :4]  # [x_center, y_center, w, h]
+        class_scores = pred[:, 4 : 4 + len(self.class_names)]
+
+        # 获取最大分数和类别
+        max_scores = np.max(class_scores, axis=1)
+        class_ids = np.argmax(class_scores, axis=1)
+
+        # 置信度过滤
+        mask = max_scores > self.conf_threshold
+        if not np.any(mask):
+            return []
+
+        boxes = boxes[mask]
+        max_scores = max_scores[mask]
+        class_ids = class_ids[mask]
+
+        # 中心坐标转左上右下
+        x_center, y_center, w, h = boxes[:, 0], boxes[:, 1], boxes[:, 2], boxes[:, 3]
+        x1 = x_center - w / 2
+        y1 = y_center - h / 2
+        x2 = x_center + w / 2
+        y2 = y_center + h / 2
+
+        # 缩放到原图尺寸
+        scale_x = orig_w / self.input_shape[3]
+        scale_y = orig_h / self.input_shape[2]
+        x1 = np.clip(x1 * scale_x, 0, orig_w).astype(int)
+        y1 = np.clip(y1 * scale_y, 0, orig_h).astype(int)
+        x2 = np.clip(x2 * scale_x, 0, orig_w).astype(int)
+        y2 = np.clip(y2 * scale_y, 0, orig_h).astype(int)
+
+        # NMS（与示例代码一致）
+        boxes_xywh = np.stack([x1, y1, x2 - x1, y2 - y1], axis=1)
+        indices = cv2.dnn.NMSBoxes(
+            boxes_xywh.tolist(),
+            max_scores.tolist(),
+            self.conf_threshold,
+            self.iou_threshold,
+        )
+
         detections = []
-        for det in output:
-            x_center, y_center, box_w, box_h = det[:4]
-            class_scores = det[4 : 4 + len(self.class_names)]
-
-            max_score = np.max(class_scores)
-            cls_id = int(np.argmax(class_scores))
-
-            if max_score >= self.conf_threshold:
-                # 转换坐标到原图
-                x1 = int((x_center - box_w / 2) * orig_w / self.input_shape[3])
-                y1 = int((y_center - box_h / 2) * orig_h / self.input_shape[2])
-                x2 = int((x_center + box_w / 2) * orig_w / self.input_shape[3])
-                y2 = int((y_center + box_h / 2) * orig_h / self.input_shape[2])
-
-                x1, y1 = max(0, x1), max(0, y1)
-                x2, y2 = min(orig_w, x2), min(orig_h, y2)
-
+        if len(indices) > 0:
+            for idx in indices.flatten():
                 detections.append(
                     {
-                        "bbox": [x1, y1, x2, y2],
-                        "confidence": float(max_score),
-                        "class_id": cls_id,
-                        "class_name": self.class_names[cls_id],
+                        "bbox": [x1[idx], y1[idx], x2[idx], y2[idx]],
+                        "confidence": float(max_scores[idx]),
+                        "class_id": int(class_ids[idx]),
+                        "class_name": self.class_names[class_ids[idx]],
                     }
                 )
 
-        # NMS
-        return self._apply_nms(detections)
+        return detections
 
     def _detect_pytorch(self, image):
         """PyTorch推理"""
@@ -227,7 +254,7 @@ class DroneDetector:
                     }
                 )
 
-        return detections
+        return detections  # PyTorch的YOLO已经做过NMS了
 
     def _apply_nms(self, detections):
         """应用NMS"""
