@@ -63,7 +63,7 @@ class WaterfallVisualizationCard(QWidget):
         layout.setStretch(1, 1)
 
     def start_update(self):
-        self.update_timer.start(10)
+        self.update_timer.start(20)
 
     def stop_update(self):
         self.update_timer.stop()

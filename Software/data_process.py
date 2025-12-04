@@ -5,6 +5,7 @@ from collections import deque
 import logging
 import queue
 import matplotlib.pyplot as plt
+import cv2
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +35,7 @@ class DataProcessor:
             maxlen=self.waterfall_height,
         )
 
-        self.transfer_time = 0.01
+        self.transfer_time_interval = 0.01
         self.waterfall_image = np.zeros(
             (self.waterfall_height, self.waterfall_width, 3), dtype=np.uint8
         )
@@ -49,6 +50,9 @@ class DataProcessor:
         self.min_value = 0.0
         self.batch_size = 0
 
+        # 【改进】预计算LUT表，使用OpenCV的applyColorMap
+        self.use_opencv_colormap = True
+
     def start_processing(self):
         if not self.process_thread or not self.process_thread.is_alive():
             self.state.data_processing_thread = True
@@ -56,14 +60,14 @@ class DataProcessor:
                 target=self._process_loop, daemon=True
             )
             self.process_thread.start()
-            logger.info("数据处理线程已启动")
+            logger.info("Data processing thread started")
 
         if not self.image_thread or not self.image_thread.is_alive():
             self.image_thread = threading.Thread(
                 target=self._image_conversion_loop, daemon=True
             )
             self.image_thread.start()
-            logger.info("图像转换线程已启动")
+            logger.info("Image conversion thread started")
 
     def stop_processing(self):
         self.state.data_processing_thread = False
@@ -74,26 +78,28 @@ class DataProcessor:
         if self.image_thread:
             self.image_thread.join(timeout=2)
 
-        logger.info("数据处理和图像转换线程已停止")
+        logger.info("Data processing and image conversion threads stopped")
 
     def _process_loop(self):
         while self.state.data_processing_thread:
             try:
-                batch_frames = []
+                batch_frames = []  # 一轮批次处理的帧列表
                 try:
                     first_frame = self.fft_data_queue.get(timeout=1)
                     batch_frames.append(first_frame)
                 except queue.Empty:
                     continue
 
-                while True:
+                while True:  # 尽可能多地获取队列中的数据，直到队列为空
                     try:
                         frame = self.fft_data_queue.get_nowait()
                         batch_frames.append(frame)
                     except queue.Empty:
                         break
 
-                self.batch_size = len(batch_frames)
+                self.batch_size = len(
+                    batch_frames
+                )  # 只要长度为1，就说明数据处理速度可以跟上通信层速度
 
                 processed_batch = []
                 for fft_frame in batch_frames:
@@ -139,21 +145,26 @@ class DataProcessor:
         while self.state.data_processing_thread:
             try:
                 if not self.image_needs_update:
-                    time.sleep(self.transfer_time)
+                    time.sleep(self.transfer_time_interval)
                     continue
 
                 with self.data_lock:
                     waterfall_list = list(self.waterfall_buffer)
                     self.image_needs_update = False
 
-                # Convert to array: shape (height, width); newest at top
+                # 【改进1】直接转为uint8，减少中间转换
                 waterfall_array = np.array(waterfall_list, dtype=np.float32)
-                waterfall_array = np.flipud(waterfall_array)
-                # Transpose so YOLO receives width x height orientation
-                waterfall_array = waterfall_array.T
+                waterfall_array = np.flipud(waterfall_array).T
 
-                color_indices = (waterfall_array * 255.0).astype(np.uint8)
-                rgb_image = self.colormap[color_indices]
+                # 【改进2】使用OpenCV的硬件加速颜色映射
+                if self.use_opencv_colormap:
+                    gray_image = (waterfall_array * 255.0).astype(np.uint8)
+                    bgr_image = cv2.applyColorMap(gray_image, cv2.COLORMAP_JET)
+                    rgb_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
+                else:
+                    # 原始方法（保留作为fallback）
+                    color_indices = (waterfall_array * 255.0).astype(np.uint8)
+                    rgb_image = self.colormap[color_indices]
 
                 with self.image_lock:
                     self.waterfall_image = rgb_image
@@ -202,7 +213,9 @@ class DataProcessor:
                 maxlen=self.waterfall_height,
             )
 
-            logger.info(f"FFT长度已设置为: {length}, 瀑布图尺寸 {self.waterfall_width}x{self.waterfall_height}")
+            logger.info(
+                f"FFT长度已设置为: {length}, 瀑布图尺寸 {self.waterfall_width}x{self.waterfall_height}"
+            )
 
         with self.image_lock:
             self.waterfall_image = np.zeros(
@@ -231,6 +244,4 @@ class DataProcessor:
                 self.waterfall_image = np.zeros(
                     (self.waterfall_height, self.waterfall_width, 3), dtype=np.uint8
                 )
-            logger.info(
-                f"瀑布图参数更新 height={self.waterfall_height}"
-            )
+            logger.info(f"瀑布图参数更新 height={self.waterfall_height}")

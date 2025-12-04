@@ -1,6 +1,6 @@
 {
   "Receiver": {
-    "FFT_Length": 512,
+    "FFT_Length": 1024,
     "Decimation_factor": 100,
     "Centre_frequency(MHz)": 2400.0,
     "SPAN(MHz)": 100.0

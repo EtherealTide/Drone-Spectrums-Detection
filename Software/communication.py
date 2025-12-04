@@ -57,10 +57,10 @@ class Communication:
             )
             self.receive_thread.start()
             self.state.communication_thread = True  # 这会触发信号
-            logger.info(f"已连接到 {ip}:{port}")
+            logger.info(f"Connected to {ip}:{port}")
             return True
         except Exception as e:
-            logger.error(f"连接失败: {e}")
+            logger.error(f"Connection failed: {e}")
             self.state.communication_thread = False  # 这会触发信号
             return False
 
@@ -69,7 +69,7 @@ class Communication:
         if self.socket:
             self.socket.close()
             self.socket = None
-        logger.info("连接已断开")
+        logger.info("Disconnected from slave device")
 
     def send_command(self, command_name, value):
         """发送命令到下位机

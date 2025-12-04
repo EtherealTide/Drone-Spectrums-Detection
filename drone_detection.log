@@ -1,178 +1,664 @@
-2025-11-29 17:01:15,222 - __main__ - INFO - ============================================================
-2025-11-29 17:01:15,222 - __main__ - INFO - Initializing drone detection system...
-2025-11-29 17:01:15,242 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
-2025-11-29 17:01:15,243 - __main__ - INFO - System state initialized
-2025-11-29 17:01:15,244 - __main__ - INFO - Communication layer ready
-2025-11-29 17:01:15,245 - __main__ - INFO - Data processor ready
-2025-11-29 17:01:15,246 - algorithms - INFO - ✓ 加载了 4 个类别: ['Noise', 'WiFi/bluetooth', 'Video-transmission signal', 'Flight-control signal']
-2025-11-29 17:01:15,397 - algorithms - INFO - 正在加载OpenVINO模型: c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\best_openvino_model\best.xml
-2025-11-29 17:01:16,031 - algorithms - INFO - ✓ OpenVINO模型加载成功（GPU加速）- 输入形状: [1,3,512,512]
-2025-11-29 17:01:16,031 - algorithms - INFO - 🔥 预热模型...
-2025-11-29 17:01:16,055 - algorithms - INFO - ✓ 模型预热完成
-2025-11-29 17:01:16,058 - algorithms - INFO - 算法层初始化完成
-2025-11-29 17:01:16,058 - __main__ - INFO - Detector ready
-2025-11-29 17:01:18,176 - __main__ - INFO - UI ready
-2025-11-29 17:01:18,177 - __main__ - INFO - Signal wiring complete
-2025-11-29 17:01:18,177 - __main__ - INFO - System initialization complete
-2025-11-29 17:01:18,177 - __main__ - INFO - ============================================================
-2025-11-29 17:01:18,177 - __main__ - INFO - Launching UI...
-2025-11-29 17:01:24,338 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
-2025-11-29 17:01:24,338 - __main__ - INFO - Received connect request...
-2025-11-29 17:01:24,340 - communication - INFO - 接收线程启动
-2025-11-29 17:01:24,340 - state - INFO - connection status changed: True
-2025-11-29 17:01:24,341 - communication - INFO - 已连接到 127.0.0.1:5000
-2025-11-29 17:01:24,341 - __main__ - INFO - Device connected
-2025-11-29 17:01:24,341 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
-2025-11-29 17:01:24,342 - data_process - INFO - 数据处理线程已启动
-2025-11-29 17:01:24,343 - data_process - INFO - 图像转换线程已启动
-2025-11-29 17:01:24,343 - __main__ - INFO - Data processing thread started
-2025-11-29 17:01:24,344 - algorithms - INFO - 检测循环开始运行...
-2025-11-29 17:01:24,344 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
-2025-11-29 17:01:24,344 - __main__ - INFO - Detection thread started
-2025-11-29 17:01:24,344 - __main__ - INFO - Waterfall visualization started
-2025-11-29 17:01:24,345 - __main__ - INFO - Spectrum visualization started
-2025-11-29 17:01:41,782 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
-2025-11-29 17:01:41,782 - __main__ - INFO - Received disconnect request...
-2025-11-29 17:01:41,782 - __main__ - INFO - Disconnecting device...
-2025-11-29 17:01:41,789 - algorithms - INFO - 检测循环已退出
-2025-11-29 17:01:41,789 - algorithms - INFO - 检测线程已停止
-2025-11-29 17:01:41,792 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:01:41,793 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:01:41,793 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:01:41,793 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:01:41,793 - data_process - INFO - 数据处理和图像转换线程已停止
-2025-11-29 17:01:41,793 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:01:41,794 - state - INFO - connection status changed: False
-2025-11-29 17:01:41,794 - communication - INFO - 接收线程已退出
-2025-11-29 17:01:41,797 - communication - INFO - 连接已断开
-2025-11-29 17:01:41,797 - __main__ - INFO - Device disconnected
-2025-11-29 17:02:58,434 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
-2025-11-29 17:02:58,434 - __main__ - INFO - Received connect request...
-2025-11-29 17:02:58,438 - communication - INFO - 接收线程启动
-2025-11-29 17:02:58,438 - state - INFO - connection status changed: True
-2025-11-29 17:02:58,438 - communication - INFO - 已连接到 127.0.0.1:5000
-2025-11-29 17:02:58,438 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:02:58,439 - __main__ - INFO - Device connected
-2025-11-29 17:02:58,439 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:02:58,439 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
-2025-11-29 17:02:58,439 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:02:58,440 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:02:58,440 - data_process - INFO - 数据处理线程已启动
-2025-11-29 17:02:58,441 - data_process - INFO - 图像转换线程已启动
-2025-11-29 17:02:58,441 - __main__ - INFO - Data processing thread started
-2025-11-29 17:02:58,442 - algorithms - INFO - 检测循环开始运行...
-2025-11-29 17:02:58,442 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
-2025-11-29 17:02:58,442 - __main__ - INFO - Detection thread started
-2025-11-29 17:02:58,443 - __main__ - INFO - Waterfall visualization started
-2025-11-29 17:02:58,443 - __main__ - INFO - Spectrum visualization started
-2025-11-29 17:02:59,098 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
-2025-11-29 17:02:59,098 - __main__ - INFO - Received disconnect request...
-2025-11-29 17:02:59,098 - __main__ - INFO - Disconnecting device...
-2025-11-29 17:02:59,105 - algorithms - INFO - 检测循环已退出
-2025-11-29 17:02:59,106 - algorithms - INFO - 检测线程已停止
-2025-11-29 17:02:59,107 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:02:59,108 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:02:59,108 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:02:59,108 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:02:59,108 - data_process - INFO - 数据处理和图像转换线程已停止
-2025-11-29 17:02:59,108 - state - INFO - connection status changed: False
-2025-11-29 17:02:59,108 - communication - ERROR - 无法同步到魔数，退出接收
-2025-11-29 17:02:59,109 - communication - INFO - 接收线程已退出
-2025-11-29 17:02:59,111 - communication - INFO - 连接已断开
-2025-11-29 17:02:59,111 - __main__ - INFO - Device disconnected
-2025-11-29 17:03:37,291 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
-2025-11-29 17:03:37,292 - __main__ - INFO - Received connect request...
-2025-11-29 17:03:37,294 - communication - INFO - 接收线程启动
-2025-11-29 17:03:37,294 - state - INFO - connection status changed: True
-2025-11-29 17:03:37,295 - communication - INFO - 已连接到 127.0.0.1:5000
-2025-11-29 17:03:37,295 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:03:37,295 - __main__ - INFO - Device connected
-2025-11-29 17:03:37,295 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:03:37,295 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
-2025-11-29 17:03:37,295 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:03:37,296 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:03:37,297 - data_process - INFO - 数据处理线程已启动
-2025-11-29 17:03:37,297 - data_process - INFO - 图像转换线程已启动
-2025-11-29 17:03:37,298 - __main__ - INFO - Data processing thread started
-2025-11-29 17:03:37,298 - algorithms - INFO - 检测循环开始运行...
-2025-11-29 17:03:37,299 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
-2025-11-29 17:03:37,299 - __main__ - INFO - Detection thread started
-2025-11-29 17:03:37,299 - __main__ - INFO - Waterfall visualization started
-2025-11-29 17:03:37,299 - __main__ - INFO - Spectrum visualization started
-2025-11-29 17:03:40,950 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
-2025-11-29 17:03:40,951 - __main__ - INFO - Received disconnect request...
-2025-11-29 17:03:40,951 - __main__ - INFO - Disconnecting device...
-2025-11-29 17:03:40,954 - algorithms - INFO - 检测循环已退出
-2025-11-29 17:03:40,954 - algorithms - INFO - 检测线程已停止
-2025-11-29 17:03:40,957 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:03:40,957 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:03:40,957 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:03:40,957 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:03:40,957 - data_process - INFO - 数据处理和图像转换线程已停止
-2025-11-29 17:03:40,957 - state - INFO - connection status changed: False
-2025-11-29 17:03:40,957 - communication - INFO - 接收线程已退出
-2025-11-29 17:03:40,960 - communication - INFO - 连接已断开
-2025-11-29 17:03:40,960 - __main__ - INFO - Device disconnected
-2025-11-29 17:06:19,194 - __main__ - INFO - Cleaning up system resources...
-2025-11-29 17:06:19,195 - __main__ - INFO - Disconnecting device...
-2025-11-29 17:06:19,195 - algorithms - INFO - 检测线程已停止
-2025-11-29 17:06:19,195 - data_process - INFO - 数据处理和图像转换线程已停止
-2025-11-29 17:06:19,195 - communication - INFO - 连接已断开
-2025-11-29 17:06:19,195 - __main__ - INFO - Device disconnected
-2025-11-29 17:06:19,195 - __main__ - INFO - System shutdown complete
-2025-11-29 17:06:27,623 - __main__ - INFO - ============================================================
-2025-11-29 17:06:27,624 - __main__ - INFO - Initializing drone detection system...
-2025-11-29 17:06:27,624 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
-2025-11-29 17:06:27,625 - __main__ - INFO - System state initialized
-2025-11-29 17:06:27,625 - __main__ - INFO - Communication layer ready
-2025-11-29 17:06:27,626 - __main__ - INFO - Data processor ready
-2025-11-29 17:06:27,627 - algorithms - INFO - ✓ 加载了 4 个类别: ['Noise', 'WiFi/bluetooth', 'Video-transmission signal', 'Flight-control signal']
-2025-11-29 17:06:27,759 - algorithms - INFO - 正在加载OpenVINO模型: c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\best_openvino_model\best.xml
-2025-11-29 17:06:28,676 - algorithms - INFO - ✓ OpenVINO模型加载成功（GPU加速）- 输入形状: [1,3,512,512]
-2025-11-29 17:06:28,676 - algorithms - INFO - 🔥 预热模型...
-2025-11-29 17:06:28,697 - algorithms - INFO - ✓ 模型预热完成
-2025-11-29 17:06:28,699 - algorithms - INFO - 算法层初始化完成
-2025-11-29 17:06:28,700 - __main__ - INFO - Detector ready
-2025-11-29 17:06:30,827 - __main__ - INFO - UI ready
-2025-11-29 17:06:30,827 - __main__ - INFO - Signal wiring complete
-2025-11-29 17:06:30,828 - __main__ - INFO - System initialization complete
-2025-11-29 17:06:30,828 - __main__ - INFO - ============================================================
-2025-11-29 17:06:30,828 - __main__ - INFO - Launching UI...
-2025-11-29 17:06:38,109 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
-2025-11-29 17:06:38,111 - __main__ - INFO - Received connect request...
-2025-11-29 17:06:38,112 - communication - INFO - 接收线程启动
-2025-11-29 17:06:38,112 - state - INFO - connection status changed: True
-2025-11-29 17:06:38,113 - communication - INFO - 已连接到 127.0.0.1:5000
-2025-11-29 17:06:38,113 - __main__ - INFO - Device connected
-2025-11-29 17:06:38,113 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
-2025-11-29 17:06:38,114 - data_process - INFO - 数据处理线程已启动
-2025-11-29 17:06:38,115 - data_process - INFO - 图像转换线程已启动
-2025-11-29 17:06:38,115 - __main__ - INFO - Data processing thread started
-2025-11-29 17:06:38,116 - algorithms - INFO - 检测循环开始运行...
-2025-11-29 17:06:38,116 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
-2025-11-29 17:06:38,116 - __main__ - INFO - Detection thread started
-2025-11-29 17:06:38,116 - __main__ - INFO - Waterfall visualization started
-2025-11-29 17:06:38,117 - __main__ - INFO - Spectrum visualization started
-2025-11-29 17:08:01,332 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
-2025-11-29 17:08:01,333 - __main__ - INFO - Received disconnect request...
-2025-11-29 17:08:01,333 - __main__ - INFO - Disconnecting device...
-2025-11-29 17:08:01,339 - algorithms - INFO - 检测循环已退出
-2025-11-29 17:08:01,339 - algorithms - INFO - 检测线程已停止
-2025-11-29 17:08:01,344 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:08:01,345 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:08:01,345 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:08:01,345 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:08:01,345 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:08:01,346 - data_process - INFO - 数据处理和图像转换线程已停止
-2025-11-29 17:08:01,346 - state - INFO - connection status changed: False
-2025-11-29 17:08:01,346 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
-2025-11-29 17:08:01,346 - communication - INFO - 接收线程已退出
-2025-11-29 17:08:01,349 - communication - INFO - 连接已断开
-2025-11-29 17:08:01,349 - __main__ - INFO - Device disconnected
-2025-11-29 17:08:04,029 - __main__ - INFO - Cleaning up system resources...
-2025-11-29 17:08:04,029 - __main__ - INFO - Disconnecting device...
-2025-11-29 17:08:04,029 - algorithms - INFO - 检测线程已停止
-2025-11-29 17:08:04,029 - data_process - INFO - 数据处理和图像转换线程已停止
-2025-11-29 17:08:04,029 - communication - INFO - 连接已断开
-2025-11-29 17:08:04,031 - __main__ - INFO - Device disconnected
-2025-11-29 17:08:04,031 - __main__ - INFO - System shutdown complete
+2025-12-01 14:53:32,649 - __main__ - INFO - ============================================================
+2025-12-01 14:53:32,650 - __main__ - INFO - Initializing drone detection system...
+2025-12-01 14:53:32,652 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-01 14:53:32,652 - __main__ - INFO - System state initialized
+2025-12-01 14:53:32,653 - __main__ - INFO - Communication layer ready
+2025-12-01 14:53:32,656 - __main__ - INFO - Data processor ready
+2025-12-01 14:53:32,657 - algorithms - INFO - successfully loads 4 classes: ['Noise', 'WiFi/bluetooth', 'Video-transmission signal', 'Flight-control signal']
+2025-12-01 14:53:32,825 - algorithms - INFO - Loading OpenVINO model from: c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\best_openvino_model\best.xml
+2025-12-01 14:53:33,551 - algorithms - INFO - ✓ OpenVINO model loaded successfully (GPU acceleration) - Input shape: [1,3,512,512]
+2025-12-01 14:53:33,552 - algorithms - INFO - 🔥 Warming up the model...
+2025-12-01 14:53:33,596 - algorithms - INFO - ✓ Model warmup completed
+2025-12-01 14:53:33,599 - __main__ - INFO - Detector ready
+2025-12-01 14:53:36,082 - __main__ - INFO - UI ready
+2025-12-01 14:53:36,082 - __main__ - INFO - Signal wiring complete
+2025-12-01 14:53:36,082 - __main__ - INFO - System initialization complete
+2025-12-01 14:53:36,082 - __main__ - INFO - ============================================================
+2025-12-01 14:53:36,084 - __main__ - INFO - Launching UI...
+2025-12-01 14:53:42,276 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-12-01 14:53:42,277 - __main__ - INFO - Received connect request...
+2025-12-01 14:53:42,281 - communication - INFO - 接收线程启动
+2025-12-01 14:53:42,281 - state - INFO - connection status changed: True
+2025-12-01 14:53:42,282 - communication - INFO - Connected to 127.0.0.1:5000
+2025-12-01 14:53:42,282 - __main__ - INFO - Device connected
+2025-12-01 14:53:42,284 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-01 14:53:42,286 - data_process - INFO - Data processing thread started
+2025-12-01 14:53:42,287 - data_process - INFO - Image conversion thread started
+2025-12-01 14:53:42,288 - __main__ - INFO - Data processing thread started
+2025-12-01 14:53:42,290 - algorithms - INFO - 检测循环开始运行...
+2025-12-01 14:53:42,290 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
+2025-12-01 14:53:42,291 - __main__ - INFO - Detection thread started
+2025-12-01 14:53:42,292 - __main__ - INFO - Waterfall visualization started
+2025-12-01 14:53:42,293 - __main__ - INFO - Spectrum visualization started
+2025-12-01 14:53:46,972 - __main__ - INFO - Handling parameter update: Receiver.FFT_Length = 4096
+2025-12-01 14:53:46,972 - state - INFO - parameter updated: Receiver.FFT_Length = 4096 (old 512)
+2025-12-01 14:53:46,975 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-01 14:53:46,975 - UI.spectrum.config_interface - INFO - UI display refreshed: Receiver.FFT_Length = 4096
+2025-12-01 14:53:46,975 - UI.waterfall.config_interface - INFO - UI display refreshed: Receiver.FFT_Length = 4096
+2025-12-01 14:53:46,977 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 4096
+2025-12-01 14:53:46,977 - communication - INFO - 通信层更新FFT长度为: 4096
+2025-12-01 14:53:46,993 - data_process - INFO - FFT长度已设置为: 4096, 瀑布图尺寸 4096x512
+2025-12-01 14:53:46,994 - __main__ - INFO - Parameter update handled
+2025-12-01 14:53:46,995 - UI.waterfall.config_interface - INFO - Request parameter update: Receiver.FFT_Length = 4096
+2025-12-01 14:54:05,913 - __main__ - INFO - Handling parameter update: Receiver.FFT_Length = 2048
+2025-12-01 14:54:05,913 - state - INFO - parameter updated: Receiver.FFT_Length = 2048 (old 4096)
+2025-12-01 14:54:05,915 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-01 14:54:05,916 - UI.spectrum.config_interface - INFO - UI display refreshed: Receiver.FFT_Length = 2048
+2025-12-01 14:54:05,916 - UI.waterfall.config_interface - INFO - UI display refreshed: Receiver.FFT_Length = 2048
+2025-12-01 14:54:05,917 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 2048
+2025-12-01 14:54:05,917 - communication - INFO - 通信层更新FFT长度为: 2048
+2025-12-01 14:54:05,925 - data_process - INFO - FFT长度已设置为: 2048, 瀑布图尺寸 2048x512
+2025-12-01 14:54:05,925 - __main__ - INFO - Parameter update handled
+2025-12-01 14:54:05,926 - UI.waterfall.config_interface - INFO - Request parameter update: Receiver.FFT_Length = 2048
+2025-12-01 14:54:30,594 - __main__ - INFO - Handling parameter update: Detection.image_size = 2048
+2025-12-01 14:54:30,595 - state - INFO - parameter updated: Detection.image_size = 2048 (old default)
+2025-12-01 14:54:30,598 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-01 14:54:30,598 - UI.spectrum.config_interface - INFO - UI display refreshed: Detection.image_size = 2048
+2025-12-01 14:54:30,599 - UI.waterfall.config_interface - INFO - UI display refreshed: Detection.image_size = 2048
+2025-12-01 14:54:30,600 - __main__ - INFO - Parameter update handled
+2025-12-01 14:54:30,600 - UI.waterfall.config_interface - INFO - Request parameter update: Detection.image_size = 2048
+2025-12-01 14:54:33,740 - __main__ - INFO - Handling parameter update: Detection.image_size = 2048
+2025-12-01 14:54:33,743 - state - INFO - parameter updated: Detection.image_size = 2048 (old 2048)
+2025-12-01 14:54:33,746 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-01 14:54:33,747 - UI.spectrum.config_interface - INFO - UI display refreshed: Detection.image_size = 2048
+2025-12-01 14:54:33,748 - UI.waterfall.config_interface - INFO - UI display refreshed: Detection.image_size = 2048
+2025-12-01 14:54:33,748 - __main__ - INFO - Parameter update handled
+2025-12-01 14:54:33,749 - UI.waterfall.config_interface - INFO - Request parameter update: Detection.image_size = 2048
+2025-12-01 14:54:36,103 - __main__ - INFO - Handling parameter update: Detection.image_size = default
+2025-12-01 14:54:36,103 - state - INFO - parameter updated: Detection.image_size = default (old 2048)
+2025-12-01 14:54:36,105 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-01 14:54:36,106 - UI.spectrum.config_interface - INFO - UI display refreshed: Detection.image_size = default
+2025-12-01 14:54:36,106 - UI.waterfall.config_interface - INFO - UI display refreshed: Detection.image_size = default
+2025-12-01 14:54:36,106 - __main__ - INFO - Parameter update handled
+2025-12-01 14:54:36,108 - UI.waterfall.config_interface - INFO - Request parameter update: Detection.image_size = default
+2025-12-01 14:54:40,923 - __main__ - INFO - Handling parameter update: UI_Waterfall.waterfall_height = 1024
+2025-12-01 14:54:40,923 - state - INFO - parameter updated: UI_Waterfall.waterfall_height = 1024 (old 512)
+2025-12-01 14:54:40,925 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-01 14:54:40,925 - UI.waterfall.config_interface - INFO - UI display refreshed: UI_Waterfall.waterfall_height = 1024
+2025-12-01 14:54:40,944 - data_process - INFO - 瀑布图参数更新 height=1024
+2025-12-01 14:54:40,945 - __main__ - INFO - Parameter update handled
+2025-12-01 14:54:40,945 - UI.waterfall.config_interface - INFO - Request parameter update: UI_Waterfall.waterfall_height = 1024
+2025-12-01 14:55:09,825 - __main__ - INFO - Handling parameter update: Receiver.FFT_Length = 1024
+2025-12-01 14:55:09,825 - state - INFO - parameter updated: Receiver.FFT_Length = 1024 (old 2048)
+2025-12-01 14:55:09,827 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-01 14:55:09,828 - UI.spectrum.config_interface - INFO - UI display refreshed: Receiver.FFT_Length = 1024
+2025-12-01 14:55:09,829 - UI.waterfall.config_interface - INFO - UI display refreshed: Receiver.FFT_Length = 1024
+2025-12-01 14:55:09,830 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 1024
+2025-12-01 14:55:09,830 - communication - INFO - 通信层更新FFT长度为: 1024
+2025-12-01 14:55:09,846 - data_process - INFO - FFT长度已设置为: 1024, 瀑布图尺寸 1024x1024
+2025-12-01 14:55:09,849 - __main__ - INFO - Parameter update handled
+2025-12-01 14:55:09,850 - UI.waterfall.config_interface - INFO - Request parameter update: Receiver.FFT_Length = 1024
+2025-12-01 14:55:31,512 - __main__ - INFO - Handling parameter update: UI_Waterfall.waterfall_height = 512
+2025-12-01 14:55:31,513 - state - INFO - parameter updated: UI_Waterfall.waterfall_height = 512 (old 1024)
+2025-12-01 14:55:31,515 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-01 14:55:31,515 - UI.waterfall.config_interface - INFO - UI display refreshed: UI_Waterfall.waterfall_height = 512
+2025-12-01 14:55:31,522 - data_process - INFO - 瀑布图参数更新 height=512
+2025-12-01 14:55:31,523 - __main__ - INFO - Parameter update handled
+2025-12-01 14:55:31,523 - UI.waterfall.config_interface - INFO - Request parameter update: UI_Waterfall.waterfall_height = 512
+2025-12-01 14:55:43,124 - __main__ - INFO - Handling parameter update: Receiver.FFT_Length = 512
+2025-12-01 14:55:43,125 - state - INFO - parameter updated: Receiver.FFT_Length = 512 (old 1024)
+2025-12-01 14:55:43,128 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-01 14:55:43,128 - UI.spectrum.config_interface - INFO - UI display refreshed: Receiver.FFT_Length = 512
+2025-12-01 14:55:43,129 - UI.waterfall.config_interface - INFO - UI display refreshed: Receiver.FFT_Length = 512
+2025-12-01 14:55:43,130 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-01 14:55:43,130 - communication - INFO - 通信层更新FFT长度为: 512
+2025-12-01 14:55:43,135 - data_process - INFO - FFT长度已设置为: 512, 瀑布图尺寸 512x512
+2025-12-01 14:55:43,136 - __main__ - INFO - Parameter update handled
+2025-12-01 14:55:43,137 - UI.waterfall.config_interface - INFO - Request parameter update: Receiver.FFT_Length = 512
+2025-12-01 14:55:46,178 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-12-01 14:55:46,179 - __main__ - INFO - Received disconnect request...
+2025-12-01 14:55:46,180 - __main__ - INFO - Disconnecting device...
+2025-12-01 14:55:46,186 - algorithms - INFO - 检测循环已退出
+2025-12-01 14:55:46,187 - algorithms - INFO - 检测线程已停止
+2025-12-01 14:55:46,193 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-01 14:55:46,193 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-01 14:55:46,193 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-01 14:55:46,193 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-01 14:55:46,194 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-01 14:55:46,194 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-01 14:55:46,195 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-01 14:55:46,195 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-01 14:55:46,195 - state - INFO - connection status changed: False
+2025-12-01 14:55:46,196 - communication - INFO - 接收线程已退出
+2025-12-01 14:55:46,199 - communication - INFO - Disconnected from slave device
+2025-12-01 14:55:46,199 - __main__ - INFO - Device disconnected
+2025-12-01 14:55:47,557 - __main__ - INFO - Cleaning up system resources...
+2025-12-01 14:55:47,557 - __main__ - INFO - Disconnecting device...
+2025-12-01 14:55:47,558 - algorithms - INFO - 检测线程已停止
+2025-12-01 14:55:47,558 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-01 14:55:47,559 - communication - INFO - Disconnected from slave device
+2025-12-01 14:55:47,559 - __main__ - INFO - Device disconnected
+2025-12-01 14:55:47,559 - __main__ - INFO - System shutdown complete
+2025-12-03 19:39:28,958 - __main__ - INFO - ============================================================
+2025-12-03 19:39:28,958 - __main__ - INFO - Initializing drone detection system...
+2025-12-03 19:39:28,977 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-03 19:39:28,977 - __main__ - INFO - System state initialized
+2025-12-03 19:39:28,986 - __main__ - INFO - Communication layer ready
+2025-12-03 19:39:28,988 - __main__ - INFO - Data processor ready
+2025-12-03 19:39:29,001 - algorithms - INFO - successfully loads 4 classes: ['Noise', 'WiFi/bluetooth', 'Video-transmission signal', 'Flight-control signal']
+2025-12-03 19:39:29,250 - algorithms - INFO - Loading OpenVINO model from: c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\best_openvino_model\best.xml
+2025-12-03 19:39:30,324 - algorithms - INFO - ✓ OpenVINO model loaded successfully (GPU acceleration) - Input shape: [1,3,512,512]
+2025-12-03 19:39:30,324 - algorithms - INFO - 🔥 Warming up the model...
+2025-12-03 19:39:30,352 - algorithms - INFO - ✓ Model warmup completed
+2025-12-03 19:39:30,355 - __main__ - INFO - Detector ready
+2025-12-03 19:39:32,506 - __main__ - INFO - UI ready
+2025-12-03 19:39:32,506 - __main__ - INFO - Signal wiring complete
+2025-12-03 19:39:32,507 - __main__ - INFO - System initialization complete
+2025-12-03 19:39:32,507 - __main__ - INFO - ============================================================
+2025-12-03 19:39:32,508 - __main__ - INFO - Launching UI...
+2025-12-03 19:39:40,057 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-12-03 19:39:40,058 - __main__ - INFO - Received connect request...
+2025-12-03 19:39:40,060 - communication - INFO - 接收线程启动
+2025-12-03 19:39:40,060 - state - INFO - connection status changed: True
+2025-12-03 19:39:40,060 - communication - INFO - Connected to 127.0.0.1:5000
+2025-12-03 19:39:40,062 - __main__ - INFO - Device connected
+2025-12-03 19:39:40,062 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-03 19:39:40,063 - data_process - INFO - Data processing thread started
+2025-12-03 19:39:40,064 - data_process - INFO - Image conversion thread started
+2025-12-03 19:39:40,065 - __main__ - INFO - Data processing thread started
+2025-12-03 19:39:40,065 - algorithms - INFO - 检测循环开始运行...
+2025-12-03 19:39:40,065 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
+2025-12-03 19:39:40,066 - __main__ - INFO - Detection thread started
+2025-12-03 19:39:40,067 - __main__ - INFO - Waterfall visualization started
+2025-12-03 19:39:40,067 - __main__ - INFO - Spectrum visualization started
+2025-12-03 19:39:49,169 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-12-03 19:39:49,170 - __main__ - INFO - Received disconnect request...
+2025-12-03 19:39:49,171 - __main__ - INFO - Disconnecting device...
+2025-12-03 19:39:49,174 - algorithms - INFO - 检测循环已退出
+2025-12-03 19:39:49,174 - algorithms - INFO - 检测线程已停止
+2025-12-03 19:39:49,177 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 19:39:49,179 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 19:39:49,182 - state - INFO - connection status changed: False
+2025-12-03 19:39:49,182 - communication - INFO - 接收线程已退出
+2025-12-03 19:39:49,184 - communication - INFO - Disconnected from slave device
+2025-12-03 19:39:49,185 - __main__ - INFO - Device disconnected
+2025-12-03 19:40:26,870 - __main__ - INFO - ============================================================
+2025-12-03 19:40:26,871 - __main__ - INFO - Initializing drone detection system...
+2025-12-03 19:40:26,872 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-03 19:40:26,872 - __main__ - INFO - System state initialized
+2025-12-03 19:40:26,872 - __main__ - INFO - Communication layer ready
+2025-12-03 19:40:26,874 - __main__ - INFO - Data processor ready
+2025-12-03 19:40:26,875 - algorithms - INFO - successfully loads 4 classes: ['Noise', 'WiFi/bluetooth', 'Video-transmission signal', 'Flight-control signal']
+2025-12-03 19:40:27,038 - algorithms - INFO - Loading OpenVINO model from: c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\best_openvino_model\best.xml
+2025-12-03 19:40:28,006 - algorithms - INFO - ✓ OpenVINO model loaded successfully (GPU acceleration) - Input shape: [1,3,512,512]
+2025-12-03 19:40:28,006 - algorithms - INFO - 🔥 Warming up the model...
+2025-12-03 19:40:28,025 - algorithms - INFO - ✓ Model warmup completed
+2025-12-03 19:40:28,028 - __main__ - INFO - Detector ready
+2025-12-03 19:40:30,138 - __main__ - INFO - UI ready
+2025-12-03 19:40:30,139 - __main__ - INFO - Signal wiring complete
+2025-12-03 19:40:30,139 - __main__ - INFO - System initialization complete
+2025-12-03 19:40:30,139 - __main__ - INFO - ============================================================
+2025-12-03 19:40:30,140 - __main__ - INFO - Launching UI...
+2025-12-03 19:40:48,843 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-12-03 19:40:48,844 - __main__ - INFO - Received connect request...
+2025-12-03 19:40:48,846 - communication - INFO - 接收线程启动
+2025-12-03 19:40:48,847 - state - INFO - connection status changed: True
+2025-12-03 19:40:48,848 - communication - INFO - Connected to 127.0.0.1:5000
+2025-12-03 19:40:48,848 - __main__ - INFO - Device connected
+2025-12-03 19:40:48,849 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-03 19:40:48,850 - data_process - INFO - Data processing thread started
+2025-12-03 19:40:48,851 - data_process - INFO - Image conversion thread started
+2025-12-03 19:40:48,851 - __main__ - INFO - Data processing thread started
+2025-12-03 19:40:48,852 - algorithms - INFO - 检测循环开始运行...
+2025-12-03 19:40:48,852 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
+2025-12-03 19:40:48,853 - __main__ - INFO - Detection thread started
+2025-12-03 19:40:48,853 - __main__ - INFO - Waterfall visualization started
+2025-12-03 19:40:48,853 - __main__ - INFO - Spectrum visualization started
+2025-12-03 19:40:58,847 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-12-03 19:40:58,847 - __main__ - INFO - Received disconnect request...
+2025-12-03 19:40:58,848 - __main__ - INFO - Disconnecting device...
+2025-12-03 19:40:58,853 - algorithms - INFO - 检测循环已退出
+2025-12-03 19:40:58,856 - algorithms - INFO - 检测线程已停止
+2025-12-03 19:40:58,857 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 19:40:58,858 - communication - ERROR - 无法同步到魔数，退出接收
+2025-12-03 19:40:58,858 - state - INFO - connection status changed: False
+2025-12-03 19:40:58,858 - communication - INFO - 接收线程已退出
+2025-12-03 19:40:58,861 - communication - INFO - Disconnected from slave device
+2025-12-03 19:40:58,861 - __main__ - INFO - Device disconnected
+2025-12-03 19:41:24,130 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-12-03 19:41:24,131 - __main__ - INFO - Received connect request...
+2025-12-03 19:41:24,132 - communication - INFO - 接收线程启动
+2025-12-03 19:41:24,133 - state - INFO - connection status changed: True
+2025-12-03 19:41:24,133 - communication - INFO - Connected to 127.0.0.1:5000
+2025-12-03 19:41:24,134 - __main__ - INFO - Device connected
+2025-12-03 19:41:24,134 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-03 19:41:24,134 - data_process - INFO - Data processing thread started
+2025-12-03 19:41:24,135 - data_process - INFO - Image conversion thread started
+2025-12-03 19:41:24,136 - __main__ - INFO - Data processing thread started
+2025-12-03 19:41:24,136 - algorithms - INFO - 检测循环开始运行...
+2025-12-03 19:41:24,136 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
+2025-12-03 19:41:24,137 - __main__ - INFO - Detection thread started
+2025-12-03 19:41:24,138 - __main__ - INFO - Waterfall visualization started
+2025-12-03 19:41:24,138 - __main__ - INFO - Spectrum visualization started
+2025-12-03 19:41:34,201 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-12-03 19:41:34,202 - __main__ - INFO - Received disconnect request...
+2025-12-03 19:41:34,202 - __main__ - INFO - Disconnecting device...
+2025-12-03 19:41:34,203 - algorithms - INFO - 检测循环已退出
+2025-12-03 19:41:34,203 - algorithms - INFO - 检测线程已停止
+2025-12-03 19:41:34,206 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 19:41:34,206 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 19:41:34,206 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 19:41:34,206 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 19:41:34,206 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 19:41:34,207 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 19:41:34,207 - state - INFO - connection status changed: False
+2025-12-03 19:41:34,207 - communication - INFO - 接收线程已退出
+2025-12-03 19:41:34,210 - communication - INFO - Disconnected from slave device
+2025-12-03 19:41:34,210 - __main__ - INFO - Device disconnected
+2025-12-03 22:21:54,335 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-12-03 22:21:54,340 - __main__ - INFO - Received connect request...
+2025-12-03 22:21:54,347 - communication - INFO - 接收线程启动
+2025-12-03 22:21:54,349 - state - INFO - connection status changed: True
+2025-12-03 22:21:54,349 - communication - INFO - Connected to 127.0.0.1:5000
+2025-12-03 22:21:54,350 - __main__ - INFO - Device connected
+2025-12-03 22:21:54,351 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-03 22:21:54,355 - data_process - INFO - Data processing thread started
+2025-12-03 22:21:54,360 - data_process - INFO - Image conversion thread started
+2025-12-03 22:21:54,362 - __main__ - INFO - Data processing thread started
+2025-12-03 22:21:54,363 - algorithms - INFO - 检测循环开始运行...
+2025-12-03 22:21:54,363 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
+2025-12-03 22:21:54,364 - __main__ - INFO - Detection thread started
+2025-12-03 22:21:54,365 - __main__ - INFO - Waterfall visualization started
+2025-12-03 22:21:54,366 - __main__ - INFO - Spectrum visualization started
+2025-12-03 22:21:56,860 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-12-03 22:21:56,861 - __main__ - INFO - Received disconnect request...
+2025-12-03 22:21:56,861 - __main__ - INFO - Disconnecting device...
+2025-12-03 22:21:56,866 - algorithms - INFO - 检测循环已退出
+2025-12-03 22:21:56,866 - algorithms - INFO - 检测线程已停止
+2025-12-03 22:21:56,868 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:21:56,868 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:21:56,868 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:21:56,868 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:21:56,869 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:21:56,869 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:21:56,869 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:21:56,869 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 22:21:56,869 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:21:56,869 - state - INFO - connection status changed: False
+2025-12-03 22:21:56,870 - communication - INFO - 接收线程已退出
+2025-12-03 22:21:56,872 - communication - INFO - Disconnected from slave device
+2025-12-03 22:21:56,872 - __main__ - INFO - Device disconnected
+2025-12-03 22:22:06,758 - __main__ - INFO - Cleaning up system resources...
+2025-12-03 22:22:06,760 - __main__ - INFO - Disconnecting device...
+2025-12-03 22:22:06,760 - algorithms - INFO - 检测线程已停止
+2025-12-03 22:22:06,760 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 22:22:06,760 - communication - INFO - Disconnected from slave device
+2025-12-03 22:22:06,761 - __main__ - INFO - Device disconnected
+2025-12-03 22:22:06,761 - __main__ - INFO - System shutdown complete
+2025-12-03 22:36:50,193 - __main__ - INFO - ============================================================
+2025-12-03 22:36:50,194 - __main__ - INFO - Initializing drone detection system...
+2025-12-03 22:36:50,194 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-03 22:36:50,195 - __main__ - INFO - System state initialized
+2025-12-03 22:36:50,195 - __main__ - INFO - Communication layer ready
+2025-12-03 22:36:50,197 - __main__ - INFO - Data processor ready
+2025-12-03 22:36:50,197 - algorithms - INFO - successfully loads 4 classes: ['Noise', 'WiFi/bluetooth', 'Video-transmission signal', 'Flight-control signal']
+2025-12-03 22:36:50,360 - algorithms - INFO - Loading OpenVINO model from: c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\best_openvino_model\best.xml
+2025-12-03 22:36:51,090 - algorithms - INFO - ✓ OpenVINO model loaded successfully (GPU acceleration) - Input shape: [1,3,512,512]
+2025-12-03 22:36:51,090 - algorithms - INFO - 🔥 Warming up the model...
+2025-12-03 22:36:51,113 - algorithms - INFO - ✓ Model warmup completed
+2025-12-03 22:36:51,116 - __main__ - INFO - Detector ready
+2025-12-03 22:36:53,242 - __main__ - INFO - UI ready
+2025-12-03 22:36:53,243 - __main__ - INFO - Signal wiring complete
+2025-12-03 22:36:53,243 - __main__ - INFO - System initialization complete
+2025-12-03 22:36:53,243 - __main__ - INFO - ============================================================
+2025-12-03 22:36:53,244 - __main__ - INFO - Launching UI...
+2025-12-03 22:37:02,164 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-12-03 22:37:02,165 - __main__ - INFO - Received connect request...
+2025-12-03 22:37:02,167 - communication - INFO - 接收线程启动
+2025-12-03 22:37:02,167 - state - INFO - connection status changed: True
+2025-12-03 22:37:02,168 - communication - INFO - Connected to 127.0.0.1:5000
+2025-12-03 22:37:02,168 - __main__ - INFO - Device connected
+2025-12-03 22:37:02,169 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-03 22:37:02,170 - data_process - INFO - Data processing thread started
+2025-12-03 22:37:02,171 - data_process - INFO - Image conversion thread started
+2025-12-03 22:37:02,171 - __main__ - INFO - Data processing thread started
+2025-12-03 22:37:02,172 - algorithms - INFO - 检测循环开始运行...
+2025-12-03 22:37:02,173 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
+2025-12-03 22:37:02,173 - __main__ - INFO - Detection thread started
+2025-12-03 22:37:02,174 - __main__ - INFO - Waterfall visualization started
+2025-12-03 22:37:02,174 - __main__ - INFO - Spectrum visualization started
+2025-12-03 22:37:12,452 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-12-03 22:37:12,452 - __main__ - INFO - Received disconnect request...
+2025-12-03 22:37:12,454 - __main__ - INFO - Disconnecting device...
+2025-12-03 22:37:12,456 - algorithms - INFO - 检测循环已退出
+2025-12-03 22:37:12,457 - algorithms - INFO - 检测线程已停止
+2025-12-03 22:37:12,459 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:37:12,459 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:37:12,459 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:37:12,460 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:37:12,460 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:37:12,460 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:37:12,460 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:37:12,460 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:37:12,460 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:37:12,460 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 22:37:12,461 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:37:12,461 - state - INFO - connection status changed: False
+2025-12-03 22:37:12,461 - communication - INFO - 接收线程已退出
+2025-12-03 22:37:12,464 - communication - INFO - Disconnected from slave device
+2025-12-03 22:37:12,464 - __main__ - INFO - Device disconnected
+2025-12-03 22:37:24,477 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-12-03 22:37:24,478 - __main__ - INFO - Received connect request...
+2025-12-03 22:37:24,480 - communication - INFO - 接收线程启动
+2025-12-03 22:37:24,480 - state - INFO - connection status changed: True
+2025-12-03 22:37:24,480 - communication - INFO - Connected to 127.0.0.1:5000
+2025-12-03 22:37:24,480 - __main__ - INFO - Device connected
+2025-12-03 22:37:24,481 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-03 22:37:24,481 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:37:24,481 - data_process - INFO - Data processing thread started
+2025-12-03 22:37:24,482 - data_process - INFO - Image conversion thread started
+2025-12-03 22:37:24,483 - __main__ - INFO - Data processing thread started
+2025-12-03 22:37:24,483 - algorithms - INFO - 检测循环开始运行...
+2025-12-03 22:37:24,483 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
+2025-12-03 22:37:24,484 - __main__ - INFO - Detection thread started
+2025-12-03 22:37:24,484 - __main__ - INFO - Waterfall visualization started
+2025-12-03 22:37:24,484 - __main__ - INFO - Spectrum visualization started
+2025-12-03 22:37:29,659 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-12-03 22:37:29,659 - __main__ - INFO - Received disconnect request...
+2025-12-03 22:37:29,660 - __main__ - INFO - Disconnecting device...
+2025-12-03 22:37:29,665 - algorithms - INFO - 检测循环已退出
+2025-12-03 22:37:29,665 - algorithms - INFO - 检测线程已停止
+2025-12-03 22:37:29,666 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 22:37:29,667 - state - INFO - connection status changed: False
+2025-12-03 22:37:29,667 - communication - ERROR - 无法同步到魔数，退出接收
+2025-12-03 22:37:29,667 - communication - INFO - 接收线程已退出
+2025-12-03 22:37:29,668 - communication - INFO - Disconnected from slave device
+2025-12-03 22:37:29,668 - __main__ - INFO - Device disconnected
+2025-12-03 22:38:37,655 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-12-03 22:38:37,656 - __main__ - INFO - Received connect request...
+2025-12-03 22:38:37,658 - communication - INFO - 接收线程启动
+2025-12-03 22:38:37,658 - state - INFO - connection status changed: True
+2025-12-03 22:38:37,659 - communication - INFO - Connected to 127.0.0.1:5000
+2025-12-03 22:38:37,659 - __main__ - INFO - Device connected
+2025-12-03 22:38:37,660 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-03 22:38:37,661 - data_process - INFO - Data processing thread started
+2025-12-03 22:38:37,663 - data_process - INFO - Image conversion thread started
+2025-12-03 22:38:37,663 - __main__ - INFO - Data processing thread started
+2025-12-03 22:38:37,664 - algorithms - INFO - 检测循环开始运行...
+2025-12-03 22:38:37,664 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
+2025-12-03 22:38:37,665 - __main__ - INFO - Detection thread started
+2025-12-03 22:38:37,665 - __main__ - INFO - Waterfall visualization started
+2025-12-03 22:38:37,666 - __main__ - INFO - Spectrum visualization started
+2025-12-03 22:39:01,625 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-12-03 22:39:01,626 - __main__ - INFO - Received disconnect request...
+2025-12-03 22:39:01,626 - __main__ - INFO - Disconnecting device...
+2025-12-03 22:39:01,627 - algorithms - INFO - 检测循环已退出
+2025-12-03 22:39:01,627 - algorithms - INFO - 检测线程已停止
+2025-12-03 22:39:01,631 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:39:01,631 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:39:01,632 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:39:01,632 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 22:39:01,632 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:39:01,633 - state - INFO - connection status changed: False
+2025-12-03 22:39:01,633 - communication - INFO - 接收线程已退出
+2025-12-03 22:39:01,635 - communication - INFO - Disconnected from slave device
+2025-12-03 22:39:01,635 - __main__ - INFO - Device disconnected
+2025-12-03 22:39:08,492 - __main__ - INFO - Cleaning up system resources...
+2025-12-03 22:39:08,492 - __main__ - INFO - Disconnecting device...
+2025-12-03 22:39:08,493 - algorithms - INFO - 检测线程已停止
+2025-12-03 22:39:08,493 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 22:39:08,493 - communication - INFO - Disconnected from slave device
+2025-12-03 22:39:08,494 - __main__ - INFO - Device disconnected
+2025-12-03 22:39:08,494 - __main__ - INFO - System shutdown complete
+2025-12-03 22:39:20,620 - __main__ - INFO - ============================================================
+2025-12-03 22:39:20,620 - __main__ - INFO - Initializing drone detection system...
+2025-12-03 22:39:20,620 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-03 22:39:20,620 - __main__ - INFO - System state initialized
+2025-12-03 22:39:20,620 - __main__ - INFO - Communication layer ready
+2025-12-03 22:39:20,620 - __main__ - INFO - Data processor ready
+2025-12-03 22:39:20,620 - algorithms - INFO - successfully loads 4 classes: ['Noise', 'WiFi/bluetooth', 'Video-transmission signal', 'Flight-control signal']
+2025-12-03 22:39:20,770 - algorithms - INFO - Loading OpenVINO model from: c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\best_openvino_model\best.xml
+2025-12-03 22:39:21,254 - algorithms - INFO - ✓ OpenVINO model loaded successfully (GPU acceleration) - Input shape: [1,3,512,512]
+2025-12-03 22:39:21,254 - algorithms - INFO - 🔥 Warming up the model...
+2025-12-03 22:39:21,275 - algorithms - INFO - ✓ Model warmup completed
+2025-12-03 22:39:21,277 - __main__ - INFO - Detector ready
+2025-12-03 22:39:23,389 - __main__ - INFO - UI ready
+2025-12-03 22:39:23,389 - __main__ - INFO - Signal wiring complete
+2025-12-03 22:39:23,390 - __main__ - INFO - System initialization complete
+2025-12-03 22:39:23,390 - __main__ - INFO - ============================================================
+2025-12-03 22:39:23,390 - __main__ - INFO - Launching UI...
+2025-12-03 22:39:27,993 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-12-03 22:39:27,994 - __main__ - INFO - Received connect request...
+2025-12-03 22:39:27,996 - communication - INFO - 接收线程启动
+2025-12-03 22:39:27,996 - state - INFO - connection status changed: True
+2025-12-03 22:39:27,996 - communication - INFO - Connected to 127.0.0.1:5000
+2025-12-03 22:39:27,997 - __main__ - INFO - Device connected
+2025-12-03 22:39:27,997 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-03 22:39:27,999 - data_process - INFO - Data processing thread started
+2025-12-03 22:39:28,000 - data_process - INFO - Image conversion thread started
+2025-12-03 22:39:28,001 - __main__ - INFO - Data processing thread started
+2025-12-03 22:39:28,001 - algorithms - INFO - 检测循环开始运行...
+2025-12-03 22:39:28,001 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
+2025-12-03 22:39:28,002 - __main__ - INFO - Detection thread started
+2025-12-03 22:39:28,002 - __main__ - INFO - Waterfall visualization started
+2025-12-03 22:39:28,002 - __main__ - INFO - Spectrum visualization started
+2025-12-03 22:39:40,404 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-12-03 22:39:40,405 - __main__ - INFO - Received disconnect request...
+2025-12-03 22:39:40,405 - __main__ - INFO - Disconnecting device...
+2025-12-03 22:39:40,406 - algorithms - INFO - 检测循环已退出
+2025-12-03 22:39:40,407 - algorithms - INFO - 检测线程已停止
+2025-12-03 22:39:40,409 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 22:39:40,410 - state - INFO - connection status changed: False
+2025-12-03 22:39:40,410 - communication - INFO - 接收线程已退出
+2025-12-03 22:39:40,412 - communication - INFO - Disconnected from slave device
+2025-12-03 22:39:40,412 - __main__ - INFO - Device disconnected
+2025-12-03 22:39:52,317 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-12-03 22:39:52,318 - __main__ - INFO - Received connect request...
+2025-12-03 22:39:52,319 - communication - INFO - 接收线程启动
+2025-12-03 22:39:52,319 - state - INFO - connection status changed: True
+2025-12-03 22:39:52,320 - communication - INFO - Connected to 127.0.0.1:5000
+2025-12-03 22:39:52,320 - __main__ - INFO - Device connected
+2025-12-03 22:39:52,321 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-03 22:39:52,322 - data_process - INFO - Data processing thread started
+2025-12-03 22:39:52,323 - data_process - INFO - Image conversion thread started
+2025-12-03 22:39:52,324 - __main__ - INFO - Data processing thread started
+2025-12-03 22:39:52,324 - algorithms - INFO - 检测循环开始运行...
+2025-12-03 22:39:52,324 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
+2025-12-03 22:39:52,324 - __main__ - INFO - Detection thread started
+2025-12-03 22:39:52,326 - __main__ - INFO - Waterfall visualization started
+2025-12-03 22:39:52,326 - __main__ - INFO - Spectrum visualization started
+2025-12-03 22:39:53,458 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-12-03 22:39:53,458 - __main__ - INFO - Received disconnect request...
+2025-12-03 22:39:53,459 - __main__ - INFO - Disconnecting device...
+2025-12-03 22:39:53,464 - algorithms - INFO - 检测循环已退出
+2025-12-03 22:39:53,465 - algorithms - INFO - 检测线程已停止
+2025-12-03 22:39:53,467 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:39:53,468 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:39:53,468 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:39:53,468 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:39:53,468 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:39:53,468 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:39:53,468 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:39:53,468 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:39:53,468 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 22:39:53,469 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:39:53,469 - state - INFO - connection status changed: False
+2025-12-03 22:39:53,469 - communication - INFO - 接收线程已退出
+2025-12-03 22:39:53,471 - communication - INFO - Disconnected from slave device
+2025-12-03 22:39:53,472 - __main__ - INFO - Device disconnected
+2025-12-03 22:40:02,074 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-12-03 22:40:02,075 - __main__ - INFO - Received connect request...
+2025-12-03 22:40:02,077 - communication - INFO - 接收线程启动
+2025-12-03 22:40:02,077 - state - INFO - connection status changed: True
+2025-12-03 22:40:02,078 - communication - INFO - Connected to 127.0.0.1:5000
+2025-12-03 22:40:02,078 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:02,079 - __main__ - INFO - Device connected
+2025-12-03 22:40:02,079 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:02,079 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-03 22:40:02,080 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:02,080 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:02,081 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:02,081 - data_process - INFO - Data processing thread started
+2025-12-03 22:40:02,082 - data_process - INFO - Image conversion thread started
+2025-12-03 22:40:02,083 - __main__ - INFO - Data processing thread started
+2025-12-03 22:40:02,083 - algorithms - INFO - 检测循环开始运行...
+2025-12-03 22:40:02,083 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
+2025-12-03 22:40:02,084 - __main__ - INFO - Detection thread started
+2025-12-03 22:40:02,084 - __main__ - INFO - Waterfall visualization started
+2025-12-03 22:40:02,086 - __main__ - INFO - Spectrum visualization started
+2025-12-03 22:40:11,275 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-12-03 22:40:11,275 - __main__ - INFO - Received disconnect request...
+2025-12-03 22:40:11,275 - __main__ - INFO - Disconnecting device...
+2025-12-03 22:40:11,277 - algorithms - INFO - 检测循环已退出
+2025-12-03 22:40:11,277 - algorithms - INFO - 检测线程已停止
+2025-12-03 22:40:11,277 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 22:40:11,278 - state - INFO - connection status changed: False
+2025-12-03 22:40:11,278 - communication - INFO - 接收线程已退出
+2025-12-03 22:40:11,280 - communication - INFO - Disconnected from slave device
+2025-12-03 22:40:11,280 - __main__ - INFO - Device disconnected
+2025-12-03 22:40:16,430 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-12-03 22:40:16,431 - __main__ - INFO - Received connect request...
+2025-12-03 22:40:16,433 - communication - INFO - 接收线程启动
+2025-12-03 22:40:16,433 - state - INFO - connection status changed: True
+2025-12-03 22:40:16,433 - communication - INFO - Connected to 127.0.0.1:5000
+2025-12-03 22:40:16,434 - __main__ - INFO - Device connected
+2025-12-03 22:40:16,434 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-03 22:40:16,435 - data_process - INFO - Data processing thread started
+2025-12-03 22:40:16,436 - data_process - INFO - Image conversion thread started
+2025-12-03 22:40:16,436 - __main__ - INFO - Data processing thread started
+2025-12-03 22:40:16,437 - algorithms - INFO - 检测循环开始运行...
+2025-12-03 22:40:16,437 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
+2025-12-03 22:40:16,438 - __main__ - INFO - Detection thread started
+2025-12-03 22:40:16,438 - __main__ - INFO - Waterfall visualization started
+2025-12-03 22:40:16,438 - __main__ - INFO - Spectrum visualization started
+2025-12-03 22:40:17,825 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-12-03 22:40:17,825 - __main__ - INFO - Received disconnect request...
+2025-12-03 22:40:17,825 - __main__ - INFO - Disconnecting device...
+2025-12-03 22:40:17,831 - algorithms - INFO - 检测循环已退出
+2025-12-03 22:40:17,832 - algorithms - INFO - 检测线程已停止
+2025-12-03 22:40:17,834 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:17,834 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 22:40:17,834 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:17,834 - state - INFO - connection status changed: False
+2025-12-03 22:40:17,834 - communication - INFO - 接收线程已退出
+2025-12-03 22:40:17,837 - communication - INFO - Disconnected from slave device
+2025-12-03 22:40:17,837 - __main__ - INFO - Device disconnected
+2025-12-03 22:40:19,549 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-12-03 22:40:19,550 - __main__ - INFO - Received connect request...
+2025-12-03 22:40:19,551 - communication - INFO - 接收线程启动
+2025-12-03 22:40:19,551 - state - INFO - connection status changed: True
+2025-12-03 22:40:19,552 - communication - INFO - Connected to 127.0.0.1:5000
+2025-12-03 22:40:19,552 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:19,552 - __main__ - INFO - Device connected
+2025-12-03 22:40:19,552 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-03 22:40:19,552 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:19,554 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:19,554 - data_process - INFO - Data processing thread started
+2025-12-03 22:40:19,554 - data_process - INFO - Image conversion thread started
+2025-12-03 22:40:19,554 - __main__ - INFO - Data processing thread started
+2025-12-03 22:40:19,555 - algorithms - INFO - 检测循环开始运行...
+2025-12-03 22:40:19,555 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
+2025-12-03 22:40:19,555 - __main__ - INFO - Detection thread started
+2025-12-03 22:40:19,556 - __main__ - INFO - Waterfall visualization started
+2025-12-03 22:40:19,556 - __main__ - INFO - Spectrum visualization started
+2025-12-03 22:40:21,287 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-12-03 22:40:21,288 - __main__ - INFO - Received disconnect request...
+2025-12-03 22:40:21,288 - __main__ - INFO - Disconnecting device...
+2025-12-03 22:40:21,292 - algorithms - INFO - 检测循环已退出
+2025-12-03 22:40:21,292 - algorithms - INFO - 检测线程已停止
+2025-12-03 22:40:21,294 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:21,294 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:21,294 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 22:40:21,295 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:21,295 - state - INFO - connection status changed: False
+2025-12-03 22:40:21,295 - communication - INFO - 接收线程已退出
+2025-12-03 22:40:21,297 - communication - INFO - Disconnected from slave device
+2025-12-03 22:40:21,297 - __main__ - INFO - Device disconnected
+2025-12-03 22:40:21,800 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-12-03 22:40:21,802 - __main__ - INFO - Received connect request...
+2025-12-03 22:40:21,803 - communication - INFO - 接收线程启动
+2025-12-03 22:40:21,804 - state - INFO - connection status changed: True
+2025-12-03 22:40:21,804 - communication - INFO - Connected to 127.0.0.1:5000
+2025-12-03 22:40:21,804 - __main__ - INFO - Device connected
+2025-12-03 22:40:21,805 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:21,805 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-03 22:40:21,805 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:21,806 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:40:21,806 - data_process - INFO - Data processing thread started
+2025-12-03 22:40:21,807 - data_process - INFO - Image conversion thread started
+2025-12-03 22:40:21,807 - __main__ - INFO - Data processing thread started
+2025-12-03 22:40:21,808 - algorithms - INFO - 检测循环开始运行...
+2025-12-03 22:40:21,808 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
+2025-12-03 22:40:21,808 - __main__ - INFO - Detection thread started
+2025-12-03 22:40:21,809 - __main__ - INFO - Waterfall visualization started
+2025-12-03 22:40:21,809 - __main__ - INFO - Spectrum visualization started
+2025-12-03 22:40:24,206 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-12-03 22:40:24,207 - __main__ - INFO - Received disconnect request...
+2025-12-03 22:40:24,208 - __main__ - INFO - Disconnecting device...
+2025-12-03 22:40:24,216 - algorithms - INFO - 检测循环已退出
+2025-12-03 22:40:24,217 - algorithms - INFO - 检测线程已停止
+2025-12-03 22:40:24,222 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 22:40:24,223 - state - INFO - connection status changed: False
+2025-12-03 22:40:24,225 - communication - INFO - 接收线程已退出
+2025-12-03 22:40:24,226 - communication - INFO - Disconnected from slave device
+2025-12-03 22:40:24,227 - __main__ - INFO - Device disconnected
+2025-12-03 22:40:25,894 - __main__ - INFO - Cleaning up system resources...
+2025-12-03 22:40:25,894 - __main__ - INFO - Disconnecting device...
+2025-12-03 22:40:25,894 - algorithms - INFO - 检测线程已停止
+2025-12-03 22:40:25,894 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 22:40:25,894 - communication - INFO - Disconnected from slave device
+2025-12-03 22:40:25,895 - __main__ - INFO - Device disconnected
+2025-12-03 22:40:25,895 - __main__ - INFO - System shutdown complete
+2025-12-03 22:41:46,002 - __main__ - INFO - ============================================================
+2025-12-03 22:41:46,002 - __main__ - INFO - Initializing drone detection system...
+2025-12-03 22:41:46,002 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-03 22:41:46,006 - __main__ - INFO - System state initialized
+2025-12-03 22:41:46,006 - __main__ - INFO - Communication layer ready
+2025-12-03 22:41:46,007 - __main__ - INFO - Data processor ready
+2025-12-03 22:41:46,007 - algorithms - INFO - successfully loads 4 classes: ['Noise', 'WiFi/bluetooth', 'Video-transmission signal', 'Flight-control signal']
+2025-12-03 22:41:46,150 - algorithms - INFO - Loading OpenVINO model from: c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\best_openvino_model\best.xml
+2025-12-03 22:41:46,499 - algorithms - INFO - ✓ OpenVINO model loaded successfully (GPU acceleration) - Input shape: [1,3,512,512]
+2025-12-03 22:41:46,499 - algorithms - INFO - 🔥 Warming up the model...
+2025-12-03 22:41:46,519 - algorithms - INFO - ✓ Model warmup completed
+2025-12-03 22:41:46,522 - __main__ - INFO - Detector ready
+2025-12-03 22:41:48,660 - __main__ - INFO - UI ready
+2025-12-03 22:41:48,660 - __main__ - INFO - Signal wiring complete
+2025-12-03 22:41:48,661 - __main__ - INFO - System initialization complete
+2025-12-03 22:41:48,661 - __main__ - INFO - ============================================================
+2025-12-03 22:41:48,662 - __main__ - INFO - Launching UI...
+2025-12-03 22:41:56,076 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2025-12-03 22:41:56,077 - __main__ - INFO - Received connect request...
+2025-12-03 22:41:56,079 - communication - INFO - 接收线程启动
+2025-12-03 22:41:56,079 - state - INFO - connection status changed: True
+2025-12-03 22:41:56,080 - communication - INFO - Connected to 127.0.0.1:5000
+2025-12-03 22:41:56,080 - __main__ - INFO - Device connected
+2025-12-03 22:41:56,080 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 512
+2025-12-03 22:41:56,081 - data_process - INFO - Data processing thread started
+2025-12-03 22:41:56,081 - data_process - INFO - Image conversion thread started
+2025-12-03 22:41:56,081 - __main__ - INFO - Data processing thread started
+2025-12-03 22:41:56,082 - algorithms - INFO - 检测循环开始运行...
+2025-12-03 22:41:56,082 - algorithms - INFO - ✓ 检测线程已启动 - 推理模式: OpenVINO (GPU)
+2025-12-03 22:41:56,083 - __main__ - INFO - Detection thread started
+2025-12-03 22:41:56,083 - __main__ - INFO - Waterfall visualization started
+2025-12-03 22:41:56,083 - __main__ - INFO - Spectrum visualization started
+2025-12-03 22:42:26,040 - __main__ - INFO - Handling parameter update: Receiver.FFT_Length = 1024
+2025-12-03 22:42:26,041 - state - INFO - parameter updated: Receiver.FFT_Length = 1024 (old 512)
+2025-12-03 22:42:26,043 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term7(2025AUT)\Lab-Workspace-2025AUT\Drone-Spectrums-Detection\Software\parameters.json
+2025-12-03 22:42:26,043 - UI.spectrum.config_interface - INFO - UI display refreshed: Receiver.FFT_Length = 1024
+2025-12-03 22:42:26,044 - UI.waterfall.config_interface - INFO - UI display refreshed: Receiver.FFT_Length = 1024
+2025-12-03 22:42:26,045 - communication - INFO - ✓ 发送命令: SET_FFT_LENGTH(code=0x01) = 1024
+2025-12-03 22:42:26,045 - communication - INFO - 通信层更新FFT长度为: 1024
+2025-12-03 22:42:26,047 - data_process - INFO - FFT长度已设置为: 1024, 瀑布图尺寸 1024x512
+2025-12-03 22:42:26,047 - __main__ - INFO - Parameter update handled
+2025-12-03 22:42:26,047 - UI.waterfall.config_interface - INFO - Request parameter update: Receiver.FFT_Length = 1024
+2025-12-03 22:42:51,674 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2025-12-03 22:42:51,675 - __main__ - INFO - Received disconnect request...
+2025-12-03 22:42:51,675 - __main__ - INFO - Disconnecting device...
+2025-12-03 22:42:51,683 - algorithms - INFO - 检测循环已退出
+2025-12-03 22:42:51,683 - algorithms - INFO - 检测线程已停止
+2025-12-03 22:42:51,690 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:42:51,691 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:42:51,691 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:42:51,691 - communication - WARNING - FFT数据队列已满，丢弃最旧数据
+2025-12-03 22:42:51,692 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 22:42:51,692 - state - INFO - connection status changed: False
+2025-12-03 22:42:51,692 - communication - INFO - 接收线程已退出
+2025-12-03 22:42:51,696 - communication - INFO - Disconnected from slave device
+2025-12-03 22:42:51,696 - __main__ - INFO - Device disconnected
+2025-12-03 22:42:52,884 - __main__ - INFO - Cleaning up system resources...
+2025-12-03 22:42:52,886 - __main__ - INFO - Disconnecting device...
+2025-12-03 22:42:52,886 - algorithms - INFO - 检测线程已停止
+2025-12-03 22:42:52,886 - data_process - INFO - Data processing and image conversion threads stopped
+2025-12-03 22:42:52,886 - communication - INFO - Disconnected from slave device
+2025-12-03 22:42:52,886 - __main__ - INFO - Device disconnected
+2025-12-03 22:42:52,886 - __main__ - INFO - System shutdown complete

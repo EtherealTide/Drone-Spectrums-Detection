@@ -63,7 +63,6 @@ class DroneDetector:
 
         # 加载模型
         self._load_model()
-        logger.info("算法层初始化完成")
 
     def _load_class_names(self):
         """从文件加载类别名称"""
@@ -71,7 +70,7 @@ class DroneDetector:
             if self.class_file.exists():
                 with open(self.class_file, "r", encoding="utf-8") as f:
                     names = [line.strip() for line in f.readlines()]
-                logger.info(f"✓ 加载了 {len(names)} 个类别: {names}")
+                logger.info(f"successfully loads {len(names)} classes: {names}")
                 return names
             else:
                 logger.warning(f"类别文件 {self.class_file} 不存在，使用默认类别")
@@ -107,14 +106,15 @@ class DroneDetector:
             # 尝试OpenVINO + GPU
             core = Core()
             if "GPU" in core.available_devices and self.openvino_model_path.exists():
-                logger.info(f"正在加载OpenVINO模型: {self.openvino_model_path}")
+                logger.info(f"Loading OpenVINO model from: {self.openvino_model_path}")
                 model = core.read_model(self.openvino_model_path)
                 self.compiled_model = core.compile_model(model, device_name="GPU")
                 self.input_layer = self.compiled_model.input(0)
                 self.input_shape = self.input_layer.shape  # [1, 3, H, W]
                 self.use_openvino = True
+                # 英文日志
                 logger.info(
-                    f"✓ OpenVINO模型加载成功（GPU加速）- 输入形状: {self.input_shape}"
+                    f"✓ OpenVINO model loaded successfully (GPU acceleration) - Input shape: {self.input_shape}"
                 )
                 self._warmup_model()
                 return
@@ -136,7 +136,7 @@ class DroneDetector:
     def _warmup_model(self):
         """预热模型"""
         try:
-            logger.info("🔥 预热模型...")
+            logger.info("🔥 Warming up the model...")
             dummy_image = np.random.randint(
                 0,
                 255,
@@ -144,9 +144,9 @@ class DroneDetector:
                 dtype=np.uint8,
             )
             _ = self._detect(dummy_image)
-            logger.info("✓ 模型预热完成")
+            logger.info("✓ Model warmup completed")
         except Exception as e:
-            logger.warning(f"模型预热失败: {e}")
+            logger.warning(f"Model warmup failed: {e}")
 
     def _detect(self, image):
         """执行检测（统一接口）"""
@@ -255,30 +255,6 @@ class DroneDetector:
                 )
 
         return detections  # PyTorch的YOLO已经做过NMS了
-
-    def _apply_nms(self, detections):
-        """应用NMS"""
-        if not detections:
-            return []
-
-        boxes = [
-            [
-                d["bbox"][0],
-                d["bbox"][1],
-                d["bbox"][2] - d["bbox"][0],
-                d["bbox"][3] - d["bbox"][1],
-            ]
-            for d in detections
-        ]
-        scores = [d["confidence"] for d in detections]
-
-        indices = cv2.dnn.NMSBoxes(
-            boxes, scores, self.conf_threshold, self.iou_threshold
-        )
-
-        if indices is None or len(indices) == 0:
-            return []
-        return [detections[i] for i in indices.flatten()]
 
     def _draw_detections(self, image, detections):
         """绘制检测框"""

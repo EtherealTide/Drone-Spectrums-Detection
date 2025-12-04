@@ -6,6 +6,7 @@ import threading
 import logging
 import json
 from pathlib import Path
+from scipy.io import loadmat
 
 logging.basicConfig(level=logging.INFO)
 
