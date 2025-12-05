@@ -20,15 +20,22 @@ class Communication:
 
         # 数据缓冲区
         self.buffer = bytearray()
-        self.expected_fft_length = self.state.fft_length  # FFT长度
+
+        # ⭐ 扫描模式参数
+        self.channel_count = 20  # 固定20通道
+        self.fft_length = state.fft_length  # 单通道FFT点数(如512)
+        self.total_fft_length = self.fft_length * self.channel_count  # 10240
         self.bytes_per_sample = 4  # float32固定4字节
 
         # 包同步参数
         self.PACKET_MAGIC = 0xAABBCCDD  # 包起始魔数
         self.current_frame_buffer = bytearray()  # 当前帧的数据缓冲
+
+        # ⭐ 基于总FFT长度计算预期包数
         self.expected_packets_per_frame = (
-            self.expected_fft_length // self.state.packet_size
+            self.total_fft_length // self.state.packet_size
         )
+
         self.last_packet_id = -1  # 上一个包的ID
         self.frame_count = 0  # 接收到的完整帧计数
 
@@ -82,9 +89,7 @@ class Communication:
             bool: 发送是否成功
         """
         try:
-            cmd_info = self.command_protocol["commands"].get(
-                command_name
-            )  # 获取命令信息
+            cmd_info = self.command_protocol["commands"].get(command_name)
             if not cmd_info:
                 logger.error(f"未知命令: {command_name}")
                 return False
@@ -110,8 +115,8 @@ class Communication:
         logger.info("接收线程启动")
 
         while self.state.communication_thread:
-            # ✅ 每次循环都动态获取最新的帧大小
-            frame_size = self.expected_fft_length * self.bytes_per_sample
+            # ⭐ 动态获取最新的帧大小（基于总FFT长度）
+            frame_size = self.total_fft_length * self.bytes_per_sample
 
             try:
                 # 1. 搜索魔数，确保包同步
@@ -119,7 +124,7 @@ class Communication:
                     logger.error("无法同步到魔数，退出接收")
                     break
 
-                # 2. 读取包头：[frame_id(4)]+[packet_id(4)] + [data_length(4)]
+                # 2. 读取包头：[frame_id(4)] + [packet_id(4)] + [data_length(4)]
                 header = self._recv_exact(12)
                 if not header:
                     logger.error("接收包头失败")
@@ -147,8 +152,10 @@ class Communication:
                             if excess > 0:
                                 logger.debug(f"丢弃上一帧多余数据: {excess} 字节")
                         else:
-                            # 帧不完整，丢弃
-                            pass
+                            logger.warning(
+                                f"上一帧不完整: 接收 {len(self.current_frame_buffer)} 字节 "
+                                f"(期望 {frame_size} 字节)，丢弃"
+                            )
 
                     # 重置当前帧状态
                     self.current_frame_buffer = bytearray()
@@ -194,8 +201,6 @@ class Communication:
 
                 # 检查是否匹配魔数
                 if len(sync_buffer) == 4 and bytes(sync_buffer) == magic_bytes:
-                    # 恢复阻塞模式
-                    self.socket.settimeout(None)
                     return True
 
             except socket.timeout:
@@ -208,20 +213,22 @@ class Communication:
         return False
 
     def _process_frame(self, frame_data):
-        """处理完整的FFT帧"""
-        expected_size = self.expected_fft_length * self.bytes_per_sample
+        """处理完整的FFT帧（10240点）"""
+        expected_size = self.total_fft_length * self.bytes_per_sample
 
         if len(frame_data) < expected_size:
             # 帧不完整，检测丢包
             missing_bytes = expected_size - len(frame_data)
-            missing_packets = missing_bytes // (128 * self.bytes_per_sample)
+            missing_packets = missing_bytes // (
+                self.state.packet_size * self.bytes_per_sample
+            )
             logger.warning(
                 f"帧不完整: 缺少 {missing_bytes} 字节 "
                 f"(约{missing_packets}个包)，丢弃该帧"
             )
             return
 
-        # 解析为numpy数组
+        # ⭐ 解析为numpy数组（10240个float32）
         fft_data = np.frombuffer(frame_data[:expected_size], dtype=np.float32)
 
         # 放入队列
@@ -235,7 +242,6 @@ class Communication:
                 }
             )
             self.frame_count += 1
-            # logger.info(f"接收完整FFT帧 #{self.frame_count}, 长度: {len(fft_data)}")
         except queue.Full:
             logger.warning("FFT数据队列已满，丢弃最旧数据")
             try:
@@ -273,5 +279,9 @@ class Communication:
         return bytes(data)
 
     def set_fft_length(self):
-        self.expected_fft_length = self.state.fft_length
-        logger.info(f"通信层更新FFT长度为: {self.expected_fft_length}")
+        """更新FFT长度（单通道）"""
+        self.fft_length = self.state.fft_length
+        self.total_fft_length = self.single_channel_fft * self.channel_count
+        self.expected_packets_per_frame = (
+            self.total_fft_length // self.state.packet_size
+        )

@@ -6,12 +6,14 @@ import logging
 import queue
 import matplotlib.pyplot as plt
 import cv2
+import traceback
 
 logger = logging.getLogger(__name__)
 
 
 class DataProcessor:
     def __init__(self, state):
+        self._init_complete = False
         self.state = state
         self.fft_data_queue = None
         self.data_lock = threading.Lock()
@@ -25,8 +27,12 @@ class DataProcessor:
 
         self.latest_spectrum = None
 
-        self.fft_length = state.fft_length
-        self.waterfall_width = self.fft_length
+        # 扫描参数
+        self.channel_count = 20  # 固定20通道
+        self.fft_length = state.fft_length  # 单通道FFT点数(如512)
+        self.total_fft_length = self.fft_length * self.channel_count  # 10240
+        self.total_bandwidth_mhz = 2000  # 总带宽2000MHz
+        self.waterfall_width = self.total_fft_length
         self.waterfall_height = max(1, int(state.waterfall_height))
 
         zero_line = np.zeros(self.waterfall_width, dtype=np.float32)
@@ -37,8 +43,8 @@ class DataProcessor:
 
         self.transfer_time_interval = 0.01
         self.waterfall_image = np.zeros(
-            (self.waterfall_height, self.waterfall_width, 3), dtype=np.uint8
-        )
+            (self.waterfall_width, self.waterfall_height, 3), dtype=np.uint8
+        )  # 务必注意！这里宽高顺序与之前的buffer不同，这是因为给yolo之前需要转置
 
         self.image_needs_update = False
 
@@ -50,8 +56,8 @@ class DataProcessor:
         self.min_value = 0.0
         self.batch_size = 0
 
-        # 【改进】预计算LUT表，使用OpenCV的applyColorMap
         self.use_opencv_colormap = True
+        self._init_complete = True
 
     def start_processing(self):
         if not self.process_thread or not self.process_thread.is_alive():
@@ -83,34 +89,37 @@ class DataProcessor:
     def _process_loop(self):
         while self.state.data_processing_thread:
             try:
-                batch_frames = []  # 一轮批次处理的帧列表
+                batch_frames = []
                 try:
                     first_frame = self.fft_data_queue.get(timeout=1)
                     batch_frames.append(first_frame)
                 except queue.Empty:
                     continue
 
-                while True:  # 尽可能多地获取队列中的数据，直到队列为空
+                while True:
                     try:
                         frame = self.fft_data_queue.get_nowait()
                         batch_frames.append(frame)
                     except queue.Empty:
                         break
 
-                self.batch_size = len(
-                    batch_frames
-                )  # 只要长度为1，就说明数据处理速度可以跟上通信层速度
+                self.batch_size = len(batch_frames)
 
                 processed_batch = []
                 for fft_frame in batch_frames:
                     fft_data = fft_frame["data"]
-                    if len(fft_data) != self.fft_length:
-                        if len(fft_data) > self.fft_length:
-                            fft_data = fft_data[: self.fft_length]
+
+                    # ⭐ 确保长度为总FFT长度
+                    if len(fft_data) != self.total_fft_length:
+                        if len(fft_data) > self.total_fft_length:
+                            fft_data = fft_data[: self.total_fft_length]
                         else:
-                            padded = np.zeros(self.fft_length, dtype=fft_data.dtype)
+                            padded = np.zeros(
+                                self.total_fft_length, dtype=fft_data.dtype
+                            )
                             padded[: len(fft_data)] = fft_data
                             fft_data = padded
+
                     processed_batch.append(fft_data)
 
                 batch_array = np.array(processed_batch, dtype=np.float32)
@@ -137,7 +146,7 @@ class DataProcessor:
                 self.state.data_queue_status = "processing"
 
             except Exception as e:
-                logger.error(f"数据处理异常: {e}", exc_info=True)
+                logger.error(f"Data processing error: {e}", exc_info=True)
                 self.state.data_queue_status = "error"
                 time.sleep(0.1)
 
@@ -152,17 +161,14 @@ class DataProcessor:
                     waterfall_list = list(self.waterfall_buffer)
                     self.image_needs_update = False
 
-                # 【改进1】直接转为uint8，减少中间转换
                 waterfall_array = np.array(waterfall_list, dtype=np.float32)
                 waterfall_array = np.flipud(waterfall_array).T
 
-                # 【改进2】使用OpenCV的硬件加速颜色映射
-                if self.use_opencv_colormap:
+                if not self.use_opencv_colormap:
                     gray_image = (waterfall_array * 255.0).astype(np.uint8)
                     bgr_image = cv2.applyColorMap(gray_image, cv2.COLORMAP_JET)
                     rgb_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
                 else:
-                    # 原始方法（保留作为fallback）
                     color_indices = (waterfall_array * 255.0).astype(np.uint8)
                     rgb_image = self.colormap[color_indices]
 
@@ -170,8 +176,45 @@ class DataProcessor:
                     self.waterfall_image = rgb_image
 
             except Exception as e:
-                logger.error(f"图像转换异常: {e}", exc_info=True)
+                logger.error(f"Image conversion error: {e}", exc_info=True)
                 time.sleep(0.1)
+
+    # ==================== 新增扫描接口 ====================
+
+    def get_window_image(self, start_point, end_point):
+        """
+        Get waterfall image slice for specified FFT point range
+
+        Args:
+            start_point: Start FFT point index (0-10239)
+            end_point: End FFT point index (0-10239)
+
+        Returns:
+            Sliced RGB image [height, width, 3]
+        """
+        # Boundary check
+        start_point = max(0, min(start_point, self.total_fft_length - 1))
+        end_point = max(start_point + 1, min(end_point, self.total_fft_length))
+
+        with self.image_lock:
+            sliced_image = self.waterfall_image[start_point:end_point, :, :].copy()
+        return sliced_image
+
+    def get_point_to_frequency(
+        self, point_index
+    ):  # 用于显示实际切片FFT点数对应的频率范围
+        """
+        Convert FFT point index to frequency (MHz)
+
+        Args:
+            point_index: FFT point index (0-10239)
+
+        Returns:
+            Frequency in MHz
+        """
+        return point_index * self.total_bandwidth_mhz / self.total_fft_length
+
+    # ==================== 原有接口 ====================
 
     def get_latest_spectrum(self):
         with self.data_lock:
@@ -189,6 +232,7 @@ class DataProcessor:
         with self.image_lock:
             return self.waterfall_image.copy()
 
+    # 获取统计信息
     def get_stats(self):
         with self.data_lock:
             return {
@@ -201,11 +245,11 @@ class DataProcessor:
             }
 
     def set_fft_length(self, length):
+        """Update single channel FFT length"""
         with self.data_lock:
             self.fft_length = length
-            self.waterfall_width = length
-            if self.waterfall_height <= 0:
-                self.waterfall_height = length
+            self.total_fft_length = self.fft_length * self.fft_length
+            self.waterfall_width = self.total_fft_length
 
             zero_line = np.zeros(self.waterfall_width, dtype=np.float32)
             self.waterfall_buffer = deque(
@@ -214,12 +258,12 @@ class DataProcessor:
             )
 
             logger.info(
-                f"FFT长度已设置为: {length}, 瀑布图尺寸 {self.waterfall_width}x{self.waterfall_height}"
+                f"FFT length updated: single_channel={length}, total={self.total_fft_length}"
             )
 
         with self.image_lock:
             self.waterfall_image = np.zeros(
-                (self.waterfall_height, self.waterfall_width, 3), dtype=np.uint8
+                (self.waterfall_width, self.waterfall_height, 3), dtype=np.uint8
             )
 
     def set_waterfall_parameters(self, height=None):
@@ -244,4 +288,25 @@ class DataProcessor:
                 self.waterfall_image = np.zeros(
                     (self.waterfall_height, self.waterfall_width, 3), dtype=np.uint8
                 )
-            logger.info(f"瀑布图参数更新 height={self.waterfall_height}")
+            logger.info(f"Waterfall parameters updated: height={self.waterfall_height}")
+
+    # def __setattr__(self, name, value):
+    #     """监控 waterfall_image 的修改"""
+    #     if (
+    #         name == "waterfall_image"
+    #         and hasattr(self, "_init_complete")
+    #         and self._init_complete
+    #     ):
+    #         if value is not None and hasattr(value, "shape"):
+    #             expected = (self.waterfall_width, self.waterfall_height, 3)
+    #             if value.shape != expected:
+    #                 logger.error(
+    #                     f"❌❌❌ Attempting to set waterfall_image with wrong shape!"
+    #                 )
+    #                 logger.error(f"Expected: {expected}")
+    #                 logger.error(f"Got:      {value.shape}")
+    #                 logger.error(f"📍 Stack trace:")
+    #                 for line in traceback.format_stack():
+    #                     logger.error(line.strip())
+
+    #     super().__setattr__(name, value)

@@ -7,6 +7,7 @@ import cv2
 from pathlib import Path
 from openvino import Core
 from ultralytics import YOLO
+from scanning_controller import ScanningController, ScanMode
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +61,17 @@ class DroneDetector:
         self.conf_threshold = self.state.conf_threshold
         self.iou_threshold = self.state.iou_threshold
         self.image_size = 640
+
+        # 初始化扫描控制器
+        self.scanning_controller = ScanningController(state, data_processor)
+
+        # 设置控制信号的类别ID
+        try:
+            control_signal_id = self.class_names.index("Flight-control signal")
+            self.scanning_controller.set_control_signal_class_id(control_signal_id)
+        except ValueError:
+            logger.warning("'control_signal' class not found in class_names")
+            self.scanning_controller.set_control_signal_class_id(3)  # fallback
 
         # 加载模型
         self._load_model()
@@ -205,7 +217,7 @@ class DroneDetector:
         x2 = np.clip(x2 * scale_x, 0, orig_w).astype(int)
         y2 = np.clip(y2 * scale_y, 0, orig_h).astype(int)
 
-        # NMS（与示例代码一致）
+        # 非极大值抑制
         boxes_xywh = np.stack([x1, y1, x2 - x1, y2 - y1], axis=1)
         indices = cv2.dnn.NMSBoxes(
             boxes_xywh.tolist(),
@@ -319,37 +331,45 @@ class DroneDetector:
         logger.info("检测线程已停止")
 
     def _detection_loop(self):
-        """检测主循环"""
+        """检测主循环 - 与扫描控制器集成"""
         logger.info("检测循环开始运行...")
 
         while self.state.detection_thread:
             try:
                 start_time = time.time()
 
-                # 获取图像
-                input_image = self.data_processor.get_waterfall_image()
+                # 从扫描控制器获取当前窗口图像
+                input_image, window_start_point, window_end_point = (
+                    self.scanning_controller.get_current_window_image()
+                )
+
+                # 检查图像有效性
                 if input_image is None or input_image.size == 0:
                     time.sleep(0.01)
-                    continue
 
-                if len(input_image.shape) != 3 or input_image.shape[2] != 3:
-                    time.sleep(0.01)
                     continue
 
                 # 检测
                 detections = self._detect(input_image)
+                # 更新状态机
+                self.scanning_controller.update_state_machine(
+                    detections,
+                    window_start_point,
+                    window_end_point,
+                    input_image.shape[1],  # 图像宽度
+                )
 
-                # 绘制结果
+                # 绘制检测框
                 annotated_image = self._draw_detections(input_image, detections)
-
                 # 更新结果
                 with self.detection_lock:
                     self.detection_image = annotated_image
                     self.detection_results = detections
                     self.detection_count += 1
                     self.last_detection_time = time.time()
-                    self.total_detections += 1
-                    self.total_objects += len(detections)
+                    if detections:
+                        self.total_objects += len(detections)
+                        self.total_detections += 1
 
                 # 计算FPS
                 elapsed = time.time() - start_time
@@ -360,8 +380,6 @@ class DroneDetector:
                 time.sleep(0.1)
 
         logger.info("检测循环已退出")
-
-    # ==================== 对外接口 ====================
 
     def get_detection_image(self):
         """获取带检测框的图像"""
@@ -378,24 +396,27 @@ class DroneDetector:
             return self.detection_results.copy()
 
     def get_detection_stats(self):
-        """获取检测统计信息"""
+        """获取检测统计信息（不含扫描状态）"""
         with self.detection_lock:
             return {
-                "detection_count": self.detection_count,
                 "total_detections": self.total_detections,
                 "total_objects": self.total_objects,
-                "last_detection_time": self.last_detection_time,
-                "current_objects": len(self.detection_results),
                 "fps": self.fps,
-                "inference_mode": (
-                    "OpenVINO (GPU)" if self.use_openvino else "PyTorch (CPU)"
-                ),
+                "detection_count": self.detection_count,
             }
 
+    # ⭐ 新增：直接获取扫描控制器引用的接口
+    def get_scanning_controller(self):
+        """获取扫描控制器实例（供UI层访问）"""
+        return self.scanning_controller
+
     def update_detection_parameters(self):
-        """更新检测参数"""
+        """更新检测参数（包括扫描参数）"""
         self.conf_threshold = self.state.conf_threshold
         self.iou_threshold = self.state.iou_threshold
-        self.image_size = (
-            640 if self.state.image_size == "default" else self.state.image_size
-        )
+        self.image_size = self.state.image_size
+
+        # ⭐ 更新扫描参数
+        self.scanning_controller.update_parameters()
+
+        logger.info("检测参数已更新")

@@ -94,7 +94,9 @@ class WaterfallVisualizationCard(QWidget):
             if self.detector:
                 detection_image = self.detector.get_detection_image()
                 detection_stats = self.detector.get_detection_stats()
-
+                scanning_controller_stats = (
+                    self.detector.scanning_controller.get_status()
+                )
             if detection_image is None and self.data_processor:
                 detection_image = self.data_processor.get_waterfall_image()
 
@@ -110,7 +112,9 @@ class WaterfallVisualizationCard(QWidget):
             processor_stats = (
                 self.data_processor.get_stats() if self.data_processor else {}
             )
-            self._update_stats(processor_stats, detection_stats)
+            self._update_stats(
+                processor_stats, detection_stats, scanning_controller_stats
+            )
 
         except Exception as e:
             logger.error(f"获取瀑布图或检测数据失败: {e}", exc_info=True)
@@ -136,7 +140,9 @@ class WaterfallVisualizationCard(QWidget):
         )
         label.setPixmap(pixmap)
 
-    def _update_stats(self, stats: dict, detection_stats: dict):
+    def _update_stats(
+        self, stats: dict, detection_stats: dict, scanning_controller_stats: dict
+    ):
         sent_frames = getattr(self.state, "sent_frames", 0) if self.state else 0
         received_frames = getattr(self.state, "received_frames", 0) if self.state else 0
         processed_frames = stats.get("frame_id", 0)
@@ -144,8 +150,10 @@ class WaterfallVisualizationCard(QWidget):
             detection_stats.get("detection_count", 0) if detection_stats else 0
         )
         detection_fps = detection_stats.get("fps", 0.0) if detection_stats else 0.0
-        batch_size = stats.get("batch_size", 0)
-
+        freq_range_str = scanning_controller_stats.get(
+            "frequency_range_str", ("N/A", "N/A")
+        )
+        scan_mode = scanning_controller_stats.get("scan_mode", "N/A")
         # 基本统计信息 - 3列布局
         stats_table = f"""
         <table cellpadding='4' cellspacing='0' width='100%'>
@@ -160,8 +168,8 @@ class WaterfallVisualizationCard(QWidget):
                 <td>显示帧数: {self.frame_displayed}</td>
             </tr>
             <tr>
-                <td>批处理帧数: {batch_size}</td>
-                <td colspan='2'></td>
+                <td colspan='2'>频率范围: {freq_range_str}</td>
+                <td>当前扫描状态: {scan_mode}</td>
             </tr>
         </table>
         """

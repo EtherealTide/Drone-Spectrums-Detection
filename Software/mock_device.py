@@ -21,20 +21,28 @@ class MockDevice:
         self.client_socket = None
         self.running = False
         self.send_thread = None
-        self.command_thread = None  # 新增：指令接收线程
+        self.command_thread = None
 
-        # FFT参数
-        self.fft_length = 512
-        self.packet_size = 128  # 每次发送128个点
-        self.send_interval = 0.001  # 100ms发送一帧完整FFT
+        # ⭐ 扫描模式参数
+        self.single_channel_fft = 512  # 单通道FFT点数
+        self.channel_count = 20  # 固定20通道
+        self.total_fft_length = self.single_channel_fft * self.channel_count  # 10240
+        self.packet_size = 128  # 每个包128个点
+        self.send_interval = 0.001  # 发送间隔
 
-        # 数据流相关，数据存在代码的上两级目录的2文件夹中
+        # 数据流相关
         self.data_dir = Path(__file__).parent.parent.parent / "2"
         self.npy_files = sorted(self.data_dir.glob("*.npy"))
         self._current_file_idx = 0
         self._buffer = np.array([], dtype=np.float32)
+
         # 发送帧数
         self.frame_id = 0
+
+        logging.info(
+            f"MockDevice initialized: single_channel_fft={self.single_channel_fft}, "
+            f"total_fft_length={self.total_fft_length}"
+        )
 
     def start(self):
         """启动模拟设备"""
@@ -97,8 +105,14 @@ class MockDevice:
                         break
                     new_length = struct.unpack(">I", value_data)[0]
 
-                    self.fft_length = new_length
-                    logging.info(f"✓ 接收到指令: SET_FFT_LENGTH = {new_length}")
+                    # ⭐ 更新单通道FFT长度
+                    self.single_channel_fft = new_length
+                    self.total_fft_length = self.single_channel_fft * self.channel_count
+
+                    logging.info(
+                        f"✓ 接收到指令: SET_FFT_LENGTH = {new_length}, "
+                        f"total_fft_length = {self.total_fft_length}"
+                    )
 
                 else:
                     logging.warning(f"⚠ 未知指令码: 0x{code:02X}")
@@ -125,12 +139,13 @@ class MockDevice:
                 return None
         return bytes(data)
 
-    def _generate_fft_data(self):
-        """从指定目录中读取npy文件并转换为数据流"""
+    def _generate_raw_fft_data(self):
+        """生成单通道512点原始FFT数据（从npy文件读取）"""
         if not self.npy_files:
             raise RuntimeError(f"未在目录 {self.data_dir} 中找到任何.npy文件")
 
-        while self._buffer.size < self.fft_length:
+        # 确保缓冲区有足够的数据
+        while self._buffer.size < self.single_channel_fft:
             next_chunk = self._load_next_file_chunk()
             if next_chunk.size == 0:
                 continue
@@ -139,9 +154,34 @@ class MockDevice:
             else:
                 self._buffer = np.concatenate((self._buffer, next_chunk))
 
-        fft_data = self._buffer[: self.fft_length]
-        self._buffer = self._buffer[self.fft_length :]
-        return fft_data
+        # 提取单通道FFT数据
+        raw_fft_data = self._buffer[: self.single_channel_fft]
+        self._buffer = self._buffer[self.single_channel_fft :]
+        return raw_fft_data
+
+    def _prepare_full_frame(self, raw_fft_data):
+        """
+        ⭐ 模拟下位机数据准备逻辑
+
+        Args:
+            raw_fft_data: 原始单通道FFT数据（512点）
+
+        Returns:
+            完整帧数据（10240点）
+        """
+        # 1. 找到512点中的最小值
+        min_value = np.min(raw_fft_data)
+
+        # 2. 创建完整缓冲区（10240点）
+        full_frame = np.zeros(self.total_fft_length, dtype=np.float32)
+        full_frame[:5120] = min_value  # 前半部分填充最小值
+        # 3. 拷贝原始512点
+        full_frame[5120 : 5120 + self.single_channel_fft] = raw_fft_data
+
+        # 4. 填充剩余点为最小值
+        full_frame[5120 + self.single_channel_fft :] = min_value
+
+        return full_frame
 
     def _load_next_file_chunk(self):
         """加载下一个有效的npy文件数据"""
@@ -169,36 +209,46 @@ class MockDevice:
         return np.array([], dtype=np.float32)
 
     def _send_loop(self):
-        """数据发送循环 - 每个包前加魔数"""
+        """数据发送循环 - 发送10240点完整帧"""
         while self.running:
             try:
-                # 生成一帧完整的FFT数据
-                fft_data = self._generate_fft_data()
+                # ⭐ 1. 生成单通道512点原始FFT数据
+                raw_fft_data = self._generate_raw_fft_data()
+
+                # ⭐ 2. 准备完整10240点帧（模拟下位机逻辑）
+                full_frame = self._prepare_full_frame(raw_fft_data)
+
                 self.frame_id += 1
 
-                # 分包发送
-                num_packets = self.fft_length // self.packet_size
+                # ⭐ 3. 分包发送（10240点 / 128点 = 80个包）
+                num_packets = self.total_fft_length // self.packet_size
 
-                for i in range(num_packets):
+                for packet_id in range(num_packets):
                     # 提取当前包的数据
-                    start_idx = i * self.packet_size
+                    start_idx = packet_id * self.packet_size
                     end_idx = start_idx + self.packet_size
-                    packet_data = fft_data[start_idx:end_idx].tobytes()
+                    packet_data = full_frame[start_idx:end_idx].tobytes()
 
                     # 构造数据包: [magic(4)] + [frame_id(4)] + [packet_id(4)] + [data_length(4)] + [data]
                     header = struct.pack(
                         ">IIII",
                         0xAABBCCDD,  # 魔数
                         self.frame_id,  # 帧ID
-                        i,  # 包ID（帧内序号，从0开始）
-                        len(packet_data),  # 数据长度
+                        packet_id,  # 包ID（0-79）
+                        len(packet_data),  # 数据长度（512字节 = 128点×4字节）
                     )
 
                     # 发送
                     self.client_socket.sendall(header + packet_data)
 
-                if self.frame_id % 4000 == 0:
-                    logging.info(f"已发送 {self.frame_id} 帧数据")
+                # 日志输出（每1000帧输出一次）
+                if self.frame_id % 1000 == 0:
+                    logging.info(
+                        f"已发送 {self.frame_id} 帧数据 "
+                        f"(每帧{self.total_fft_length}点, "
+                        f"原始{self.single_channel_fft}点, "
+                        f"最小值={np.min(raw_fft_data):.4f})"
+                    )
 
             except Exception as e:
                 if self.running:
@@ -206,13 +256,19 @@ class MockDevice:
                 break
 
         # 重新初始化连接
-        self.start()
-        logging.info("发送线程已退出")
+        if self.running:
+            logging.warning("发送线程异常退出，尝试重新连接...")
+            self.start()
+        else:
+            logging.info("发送线程已退出")
 
     def set_fft_length(self, length):
-        """设置FFT长度"""
-        self.fft_length = length
-        logging.info(f"FFT长度已设置为: {length}")
+        """设置单通道FFT长度"""
+        self.single_channel_fft = length
+        self.total_fft_length = self.single_channel_fft * self.channel_count
+        logging.info(
+            f"单通道FFT长度已设置为: {length}, 总长度: {self.total_fft_length}"
+        )
 
 
 if __name__ == "__main__":

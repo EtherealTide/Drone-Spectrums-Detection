@@ -1,9 +1,16 @@
 {
   "Receiver": {
-    "FFT_Length": 1024,
+    "FFT_Length": 512,
     "Decimation_factor": 100,
     "Centre_frequency(MHz)": 2400.0,
-    "SPAN(MHz)": 100.0
+    "SPAN(MHz)": 100.0,
+    "Channel_count": 20
+  },
+  "Scanning": {
+    "enable_scanning": true,
+    "scan_bandwidth_mhz": 100,
+    "overlap_ratio": 0.5,
+    "control_lost_threshold": 50
   },
   "Detection": {
     "conf_threshold": 0.25,

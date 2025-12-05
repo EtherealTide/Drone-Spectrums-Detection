@@ -45,11 +45,18 @@ class State(QObject):
                 "Decimation_factor": 100,
                 "Centre_frequency(MHz)": 2400.0,
                 "SPAN(MHz)": 100.0,
+                "Channel_count": 20,
             },
             "Detection": {
                 "conf_threshold": 0.25,
                 "iou_threshold": 0.45,
                 "image_size": 640,
+            },
+            "Scanning": {
+                "enable_scanning": True,
+                "scan_bandwidth_mhz": 100,
+                "overlap_ratio": 0.5,
+                "control_lost_threshold": 5,
             },
             "UI_Spectrum": {
                 "spectrum_left_freq(MHz)": 0.0,
@@ -152,3 +159,25 @@ class State(QObject):
             self._communication_thread = value
             self.connection_changed.emit(value)
             logger.info(f"connection status changed: {value}")
+
+    # ==================== additional parameters ====================
+
+    @property
+    def channel_count(self):
+        return self.get_parameter("Receiver", "Channel_count", 20)
+
+    @property
+    def enable_scanning(self):
+        return self.get_parameter("Scanning", "enable_scanning", False)
+
+    @property
+    def scan_bandwidth_mhz(self):
+        return self.get_parameter("Scanning", "scan_bandwidth_mhz", 100)
+
+    @property
+    def overlap_ratio(self):
+        return self.get_parameter("Scanning", "overlap_ratio", 0.5)
+
+    @property
+    def control_lost_threshold(self):
+        return self.get_parameter("Scanning", "control_lost_threshold", 5)

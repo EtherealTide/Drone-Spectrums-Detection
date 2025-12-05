@@ -122,6 +122,12 @@ class WaterfallConfigInterface(QWidget):
         ]
         for name, value, options in detection_params:
             self.add_parameter(detection_item, "Detection", name, value, options)
+        scanner_params = [
+            ("control_lost_threshold", self.state.control_lost_threshold, None),
+            ("scan_bandwidth_mhz", self.state.scan_bandwidth_mhz, None),
+        ]
+        for name, value, options in scanner_params:
+            self.add_parameter(detection_item, "Scanner", name, value, options)
 
     def add_parameter(
         self, parent_item, param_group, param_name, current_value, options
