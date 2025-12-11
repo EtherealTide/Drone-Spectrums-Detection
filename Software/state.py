@@ -23,6 +23,7 @@ class State(QObject):
         self.received_frames = 0
         self._parameters = self._load_parameters()
         self.device_ip = "127.0.0.1"
+        # self.device_ip = "192.168.1.100"
         self.device_port = 5000
 
     def _load_parameters(self) -> dict:

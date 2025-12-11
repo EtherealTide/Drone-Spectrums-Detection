@@ -4,9 +4,8 @@ import numpy as np
 import time
 import threading
 import logging
-import json
 from pathlib import Path
-from scipy.io import loadmat
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -23,26 +22,77 @@ class MockDevice:
         self.send_thread = None
         self.command_thread = None
 
-        # ⭐ 扫描模式参数
+        # 扫描模式参数
         self.single_channel_fft = 512  # 单通道FFT点数
         self.channel_count = 20  # 固定20通道
         self.total_fft_length = self.single_channel_fft * self.channel_count  # 10240
         self.packet_size = 128  # 每个包128个点
         self.send_interval = 0.001  # 发送间隔
 
-        # 数据流相关
-        self.data_dir = Path(__file__).parent.parent.parent / "2"
-        self.npy_files = sorted(self.data_dir.glob("*.npy"))
-        self._current_file_idx = 0
-        self._buffer = np.array([], dtype=np.float32)
+        # 数据流相关 - 从txt文件读取
+        # self.data_file = Path(__file__).parent.parent.parent / "result2G_50ms.txt"
+        # 使用绝对路径-桌面
+        self.data_file = Path.home() / "Desktop" / "data1ms.npy"
+        self._data_lines = []
+        self._current_line_idx = 0
+        self._load_txt_data()
 
         # 发送帧数
         self.frame_id = 0
 
         logging.info(
             f"MockDevice initialized: single_channel_fft={self.single_channel_fft}, "
-            f"total_fft_length={self.total_fft_length}"
+            f"total_fft_length={self.total_fft_length}, "
+            f"loaded {len(self._data_lines)} lines from {self.data_file.name}"
         )
+
+    def _load_txt_data(self):
+        """从txt文件加载所有行的数据"""
+        try:
+            # 打印完整路径
+            logging.info(f"=== 开始加载数据文件 ===")
+            logging.info(f"文件路径: {self.data_file.absolute()}")
+
+            if not self.data_file.exists():
+                raise FileNotFoundError(f"文件不存在: {self.data_file.absolute()}")
+
+            # 显示文件大小和修改时间
+            file_stat = self.data_file.stat()
+            logging.info(f"文件大小: {file_stat.st_size / 1024:.2f} KB")
+
+            # 优先加载 .npy 文件
+            npy_file = self.data_file.with_suffix(".npy")
+
+            if npy_file.exists():
+                logging.info(f"加载二进制文件: {npy_file}")
+                start_time = time.time()
+                data_array = np.load(self.data_file)
+                logging.info(f"加载完成，耗时 {time.time() - start_time:.2f} 秒")
+            else:
+                logging.info(f"加载文本文件: {self.data_file}")
+                start_time = time.time()
+                data_array = np.loadtxt(self.data_file, dtype=np.float32)
+                logging.info(f"加载完成，耗时 {time.time() - start_time:.2f} 秒")
+
+                # 自动保存为 .npy 以便下次快速加载
+                logging.info(f"保存为二进制格式: {npy_file}")
+                np.save(npy_file, data_array)
+
+            for line_num, values in enumerate(data_array, 1):
+                if len(values) == self.total_fft_length:
+                    self._data_lines.append(np.array(values, dtype=np.float32))
+                else:
+                    logging.warning(
+                        f"第 {line_num} 行数据点数不匹配: "
+                        f"期望 {self.total_fft_length}, 实际 {len(values)}"
+                    )
+
+            logging.info(f"成功加载 {len(self._data_lines)} 行数据")
+
+        except FileNotFoundError:
+            raise RuntimeError(f"数据文件不存在: {self.data_file.absolute()}")
+        except Exception as e:
+            raise RuntimeError(f"加载数据文件失败: {e}")
 
     def start(self):
         """启动模拟设备"""
@@ -139,116 +189,77 @@ class MockDevice:
                 return None
         return bytes(data)
 
-    def _generate_raw_fft_data(self):
-        """生成单通道512点原始FFT数据（从npy文件读取）"""
-        if not self.npy_files:
-            raise RuntimeError(f"未在目录 {self.data_dir} 中找到任何.npy文件")
+    def _get_next_frame(self):
+        """获取下一帧完整的10240点数据"""
+        if not self._data_lines:
+            raise RuntimeError("没有可用的数据")
 
-        # 确保缓冲区有足够的数据
-        while self._buffer.size < self.single_channel_fft:
-            next_chunk = self._load_next_file_chunk()
-            if next_chunk.size == 0:
-                continue
-            if self._buffer.size == 0:
-                self._buffer = next_chunk
-            else:
-                self._buffer = np.concatenate((self._buffer, next_chunk))
+        # 循环读取
+        frame_data = self._data_lines[self._current_line_idx]
+        self._current_line_idx = (self._current_line_idx + 1) % len(self._data_lines)
 
-        # 提取单通道FFT数据
-        raw_fft_data = self._buffer[: self.single_channel_fft]
-        self._buffer = self._buffer[self.single_channel_fft :]
-        return raw_fft_data
-
-    def _prepare_full_frame(self, raw_fft_data):
-        """
-        ⭐ 模拟下位机数据准备逻辑
-
-        Args:
-            raw_fft_data: 原始单通道FFT数据（512点）
-
-        Returns:
-            完整帧数据（10240点）
-        """
-        # 1. 找到512点中的最小值
-        min_value = np.min(raw_fft_data)
-
-        # 2. 创建完整缓冲区（10240点）
-        full_frame = np.zeros(self.total_fft_length, dtype=np.float32)
-        full_frame[:5120] = min_value  # 前半部分填充最小值
-        # 3. 拷贝原始512点
-        full_frame[5120 : 5120 + self.single_channel_fft] = raw_fft_data
-
-        # 4. 填充剩余点为最小值
-        full_frame[5120 + self.single_channel_fft :] = min_value
-
-        return full_frame
-
-    def _load_next_file_chunk(self):
-        """加载下一个有效的npy文件数据"""
-        attempts = 0
-        total_files = len(self.npy_files)
-        while attempts < total_files:
-            file_path = self.npy_files[self._current_file_idx]
-            self._current_file_idx = (self._current_file_idx + 1) % total_files
-            attempts += 1
-
-            try:
-                data = np.load(file_path)
-            except Exception as exc:
-                logging.error(f"加载文件 {file_path} 失败: {exc}", exc_info=True)
-                continue
-
-            flat_data = np.asarray(data, dtype=np.float32).ravel()
-            if flat_data.size == 0:
-                logging.warning(f"文件 {file_path} 为空，跳过")
-                continue
-
-            return flat_data
-
-        logging.error("无法从任何npy文件中获取有效数据")
-        return np.array([], dtype=np.float32)
+        return frame_data
 
     def _send_loop(self):
-        """数据发送循环 - 发送10240点完整帧"""
+        """数据发送循环 - 批量发送整帧"""
+        # 性能统计
+        last_log_time = time.time()
+        frames_since_log = 0
+
         while self.running:
             try:
-                # ⭐ 1. 生成单通道512点原始FFT数据
-                raw_fft_data = self._generate_raw_fft_data()
-
-                # ⭐ 2. 准备完整10240点帧（模拟下位机逻辑）
-                full_frame = self._prepare_full_frame(raw_fft_data)
-
+                # 获取完整帧数据（10240点）
+                full_frame = self._get_next_frame()
                 self.frame_id += 1
+                frames_since_log += 1
 
-                # ⭐ 3. 分包发送（10240点 / 128点 = 80个包）
-                num_packets = self.total_fft_length // self.packet_size
+                # ⭐ 方案1A: 单包发送（最快）
+                # 构造整帧数据包: [magic(4)] + [frame_id(4)] + [data_length(4)] + [data]
+                frame_data = full_frame.tobytes()
+                header = struct.pack(
+                    ">III",
+                    0xAABBCCDD,  # 魔数
+                    self.frame_id,  # 帧ID
+                    len(frame_data),  # 数据长度
+                )
 
-                for packet_id in range(num_packets):
-                    # 提取当前包的数据
-                    start_idx = packet_id * self.packet_size
-                    end_idx = start_idx + self.packet_size
-                    packet_data = full_frame[start_idx:end_idx].tobytes()
+                # 一次性发送
+                self.client_socket.sendall(header + frame_data)
 
-                    # 构造数据包: [magic(4)] + [frame_id(4)] + [packet_id(4)] + [data_length(4)] + [data]
-                    header = struct.pack(
-                        ">IIII",
-                        0xAABBCCDD,  # 魔数
-                        self.frame_id,  # 帧ID
-                        packet_id,  # 包ID（0-79）
-                        len(packet_data),  # 数据长度（512字节 = 128点×4字节）
-                    )
+                # ⭐ 方案1B: 预打包所有80个小包（兼容现有协议）
+                # num_packets = self.total_fft_length // self.packet_size
+                # all_packets = bytearray()
+                #
+                # for packet_id in range(num_packets):
+                #     start_idx = packet_id * self.packet_size
+                #     end_idx = start_idx + self.packet_size
+                #     packet_data = full_frame[start_idx:end_idx].tobytes()
+                #
+                #     header = struct.pack(
+                #         ">IIII",
+                #         0xAABBCCDD,
+                #         self.frame_id,
+                #         packet_id,
+                #         len(packet_data),
+                #     )
+                #     all_packets.extend(header + packet_data)
+                #
+                # # 一次性发送所有包
+                # self.client_socket.sendall(all_packets)
 
-                    # 发送
-                    self.client_socket.sendall(header + packet_data)
-
-                # 日志输出（每1000帧输出一次）
-                if self.frame_id % 1000 == 0:
+                # 性能日志（每秒输出一次）
+                current_time = time.time()
+                if current_time - last_log_time >= 1.0:
+                    elapsed = current_time - last_log_time
+                    fps = frames_since_log / elapsed
+                    bandwidth = fps * self.total_fft_length * 4 / 1024 / 1024
                     logging.info(
-                        f"已发送 {self.frame_id} 帧数据 "
-                        f"(每帧{self.total_fft_length}点, "
-                        f"原始{self.single_channel_fft}点, "
-                        f"最小值={np.min(raw_fft_data):.4f})"
+                        f"帧率: {fps:.0f} FPS | "
+                        f"带宽: {bandwidth:.1f} MB/s | "
+                        f"总帧数: {self.frame_id}"
                     )
+                    last_log_time = current_time
+                    frames_since_log = 0
 
             except Exception as e:
                 if self.running:
@@ -274,7 +285,7 @@ class MockDevice:
 if __name__ == "__main__":
     # 创建并启动模拟设备
     device = MockDevice(host="127.0.0.1", port=5000)
-
+    # device = MockDevice(host="192.168.1.100", port=5000)
     try:
         device.start()
 

@@ -111,68 +111,65 @@ class Communication:
             return False
 
     def _receive_loop(self):
-        """接收数据循环 - 通过魔数同步包边界"""
+        """接收数据循环 - 简化版（匹配单包协议）"""
         logger.info("接收线程启动")
 
+        magic_bytes = struct.pack(">I", self.PACKET_MAGIC)
+
         while self.state.communication_thread:
-            # ⭐ 动态获取最新的帧大小（基于总FFT长度）
-            frame_size = self.total_fft_length * self.bytes_per_sample
-
             try:
-                # 1. 搜索魔数，确保包同步
-                if not self._sync_to_magic():
-                    logger.error("无法同步到魔数，退出接收")
-                    break
-
-                # 2. 读取包头：[frame_id(4)] + [packet_id(4)] + [data_length(4)]
+                # 1. 读取帧头: [magic(4)] + [frame_id(4)] + [data_length(4)]
                 header = self._recv_exact(12)
                 if not header:
-                    logger.error("接收包头失败")
+                    logger.error("接收帧头失败")
+                    break
+
+                magic, frame_id, data_length = struct.unpack(">III", header)
+
+                # 2. 验证魔数
+                if magic != self.PACKET_MAGIC:
+                    logger.warning(f"魔数不匹配: 0x{magic:08X}, 尝试重新同步")
+                    if not self._fast_sync():
+                        break
                     continue
 
-                frame_id, packet_id, data_length = struct.unpack(">III", header)
-
-                # 3. 接收实际数据
-                data = self._recv_exact(data_length)
-                if not data:
-                    logger.error("接收数据失败")
+                # 3. 接收完整帧数据
+                frame_data = self._recv_exact(data_length)
+                if not frame_data:
+                    logger.error(f"接收帧{frame_id}数据失败")
                     continue
 
-                # 4. 检测新帧（packet_id从0开始）
-                if packet_id == 0:
-                    # 如果缓冲区有数据，先处理上一帧
-                    if len(self.current_frame_buffer) > 0:
-                        if len(self.current_frame_buffer) >= frame_size:
-                            # 只取需要的长度，多余的丢弃
-                            self.state.sent_frames = frame_id - 1  # 上一帧的ID
-                            self.state.received_frames += 1
-                            self._process_frame(self.current_frame_buffer[:frame_size])
+                # 4. 解析为numpy数组
+                fft_data = np.frombuffer(frame_data, dtype=np.float32)
 
-                            excess = len(self.current_frame_buffer) - frame_size
-                            if excess > 0:
-                                logger.debug(f"丢弃上一帧多余数据: {excess} 字节")
-                        else:
-                            logger.warning(
-                                f"上一帧不完整: 接收 {len(self.current_frame_buffer)} 字节 "
-                                f"(期望 {frame_size} 字节)，丢弃"
-                            )
+                # 5. 更新统计
+                self.state.sent_frames = frame_id
+                self.state.received_frames += 1
 
-                    # 重置当前帧状态
-                    self.current_frame_buffer = bytearray()
-                    self.last_packet_id = -1
-
-                # 5. 检测丢包
-                if self.last_packet_id != -1 and packet_id != self.last_packet_id + 1:
-                    lost_packets = packet_id - self.last_packet_id - 1
-                    logger.warning(
-                        f"帧{frame_id}丢失 {lost_packets} 个包 "
-                        f"(上一个包: {self.last_packet_id}, 当前包: {packet_id})"
+                # 6. 放入队列
+                try:
+                    self.fft_data_queue.put_nowait(
+                        {
+                            "timestamp": time.time(),
+                            "data": fft_data,
+                            "length": len(fft_data),
+                            "frame_id": frame_id,
+                        }
                     )
-
-                self.last_packet_id = packet_id
-
-                # 6. 添加到当前帧缓冲
-                self.current_frame_buffer.extend(data)
+                except queue.Full:
+                    # 丢弃最旧的数据
+                    try:
+                        self.fft_data_queue.get_nowait()
+                        self.fft_data_queue.put_nowait(
+                            {
+                                "timestamp": time.time(),
+                                "data": fft_data,
+                                "length": len(fft_data),
+                                "frame_id": frame_id,
+                            }
+                        )
+                    except:
+                        pass
 
             except Exception as e:
                 if self.state.communication_thread:
@@ -181,35 +178,28 @@ class Communication:
 
         logger.info("接收线程已退出")
 
-    def _sync_to_magic(self):
-        """搜索魔数以同步包边界"""
+    def _fast_sync(self):
+        """快速重新同步到下一个魔数"""
         magic_bytes = struct.pack(">I", self.PACKET_MAGIC)
-        sync_buffer = bytearray()
-        while self.state.communication_thread:
+        buffer = bytearray()
+
+        for _ in range(100000):  # 最多尝试100KB
             try:
-                # 逐字节读取
                 byte = self.socket.recv(1)
                 if not byte:
-                    logger.error("Socket连接已关闭")
                     return False
 
-                sync_buffer.append(byte[0])
+                buffer.append(byte[0])
+                if len(buffer) > 4:
+                    buffer.pop(0)
 
-                # 保持缓冲区为4字节
-                if len(sync_buffer) > 4:
-                    sync_buffer.pop(0)
-
-                # 检查是否匹配魔数
-                if len(sync_buffer) == 4 and bytes(sync_buffer) == magic_bytes:
+                if len(buffer) == 4 and bytes(buffer) == magic_bytes:
+                    logger.info("重新同步成功")
                     return True
-
-            except socket.timeout:
-                logger.warning("同步魔数超时，继续尝试...")
-                continue
-            except Exception as e:
-                logger.error(f"同步魔数失败: {e}")
+            except:
                 return False
 
+        logger.error("重新同步失败")
         return False
 
     def _process_frame(self, frame_data):

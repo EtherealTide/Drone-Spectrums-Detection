@@ -13,7 +13,7 @@
     "control_lost_threshold": 50
   },
   "Detection": {
-    "conf_threshold": 0.25,
+    "conf_threshold": 0.1,
     "iou_threshold": 0.45
   },
   "UI_Spectrum": {

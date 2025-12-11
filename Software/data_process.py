@@ -121,7 +121,7 @@ class DataProcessor:
                             fft_data = padded
 
                     # 转换为dB
-                    fft_data = 20 * np.log10(np.abs(fft_data) + 1e-12)
+                    # fft_data = 20 * np.log10(np.abs(fft_data) + 1e-12)
                     processed_batch.append(fft_data)
 
                 # 保存原始dB值到buffer

@@ -4,7 +4,6 @@ Manages frequency scanning and target tracking logic
 """
 
 import logging
-import numpy as np
 from enum import Enum
 
 logger = logging.getLogger(__name__)
