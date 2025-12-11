@@ -101,30 +101,30 @@ class WaterfallConfigInterface(QWidget):
         for name, value, options in receiver_params:
             self.add_parameter(receiver_item, "Receiver", name, value, options)
 
-        waterfall_item = QTreeWidgetItem(["UI_Waterfall"])
-        self.config_tree.addTopLevelItem(waterfall_item)
-        waterfall_params = [
+        dataprocess_item = QTreeWidgetItem(["Data Process"])
+        self.config_tree.addTopLevelItem(dataprocess_item)
+        dataprocess_params = [
             ("waterfall_height", self.state.waterfall_height, None),
         ]
-        for name, value, options in waterfall_params:
-            self.add_parameter(waterfall_item, "UI_Waterfall", name, value, options)
-
+        for name, value, options in dataprocess_params:
+            self.add_parameter(dataprocess_item, "Data_Process", name, value, options)
         detection_item = QTreeWidgetItem(["Detection"])
         self.config_tree.addTopLevelItem(detection_item)
+
         detection_params = [
             ("conf_threshold", self.state.conf_threshold, None),
             ("iou_threshold", self.state.iou_threshold, None),
-            (
-                "image_size",
-                self.state.image_size,
-                ["default", "512", "1024", "1280", "1600", "1920", "2048", "2560"],
-            ),
         ]
         for name, value, options in detection_params:
             self.add_parameter(detection_item, "Detection", name, value, options)
         scanner_params = [
             ("control_lost_threshold", self.state.control_lost_threshold, None),
             ("scan_bandwidth_mhz", self.state.scan_bandwidth_mhz, None),
+            (
+                "enable_scanning",
+                self.state.enable_scanning,
+                ["Enabled", "Disabled"],
+            ),
         ]
         for name, value, options in scanner_params:
             self.add_parameter(detection_item, "Scanner", name, value, options)
@@ -170,8 +170,14 @@ class WaterfallConfigInterface(QWidget):
         def update_value():
             new_value = input_widget.currentText() if options else input_widget.text()
             try:
-                numeric_value = new_value
-                if new_value != "default":
+                # 把Enabled/Disabled转换为布尔值
+                if new_value == "Enabled":
+                    numeric_value = True
+                elif new_value == "Disabled":
+                    numeric_value = False
+                else:
+                    numeric_value = new_value
+                if new_value != "Enabled" and new_value != "Disabled":
                     numeric_value = float(new_value)
                     if numeric_value.is_integer():
                         numeric_value = int(numeric_value)

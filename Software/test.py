@@ -1,111 +1,152 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pathlib
+from pathlib import Path
 
 # 设置中文字体以支持中文显示
 plt.rcParams["font.sans-serif"] = ["SimHei"]  # 指定默认字体
 plt.rcParams["axes.unicode_minus"] = False  # 解决负号显示问题
 
 # 读取txt文件
-file_path = "Software\\result0_2G.txt"
-
+file_path = str(Path.home() / "Desktop" / "data1ms.txt")
 try:
     # 读取数据,每行是一帧的10240个FFT点
     data = np.loadtxt(file_path)
 
-    print(f"数据形状: {data.shape}")  # 应该是 (98, 10240)
+    print(f"数据形状: {data.shape}")
     print(f"数据类型: {data.dtype}")
 
-    # 选择要绘制的帧 (0-97)
-    frame_index = 50
-    frame_data = data[frame_index, :]
+    # ========== 时频图参数 ==========
+    n_freq_bins = 10240  # 频率点数
+    n_time_frames = 512  # 时间帧数
+    # 打印10帧的前100个数据点以供检查
+    print("\n第10帧的前100个数据点预览:")
+    print(data[9, :100])
 
-    n_points = len(frame_data)
+    # 确保数据足够
+    total_frames = min(n_time_frames, data.shape[0])
+    print(f"\n绘制时频图: {total_frames} 帧 × {n_freq_bins} 频点")
 
-    # 计算幅度谱
-    magnitude = np.abs(frame_data)
+    # 从10240点中抽取1024点（每10个点取1个，或取中心1024点）
+    total_points = data.shape[1]
 
-    # 创建频率轴 (因为数据已经fftshift,需要生成对应的频率轴)
+    # 方案1: 均匀抽样
+    # indices = np.linspace(0, total_points-1, n_freq_bins, dtype=int)
+
+    # 方案2: 取中心1024点
+    start_idx = (total_points - n_freq_bins) // 2
+    end_idx = start_idx + n_freq_bins
+    indices = np.arange(start_idx, end_idx)
+
+    # 构建时频矩阵 (时间 × 频率)
+    spectrogram = np.abs(data[:total_frames, indices])  # (512, 1024)
+    # 转换为float32
+    spectrogram = spectrogram.astype(np.float32)
+    # 归一化
+    # spectrogram /= np.max(spectrogram)
+    # 转为dB
+    spectrogram_db = 20 * np.log10(spectrogram + 1e-12)
+    # 归一化
+    spectrogram_db /= np.max(spectrogram_db)
+    # ========== 绘制时频图 ==========
     sample_rate = 2e9  # 2 GHz
-    # fftshift后的频率轴: 从 -fs/2 到 fs/2
-    freq = np.fft.fftshift(np.fft.fftfreq(n_points, d=1 / sample_rate))
-    # 或者直接生成: freq = np.linspace(-sample_rate/2, sample_rate/2, n_points)
+    frame_interval = 50e-3  # 50ms每帧
 
-    # 绘制频谱图
-    plt.figure(figsize=(14, 8))
+    # 时间轴 (秒)
+    time_axis = np.arange(total_frames) * frame_interval
 
-    # 子图1: 线性坐标 (完整频谱)
+    # 频率轴 (MHz) - 如果数据已经fftshift，对应 -fs/2 到 fs/2
+    freq_axis = np.linspace(-sample_rate / 2, sample_rate / 2, n_freq_bins) / 1e6
+
+    # 创建图形
+    plt.figure(figsize=(16, 10))
+
+    # 时频图
     plt.subplot(2, 1, 1)
-    plt.plot(freq / 1e6, magnitude, linewidth=0.8)
-    plt.title(f"频谱图 - 第{frame_index+1}帧 (共{data.shape[0]}帧)", fontsize=14)
+    extent = [freq_axis[0], freq_axis[-1], time_axis[0], time_axis[-1]]
+    im = plt.imshow(
+        spectrogram_db,
+        aspect="auto",
+        origin="lower",
+        extent=extent,
+        cmap="jet",
+        interpolation="bilinear",
+    )
+    plt.colorbar(im, label="幅度 (dB)")
+    plt.title(f"时频图 ({total_frames}帧 × {n_freq_bins}频点)", fontsize=14)
     plt.xlabel("频率 (MHz)", fontsize=12)
-    plt.ylabel("幅度", fontsize=12)
-    plt.grid(True, alpha=0.3)
-    plt.xlim([-sample_rate / 2 / 1e6, sample_rate / 2 / 1e6])
-    plt.axvline(x=0, color="r", linestyle="--", alpha=0.5, label="零频")
-    plt.legend()
+    plt.ylabel("时间 (秒)", fontsize=12)
+    plt.axvline(x=0, color="white", linestyle="--", alpha=0.5, linewidth=0.8)
+    plt.grid(True, alpha=0.3, color="white", linewidth=0.5)
 
-    # 子图2: 对数坐标 (dB)
+    # 仅正频率部分的时频图
     plt.subplot(2, 1, 2)
-    # 避免log(0)错误
-    magnitude_db = 20 * np.log10(magnitude + 1e-12)
-    plt.plot(freq / 1e6, magnitude_db, linewidth=0.8)
-    plt.title("频谱图 (dB)", fontsize=14)
+    zero_freq_idx = n_freq_bins // 2
+    freq_axis_pos = freq_axis[zero_freq_idx:]
+    spectrogram_db_pos = spectrogram[:, zero_freq_idx:]
+
+    extent_pos = [freq_axis_pos[0], freq_axis_pos[-1], time_axis[0], time_axis[-1]]
+    im2 = plt.imshow(
+        spectrogram_db_pos,
+        aspect="auto",
+        origin="lower",
+        extent=extent_pos,
+        cmap="jet",
+        interpolation="bilinear",
+    )
+    plt.colorbar(im2, label="幅度 (dB)")
+    plt.title(f"时频图 (仅正频率)", fontsize=14)
     plt.xlabel("频率 (MHz)", fontsize=12)
-    plt.ylabel("幅度 (dB)", fontsize=12)
-    plt.grid(True, alpha=0.3)
-    plt.xlim([-sample_rate / 2 / 1e6, sample_rate / 2 / 1e6])
-    plt.axvline(x=0, color="r", linestyle="--", alpha=0.5, label="零频")
-    plt.legend()
+    plt.ylabel("时间 (秒)", fontsize=12)
+    plt.grid(True, alpha=0.3, color="white", linewidth=0.5)
 
     plt.tight_layout()
     plt.show()
 
-    # 统计信息
-    print(f"\n第{frame_index+1}帧统计信息:")
-    print(f"  总帧数: {data.shape[0]}")
-    print(f"  每帧FFT点数: {n_points}")
-    print(f"  采样率: {sample_rate/1e9:.1f} GHz")
-    print(f"  频率分辨率: {sample_rate/n_points/1e3:.2f} kHz")
-    print(f"  频率范围: [{-sample_rate/2/1e6:.1f}, {sample_rate/2/1e6:.1f}] MHz")
-    print(f"  幅度范围: [{np.min(magnitude):.2e}, {np.max(magnitude):.2e}]")
-    print(f"  dB范围: [{np.min(magnitude_db):.2f}, {np.max(magnitude_db):.2f}] dB")
+    # ========== 统计信息 ==========
+    print(f"\n时频图统计信息:")
+    print(f"  时间范围: [0, {time_axis[-1]:.2f}] 秒")
+    print(f"  频率范围: [{freq_axis[0]:.1f}, {freq_axis[-1]:.1f}] MHz")
+    print(f"  时间分辨率: {frame_interval*1000:.1f} ms")
+    print(f"  频率分辨率: {sample_rate/total_points/1e3:.2f} kHz")
 
-    # 可选: 绘制多帧对比
-    plt.figure(figsize=(14, 6))
-    for i in range(min(5, data.shape[0])):  # 绘制前5帧
-        frame = data[i, :]
-        mag = np.abs(frame)
-        mag_db = 20 * np.log10(mag + 1e-12)
-        plt.plot(freq / 1e6, mag_db, alpha=0.7, label=f"帧{i+1}")
+    # ========== 原有的单帧频谱图 ==========
+    frame_index = 50
+    if frame_index < data.shape[0]:
+        frame_data = data[frame_index, :]
+        n_points = len(frame_data)
+        magnitude = np.abs(frame_data)
+        freq = np.fft.fftshift(np.fft.fftfreq(n_points, d=1 / sample_rate))
 
-    plt.title("多帧频谱对比", fontsize=14)
-    plt.xlabel("频率 (MHz)", fontsize=12)
-    plt.ylabel("幅度 (dB)", fontsize=12)
-    plt.axvline(x=0, color="r", linestyle="--", alpha=0.5, label="零频")
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.xlim([-sample_rate / 2 / 1e6, sample_rate / 2 / 1e6])
-    plt.tight_layout()
-    plt.show()
+        plt.figure(figsize=(14, 8))
 
-    # 可选: 只绘制正频率部分
-    plt.figure(figsize=(14, 6))
-    # 找到零频点索引
-    zero_freq_idx = n_points // 2
-    freq_pos = freq[zero_freq_idx:]
-    magnitude_db_pos = magnitude_db[zero_freq_idx:]
+        # 子图1: 线性坐标
+        plt.subplot(2, 1, 1)
+        plt.plot(freq / 1e6, magnitude, linewidth=0.8)
+        plt.title(f"频谱图 - 第{frame_index+1}帧", fontsize=14)
+        plt.xlabel("频率 (MHz)", fontsize=12)
+        plt.ylabel("幅度", fontsize=12)
+        plt.grid(True, alpha=0.3)
+        plt.xlim([-sample_rate / 2 / 1e6, sample_rate / 2 / 1e6])
+        plt.axvline(x=0, color="r", linestyle="--", alpha=0.5, label="零频")
+        plt.legend()
 
-    plt.plot(freq_pos / 1e6, magnitude_db_pos, linewidth=0.8)
-    plt.title("频谱图 (仅正频率部分)", fontsize=14)
-    plt.xlabel("频率 (MHz)", fontsize=12)
-    plt.ylabel("幅度 (dB)", fontsize=12)
-    plt.grid(True, alpha=0.3)
-    plt.xlim([0, sample_rate / 2 / 1e6])
-    plt.tight_layout()
-    plt.show()
+        # 子图2: 对数坐标
+        plt.subplot(2, 1, 2)
+        magnitude_db = 20 * np.log10(magnitude + 1e-12)
+        plt.plot(freq / 1e6, magnitude_db, linewidth=0.8)
+        plt.title("频谱图 (dB)", fontsize=14)
+        plt.xlabel("频率 (MHz)", fontsize=12)
+        plt.ylabel("幅度 (dB)", fontsize=12)
+        plt.grid(True, alpha=0.3)
+        plt.xlim([-sample_rate / 2 / 1e6, sample_rate / 2 / 1e6])
+        plt.axvline(x=0, color="r", linestyle="--", alpha=0.5, label="零频")
+        plt.legend()
+
+        plt.tight_layout()
+        plt.show()
 
 except FileNotFoundError:
     print(f"错误: 文件 '{file_path}' 未找到")
-    print("请先在MATLAB中运行导出命令")
 except Exception as e:
     print(f"读取文件时出错: {e}")

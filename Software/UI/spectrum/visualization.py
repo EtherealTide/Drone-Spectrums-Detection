@@ -39,7 +39,9 @@ class SpectrumVisualizationCard(QWidget):
 
         chart_layout, chart_card = self.component.create_card(self, height=300)
         chart_card.setMinimumHeight(300)
-        chart_card.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        chart_card.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
+        )
 
         self.spectrum_chart = self._create_spectrum_chart()
         self.spectrum_chart_view = QChartView(self.spectrum_chart)
@@ -62,14 +64,16 @@ class SpectrumVisualizationCard(QWidget):
         self.spectrum_chart.setBackgroundBrush(QBrush(card_color))
         self.spectrum_chart.setPlotAreaBackgroundBrush(QBrush(plot_color))
         self.spectrum_chart.setPlotAreaBackgroundVisible(True)
-        self.spectrum_chart.legend().setLabelBrush(QBrush(QColor(palette["text_primary"])))
+        self.spectrum_chart.legend().setLabelBrush(
+            QBrush(QColor(palette["text_primary"]))
+        )
         self.spectrum_series.setColor(QColor(palette["accent"]))
         self.axis_x.setLabelsColor(QColor(palette["text_primary"]))
-        self.axis_x.setTitleBrush(QBrush(QColor(palette["text_secondary"])) )
+        self.axis_x.setTitleBrush(QBrush(QColor(palette["text_secondary"])))
         self.axis_x.setLinePenColor(QColor(palette["text_primary"]))
         self.axis_x.setGridLineColor(QColor(palette["panel_bg"]))
         self.axis_y.setLabelsColor(QColor(palette["text_primary"]))
-        self.axis_y.setTitleBrush(QBrush(QColor(palette["text_secondary"])) )
+        self.axis_y.setTitleBrush(QBrush(QColor(palette["text_secondary"])))
         self.axis_y.setLinePenColor(QColor(palette["text_primary"]))
         self.axis_y.setGridLineColor(QColor(palette["panel_bg"]))
         self.spectrum_chart_view.setStyleSheet(
@@ -96,9 +100,9 @@ class SpectrumVisualizationCard(QWidget):
         self.axis_x = axis_x
 
         axis_y = QValueAxis()
-        axis_y.setTitleText("归一化功率")
+        axis_y.setTitleText("功率")
         axis_y.setRange(0, 1)
-        axis_y.setLabelFormat("%.0f")
+        axis_y.setLabelFormat("%.4f")
         chart.addAxis(axis_y, Qt.AlignmentFlag.AlignLeft)
         self.spectrum_series.attachAxis(axis_y)
         self.axis_y = axis_y
@@ -106,7 +110,7 @@ class SpectrumVisualizationCard(QWidget):
         return chart
 
     def start_update(self):
-        self.update_timer.start(40)
+        self.update_timer.start(30)
 
     def stop_update(self):
         self.update_timer.stop()
@@ -115,15 +119,23 @@ class SpectrumVisualizationCard(QWidget):
         if spectrum_data is None:
             return
         max_freq = self.state.sample_rate
-        freq_points = np.linspace(0, max_freq / 1e6, self.state.fft_length)
-        points = [QPointF(freq, power) for freq, power in zip(freq_points, spectrum_data)]
+        freq_points = np.linspace(
+            0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+        )
+        points = [
+            QPointF(freq, power) for freq, power in zip(freq_points, spectrum_data)
+        ]
         self.spectrum_series.replace(points)
 
     def update_visualization(self):
         try:
             if self.data_processor:
                 spectrum_data = self.data_processor.get_latest_spectrum()
+                # 更改y轴范围以适应数据
                 if spectrum_data is not None:
+                    min_power = np.min(spectrum_data)
+                    max_power = np.max(spectrum_data)
+                    self.axis_y.setRange(min_power, max_power)
                     self.update_spectrum(spectrum_data)
         except Exception as e:
             logger.error(f"Spectrum visualization update failed: {e}", exc_info=True)

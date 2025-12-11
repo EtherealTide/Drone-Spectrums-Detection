@@ -129,7 +129,8 @@ class State(QObject):
 
     @property
     def sample_rate(self):
-        return 5e9 / self.decimation_factor
+        # return 5e9 / self.decimation_factor
+        return 2e9
 
     @property
     def conf_threshold(self):
@@ -145,7 +146,7 @@ class State(QObject):
 
     @property
     def waterfall_height(self):
-        return self.get_parameter("UI_Waterfall", "waterfall_height", self.fft_length)
+        return self.get_parameter("Data_Process", "waterfall_height", self.fft_length)
 
     # ==================== connection status ====================
 
@@ -168,16 +169,16 @@ class State(QObject):
 
     @property
     def enable_scanning(self):
-        return self.get_parameter("Scanning", "enable_scanning", False)
+        return self.get_parameter("Scanner", "enable_scanning", False)
 
     @property
     def scan_bandwidth_mhz(self):
-        return self.get_parameter("Scanning", "scan_bandwidth_mhz", 100)
+        return self.get_parameter("Scanner", "scan_bandwidth_mhz", 100)
 
     @property
     def overlap_ratio(self):
-        return self.get_parameter("Scanning", "overlap_ratio", 0.5)
+        return self.get_parameter("Scanner", "overlap_ratio", 0.5)
 
     @property
     def control_lost_threshold(self):
-        return self.get_parameter("Scanning", "control_lost_threshold", 5)
+        return self.get_parameter("Scanner", "control_lost_threshold", 5)

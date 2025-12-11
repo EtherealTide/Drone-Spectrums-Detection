@@ -44,7 +44,7 @@ class DataProcessor:
         self.transfer_time_interval = 0.01
         self.waterfall_image = np.zeros(
             (self.waterfall_width, self.waterfall_height, 3), dtype=np.uint8
-        )  # 务必注意！这里宽高顺序与之前的buffer不同，这是因为给yolo之前需要转置
+        )
 
         self.image_needs_update = False
 
@@ -109,7 +109,7 @@ class DataProcessor:
                 for fft_frame in batch_frames:
                     fft_data = fft_frame["data"]
 
-                    # ⭐ 确保长度为总FFT长度
+                    # 确保长度为总FFT长度
                     if len(fft_data) != self.total_fft_length:
                         if len(fft_data) > self.total_fft_length:
                             fft_data = fft_data[: self.total_fft_length]
@@ -120,26 +120,17 @@ class DataProcessor:
                             padded[: len(fft_data)] = fft_data
                             fft_data = padded
 
+                    # 转换为dB
+                    fft_data = 20 * np.log10(np.abs(fft_data) + 1e-12)
                     processed_batch.append(fft_data)
 
-                batch_array = np.array(processed_batch, dtype=np.float32)
-                global_min = np.min(batch_array)
-                global_max = np.max(batch_array)
-
-                if global_max > global_min + 1e-10:
-                    normalized_batch = (batch_array - global_min) / (
-                        global_max - global_min
-                    )
-                else:
-                    normalized_batch = np.zeros_like(batch_array)
-
+                # 保存原始dB值到buffer
                 with self.data_lock:
-                    for normalized_spectrum in normalized_batch:
-                        self.waterfall_buffer.append(normalized_spectrum)
+                    for spectrum_db in processed_batch:
+                        self.waterfall_buffer.append(spectrum_db)
 
-                    self.latest_spectrum = normalized_batch[-1].copy()
-                    self.max_value = float(np.max(normalized_batch))
-                    self.min_value = float(np.min(normalized_batch))
+                    # latest_spectrum 也保存dB值
+                    self.latest_spectrum = processed_batch[-1].copy()
                     self.processed_frame_count += len(batch_frames)
                     self.image_needs_update = True
 
@@ -157,19 +148,40 @@ class DataProcessor:
                     time.sleep(self.transfer_time_interval)
                     continue
 
+                # 获取整个waterfall buffer的dB数据
                 with self.data_lock:
                     waterfall_list = list(self.waterfall_buffer)
                     self.image_needs_update = False
 
-                waterfall_array = np.array(waterfall_list, dtype=np.float32)
-                waterfall_array = np.flipud(waterfall_array).T
+                # ⭐ 在这里对整张图进行归一化
+                waterfall_array = np.array(
+                    waterfall_list, dtype=np.float32
+                )  # [height, width]
+                min_db = np.min(waterfall_array)
+                max_db = np.max(waterfall_array)
 
-                if not self.use_opencv_colormap:
-                    gray_image = (waterfall_array * 255.0).astype(np.uint8)
+                # 归一化到 [0, 1]
+                waterfall_normalized = (waterfall_array - min_db) / (
+                    max_db - min_db + 1e-12
+                )
+
+                # 更新统计信息
+                with self.data_lock:
+                    self.max_value = float(max_db)
+                    self.min_value = float(min_db)
+
+                # 转置并翻转
+                waterfall_normalized = np.flipud(
+                    waterfall_normalized
+                ).T  # [width, height]
+
+                # 应用colormap
+                if self.use_opencv_colormap:
+                    gray_image = (waterfall_normalized * 255.0).astype(np.uint8)
                     bgr_image = cv2.applyColorMap(gray_image, cv2.COLORMAP_JET)
                     rgb_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
                 else:
-                    color_indices = (waterfall_array * 255.0).astype(np.uint8)
+                    color_indices = (waterfall_normalized * 255.0).astype(np.uint8)
                     rgb_image = self.colormap[color_indices]
 
                 with self.image_lock:
@@ -200,9 +212,7 @@ class DataProcessor:
             sliced_image = self.waterfall_image[start_point:end_point, :, :].copy()
         return sliced_image
 
-    def get_point_to_frequency(
-        self, point_index
-    ):  # 用于显示实际切片FFT点数对应的频率范围
+    def get_point_to_frequency(self, point_index):
         """
         Convert FFT point index to frequency (MHz)
 
@@ -213,8 +223,6 @@ class DataProcessor:
             Frequency in MHz
         """
         return point_index * self.total_bandwidth_mhz / self.total_fft_length
-
-    # ==================== 原有接口 ====================
 
     def get_latest_spectrum(self):
         with self.data_lock:
@@ -237,8 +245,8 @@ class DataProcessor:
         with self.data_lock:
             return {
                 "frame_id": self.processed_frame_count,
-                "max_value": self.max_value,
-                "min_value": self.min_value,
+                "max_value": self.max_value,  # 现在是dB值
+                "min_value": self.min_value,  # 现在是dB值
                 "batch_size": self.batch_size,
                 "waterfall_height": self.waterfall_height,
                 "waterfall_width": self.waterfall_width,
@@ -248,7 +256,7 @@ class DataProcessor:
         """Update single channel FFT length"""
         with self.data_lock:
             self.fft_length = length
-            self.total_fft_length = self.fft_length * self.fft_length
+            self.total_fft_length = self.fft_length * self.channel_count
             self.waterfall_width = self.total_fft_length
 
             zero_line = np.zeros(self.waterfall_width, dtype=np.float32)
@@ -289,24 +297,3 @@ class DataProcessor:
                     (self.waterfall_height, self.waterfall_width, 3), dtype=np.uint8
                 )
             logger.info(f"Waterfall parameters updated: height={self.waterfall_height}")
-
-    # def __setattr__(self, name, value):
-    #     """监控 waterfall_image 的修改"""
-    #     if (
-    #         name == "waterfall_image"
-    #         and hasattr(self, "_init_complete")
-    #         and self._init_complete
-    #     ):
-    #         if value is not None and hasattr(value, "shape"):
-    #             expected = (self.waterfall_width, self.waterfall_height, 3)
-    #             if value.shape != expected:
-    #                 logger.error(
-    #                     f"❌❌❌ Attempting to set waterfall_image with wrong shape!"
-    #                 )
-    #                 logger.error(f"Expected: {expected}")
-    #                 logger.error(f"Got:      {value.shape}")
-    #                 logger.error(f"📍 Stack trace:")
-    #                 for line in traceback.format_stack():
-    #                     logger.error(line.strip())
-
-    #     super().__setattr__(name, value)

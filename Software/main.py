@@ -89,7 +89,9 @@ class DroneDetectionSystem:
 
             if group == "Receiver" and name == "FFT_Length":
                 if not self.state.communication_thread:
-                    logger.warning("Communication not connected; please connect device first")
+                    logger.warning(
+                        "Communication not connected; please connect device first"
+                    )
                     return
                 self.communication.send_command("SET_FFT_LENGTH", value)
                 self.communication.set_fft_length()
@@ -99,7 +101,7 @@ class DroneDetectionSystem:
                 if hasattr(self.main_window, "spectrumInterface"):
                     self.main_window.spectrumInterface.visualization_card.update_config()
 
-            if group == "UI_Waterfall":
+            if group == "Data_Process":
                 self.data_processor.set_waterfall_parameters(
                     height=self.state.waterfall_height,
                 )
@@ -108,7 +110,8 @@ class DroneDetectionSystem:
 
             if group == "Detection":
                 self.detector.update_detection_parameters()
-
+            if group == "Scanner":
+                self.detector.scanning_controller.update_parameters()
             logger.info("Parameter update handled")
 
         except Exception as e:

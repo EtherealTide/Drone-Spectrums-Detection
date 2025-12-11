@@ -1,12 +1,12 @@
 {
   "Receiver": {
     "FFT_Length": 512,
-    "Decimation_factor": 100,
+    "Decimation_factor": 4,
     "Centre_frequency(MHz)": 2400.0,
     "SPAN(MHz)": 100.0,
     "Channel_count": 20
   },
-  "Scanning": {
+  "Scanner": {
     "enable_scanning": true,
     "scan_bandwidth_mhz": 100,
     "overlap_ratio": 0.5,
@@ -14,14 +14,13 @@
   },
   "Detection": {
     "conf_threshold": 0.25,
-    "iou_threshold": 0.45,
-    "image_size": "default"
+    "iou_threshold": 0.45
   },
   "UI_Spectrum": {
-    "spectrum_left_freq(MHz)": 0.0,
-    "spectrum_right_freq(MHz)": 200.0
+    "spectrum_left_freq(MHz)": 1000,
+    "spectrum_right_freq(MHz)": 2000
   },
-  "UI_Waterfall": {
+  "Data_Process": {
     "waterfall_height": 512
   }
 }

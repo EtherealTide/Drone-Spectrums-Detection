@@ -405,18 +405,10 @@ class DroneDetector:
                 "detection_count": self.detection_count,
             }
 
-    # ⭐ 新增：直接获取扫描控制器引用的接口
-    def get_scanning_controller(self):
-        """获取扫描控制器实例（供UI层访问）"""
-        return self.scanning_controller
-
     def update_detection_parameters(self):
-        """更新检测参数（包括扫描参数）"""
+        """更新检测参数"""
         self.conf_threshold = self.state.conf_threshold
         self.iou_threshold = self.state.iou_threshold
         self.image_size = self.state.image_size
-
-        # ⭐ 更新扫描参数
-        self.scanning_controller.update_parameters()
 
         logger.info("检测参数已更新")

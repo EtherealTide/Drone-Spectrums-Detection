@@ -42,15 +42,17 @@ class ScanningController:
         self.data_processor = data_processor
 
         # Scanning parameters
-        self.enable_scanning = state.get_parameter("Scanning", "enable_scanning", False)
+        self.enable_scanning = state.get_parameter("Scanner", "enable_scanning", False)
         self.scan_bandwidth_mhz = state.get_parameter(
-            "Scanning", "scan_bandwidth_mhz", 100
+            "Scanner", "scan_bandwidth_mhz", 100
         )
-        self.overlap_ratio = state.get_parameter("Scanning", "overlap_ratio", 0.5)
+        self.overlap_ratio = state.get_parameter("Scanner", "overlap_ratio", 0.5)
         self.control_lost_threshold = state.get_parameter(
-            "Scanning", "control_lost_threshold", 50
+            "Scanner", "control_lost_threshold", 50
         )
-
+        # non-scanning mode defaults
+        self.left_freq = 0
+        self.right_freq = self.scan_bandwidth_mhz
         # Control signal class identification
         self.control_signal_class_id = None  # 用于找到控制信号的框的中心位置
 
@@ -71,9 +73,7 @@ class ScanningController:
     def _calculate_window_parameters(self):
         """Calculate sliding window parameters based on scan bandwidth"""
         # Single window FFT points，比如200M，就是两个通道的FFT点数
-        self.window_size = int(
-            self.state.scan_bandwidth_mhz / 100 * self.state.fft_length
-        )
+        self.window_size = int(self.scan_bandwidth_mhz / 100 * self.state.fft_length)
 
         # Window step size (considering overlap)
         self.window_step = int(self.window_size * (1 - self.overlap_ratio))
@@ -81,6 +81,10 @@ class ScanningController:
         # Total number of windows
         total_points = self.data_processor.total_fft_length
         self.total_windows = (total_points - self.window_size) // self.window_step + 1
+        logger.info(
+            f"Window parameters calculated: size={self.window_size}, "
+            f"step={self.window_step}, total_windows={self.total_windows}"
+        )
 
     def set_control_signal_class_id(self, class_id):
         """Set control signal class ID from detector"""
@@ -96,8 +100,8 @@ class ScanningController:
         """
         if not self.enable_scanning:
             # Non-scanning mode: return full image
-            image = self.data_processor.get_waterfall_image()
-            return image, 0, self.data_processor.total_fft_length
+            start_pt = self.left_freq
+            end_pt = self.right_freq
 
         if self.scan_mode == ScanMode.SCANNING:
             # Scanning mode: fixed-step scanning
@@ -166,7 +170,10 @@ class ScanningController:
         if not self.enable_scanning:
             self.scan_mode = ScanMode.DISABLED
             return
-
+        if self.scan_mode == ScanMode.DISABLED:
+            if self.enable_scanning:
+                self.scan_mode = ScanMode.SCANNING
+                return
         if self.control_signal_class_id is None:
             logger.warning(
                 "Control signal class ID not set, skipping state machine update"
@@ -261,13 +268,11 @@ class ScanningController:
 
         if not self.enable_scanning:
             status["frequency_range_mhz"] = (
-                0.0,
-                self.data_processor.total_bandwidth_mhz,
+                self.left_freq,
+                self.right_freq,
             )
-            status["frequency_range_str"] = (
-                f"0-{self.data_processor.total_bandwidth_mhz} MHz"
-            )
-            return status
+            status["frequency_range_str"] = f"{self.left_freq}-{self.right_freq} MHz"
+            status["scan_mode"] = "Disabled"
 
         if self.scan_mode == ScanMode.SCANNING:
             start_pt, end_pt = self._get_window_range_scanning(
@@ -308,50 +313,10 @@ class ScanningController:
 
         return status
 
-    def get_current_frequency_range(self):
-        """
-        Get current frequency range
-
-        Returns:
-            tuple: (start_freq_mhz, end_freq_mhz)
-        """
-        if not self.enable_scanning:
-            return (0.0, self.data_processor.total_bandwidth_mhz)
-
-        if self.scan_mode == ScanMode.SCANNING:
-            start_pt, end_pt = self._get_window_range_scanning(
-                self.current_window_index
-            )
-        else:  # LOCKED
-            start_pt, end_pt = self._get_window_range_locked(self.locked_center_point)
-
-        start_freq = self.data_processor.get_point_to_frequency(start_pt)
-        end_freq = self.data_processor.get_point_to_frequency(end_pt)
-        return (start_freq, end_freq)
-
     def update_parameters(self):
-        """Update scanning parameters from state"""
-        new_enable = self.state.get_parameter("Scanning", "enable_scanning", False)
-        new_bandwidth = self.state.get_parameter("Scanning", "scan_bandwidth_mhz", 100)
-        new_threshold = self.state.get_parameter(
-            "Scanning", "control_lost_threshold", 5
-        )
+        """Update scanner parameters from state"""
+        self.scan_bandwidth_mhz = self.state.scan_bandwidth_mhz
+        self.enable_scanning = self.state.enable_scanning
+        self.control_lost_threshold = self.state.control_lost_threshold
 
-        params_changed = False
-
-        if new_bandwidth != self.scan_bandwidth_mhz:
-            self.scan_bandwidth_mhz = new_bandwidth
-            self._calculate_window_parameters()
-            params_changed = True
-            logger.info(f"Scan bandwidth updated to {self.scan_bandwidth_mhz} MHz")
-
-        if new_enable != self.enable_scanning:
-            self.enable_scanning = new_enable
-            self.scan_mode = ScanMode.SCANNING if new_enable else ScanMode.DISABLED
-            logger.info(f"Scanning mode {'enabled' if new_enable else 'disabled'}")
-
-        if new_threshold != self.control_lost_threshold:
-            self.control_lost_threshold = new_threshold
-            logger.info(f"Control lost threshold updated to {new_threshold}")
-
-        return params_changed
+        self._calculate_window_parameters()
