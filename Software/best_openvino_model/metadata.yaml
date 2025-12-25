@@ -1,6 +1,6 @@
 description: Ultralytics best model trained on spectrum.yaml
 author: Ultralytics
-date: '2025-11-29T14:00:50.755917'
+date: '2025-12-25T18:04:00.242056'
 version: 8.3.233
 license: AGPL-3.0 License (https://ultralytics.com/license)
 docs: https://docs.ultralytics.com
@@ -12,9 +12,12 @@ imgsz:
 - 512
 names:
   0: Noise
-  1: WiFi/bluetooth
-  2: Video-transmission signal
-  3: Flight-control signal
+  1: WiFi
+  2: Bluetooth
+  3: Video-transmission signal
+  4: Flight-control signal
+  5: Fast-hopping
+  6: Flight-control signal pattern
 args:
   batch: 1
   fraction: 1.0

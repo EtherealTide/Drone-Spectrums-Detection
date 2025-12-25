@@ -13,11 +13,11 @@
     "control_lost_threshold": 50
   },
   "Detection": {
-    "conf_threshold": 0.1,
-    "iou_threshold": 0.45
+    "conf_threshold": 0.25,
+    "iou_threshold": 0.7
   },
   "UI_Spectrum": {
-    "spectrum_left_freq(MHz)": 1000,
+    "spectrum_left_freq(MHz)": 0,
     "spectrum_right_freq(MHz)": 2000
   },
   "Data_Process": {

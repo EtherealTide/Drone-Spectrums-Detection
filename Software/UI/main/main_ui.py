@@ -134,7 +134,10 @@ class Window(QMainWindow):
             detector=self.detector,
         )
         self.waterfallInterface = WaterfallInterface(
-            self, data_processor=self.data_processor, detector=self.detector, state=self.state
+            self,
+            data_processor=self.data_processor,
+            detector=self.detector,
+            state=self.state,
         )
         self.settingInterface = SettingsInterface(self, self.theme_manager)
         self.albumInterface = Widget("Album Interface", self)
@@ -146,8 +149,8 @@ class Window(QMainWindow):
             self.waterfallInterface,
             "📊",
         )
-        self._add_page("Albums", self.albumInterface, "🖥️")
-        self._add_page("Album 1", self.albumInterface1, "📂")
+        # self._add_page("Albums", self.albumInterface, "🖥️")
+        # self._add_page("Album 1", self.albumInterface1, "📂")
         self._add_page("Settings", self.settingInterface, "⚙️")
 
         self.navigation_list.currentRowChanged.connect(self.stack.setCurrentIndex)

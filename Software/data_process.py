@@ -179,13 +179,13 @@ class DataProcessor:
                 if self.use_opencv_colormap:
                     gray_image = (waterfall_normalized * 255.0).astype(np.uint8)
                     bgr_image = cv2.applyColorMap(gray_image, cv2.COLORMAP_JET)
-                    rgb_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
+                    # rgb_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
                 else:
                     color_indices = (waterfall_normalized * 255.0).astype(np.uint8)
                     rgb_image = self.colormap[color_indices]
 
                 with self.image_lock:
-                    self.waterfall_image = rgb_image
+                    self.waterfall_image = bgr_image
 
             except Exception as e:
                 logger.error(f"Image conversion error: {e}", exc_info=True)

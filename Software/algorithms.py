@@ -7,6 +7,7 @@ import cv2
 from pathlib import Path
 from openvino import Core
 from ultralytics import YOLO
+
 from scanning_controller import ScanningController, ScanMode
 
 logger = logging.getLogger(__name__)
@@ -20,7 +21,7 @@ class DroneDetector:
         state,
         data_processor,
         model_path="best.pt",
-        openvino_model_path="best_openvino_model/best.xml",
+        openvino_model_path="best_openvino_model/",
         class_file="class_names.txt",
     ):
         """初始化检测器"""
@@ -49,9 +50,6 @@ class DroneDetector:
         # 推理设备标志
         self.use_openvino = False
         self.model = None
-        self.compiled_model = None
-        self.input_layer = None
-        self.input_shape = None
 
         # 加载类别名称
         self.class_names = self._load_class_names()
@@ -93,11 +91,15 @@ class DroneDetector:
 
     def _generate_colors(self):
         """为每个类别生成颜色 (BGR格式)"""
+
         predefined = [
-            (0, 0, 255),  # 蓝色-噪声
-            (255, 0, 255),  # 紫色-蓝牙wifi
-            (0, 255, 0),  # 绿色-视频信号
-            (255, 0, 0),  # 红色-控制信号
+            (0, 0, 255),  # Noise - 红色
+            (255, 0, 255),  # WiFi - 紫色
+            (0, 255, 255),  # Bluetooth - 黄色
+            (0, 255, 0),  # Video-transmission signal - 绿色
+            (0, 165, 255),  # Flight-control signal - 橙色
+            (255, 255, 0),  # Fast-hopping - 青色
+            (255, 0, 0),  # Flight-control pattern - 蓝色
         ]
 
         colors = []
@@ -118,22 +120,17 @@ class DroneDetector:
             # 尝试OpenVINO + GPU
             core = Core()
             if "GPU" in core.available_devices and self.openvino_model_path.exists():
-                logger.info(f"Loading OpenVINO model from: {self.openvino_model_path}")
-                model = core.read_model(self.openvino_model_path)
-                self.compiled_model = core.compile_model(model, device_name="GPU")
-                self.input_layer = self.compiled_model.input(0)
-                self.input_shape = self.input_layer.shape  # [1, 3, H, W]
+
+                logger.info(f"正在加载Openvino模型: {self.openvino_model_path}")
+                self.model = YOLO(str(self.openvino_model_path))
                 self.use_openvino = True
-                # 英文日志
-                logger.info(
-                    f"✓ OpenVINO model loaded successfully (GPU acceleration) - Input shape: {self.input_shape}"
-                )
+                logger.info("✓ OpenVINO模型加载成功（GPU推理）")
                 self._warmup_model()
                 return
         except Exception as e:
             logger.warning(f"OpenVINO加载失败: {e}，尝试PyTorch")
 
-        # 回退到PyTorch
+        # PyTorch
         try:
             logger.info(f"正在加载PyTorch模型: {self.model_path}")
             self.model = YOLO(str(self.model_path))
@@ -162,94 +159,22 @@ class DroneDetector:
 
     def _detect(self, image):
         """执行检测（统一接口）"""
+        # 根据推理方式设置不同的参数
+        kwargs = {
+            "conf": self.conf_threshold,
+            "iou": self.iou_threshold,
+            "verbose": False,
+        }
+
         if self.use_openvino:
-            return self._detect_openvino(image)
+            kwargs["device"] = "intel:gpu"
+            kwargs["imgsz"] = 512
         else:
-            return self._detect_pytorch(image)
+            kwargs["imgsz"] = self.image_size
 
-    def _detect_openvino(self, image):
-        """OpenVINO推理 - 优化版本，与示例代码逻辑一致"""
-        orig_h, orig_w = image.shape[:2]
+        results = self.model(image, **kwargs)
 
-        # 预处理（与示例代码一致）
-        resized = cv2.resize(image, (self.input_shape[3], self.input_shape[2]))
-        img_rgb = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)
-        img_normalized = img_rgb.astype(np.float32) / 255.0
-        img_transposed = np.transpose(img_normalized, (2, 0, 1))
-        input_tensor = np.expand_dims(img_transposed, axis=0)
-
-        # 推理
-        results = self.compiled_model({self.input_layer.any_name: input_tensor})
-        output = results[self.compiled_model.output(0)]
-
-        # 后处理（与示例代码完全一致）
-        pred = output[0].T  # [N, num_classes+4]
-
-        # 提取坐标和类别分数
-        boxes = pred[:, :4]  # [x_center, y_center, w, h]
-        class_scores = pred[:, 4 : 4 + len(self.class_names)]
-
-        # 获取最大分数和类别
-        max_scores = np.max(class_scores, axis=1)
-        class_ids = np.argmax(class_scores, axis=1)
-
-        # 置信度过滤
-        mask = max_scores > self.conf_threshold
-        if not np.any(mask):
-            return []
-
-        boxes = boxes[mask]
-        max_scores = max_scores[mask]
-        class_ids = class_ids[mask]
-
-        # 中心坐标转左上右下
-        x_center, y_center, w, h = boxes[:, 0], boxes[:, 1], boxes[:, 2], boxes[:, 3]
-        x1 = x_center - w / 2
-        y1 = y_center - h / 2
-        x2 = x_center + w / 2
-        y2 = y_center + h / 2
-
-        # 缩放到原图尺寸
-        scale_x = orig_w / self.input_shape[3]
-        scale_y = orig_h / self.input_shape[2]
-        x1 = np.clip(x1 * scale_x, 0, orig_w).astype(int)
-        y1 = np.clip(y1 * scale_y, 0, orig_h).astype(int)
-        x2 = np.clip(x2 * scale_x, 0, orig_w).astype(int)
-        y2 = np.clip(y2 * scale_y, 0, orig_h).astype(int)
-
-        # 非极大值抑制
-        boxes_xywh = np.stack([x1, y1, x2 - x1, y2 - y1], axis=1)
-        indices = cv2.dnn.NMSBoxes(
-            boxes_xywh.tolist(),
-            max_scores.tolist(),
-            self.conf_threshold,
-            self.iou_threshold,
-        )
-
-        detections = []
-        if len(indices) > 0:
-            for idx in indices.flatten():
-                detections.append(
-                    {
-                        "bbox": [x1[idx], y1[idx], x2[idx], y2[idx]],
-                        "confidence": float(max_scores[idx]),
-                        "class_id": int(class_ids[idx]),
-                        "class_name": self.class_names[class_ids[idx]],
-                    }
-                )
-
-        return detections
-
-    def _detect_pytorch(self, image):
-        """PyTorch推理"""
-        results = self.model(
-            image,
-            conf=self.conf_threshold,
-            iou=self.iou_threshold,
-            imgsz=self.image_size,
-            verbose=False,
-        )
-
+        # 解析检测结果
         detections = []
         if len(results) > 0 and results[0].boxes is not None:
             for box in results[0].boxes:
@@ -266,7 +191,7 @@ class DroneDetector:
                     }
                 )
 
-        return detections  # PyTorch的YOLO已经做过NMS了
+        return detections
 
     def _draw_detections(self, image, detections):
         """绘制检测框"""
@@ -339,26 +264,24 @@ class DroneDetector:
                 start_time = time.time()
 
                 # 从扫描控制器获取当前窗口图像
-                input_image, window_start_point, window_end_point = (
-                    self.scanning_controller.get_current_window_image()
-                )
-
-                # 检查图像有效性
-                if input_image is None or input_image.size == 0:
-                    time.sleep(0.01)
-
-                    continue
+                input_image = self.scanning_controller.get_current_window_image()
 
                 # 检测
                 detections = self._detect(input_image)
                 # 更新状态机
                 self.scanning_controller.update_state_machine(
                     detections,
-                    window_start_point,
-                    window_end_point,
                     input_image.shape[1],  # 图像宽度
                 )
-
+                # 日志记录飞控信号持续时间和带宽
+                self.logger_out_detection_stats(
+                    50e-3,  # 假设总时长50ms
+                    self.scanning_controller.start_pt,  # 图像左侧频率
+                    self.state.scan_bandwidth_mhz,
+                    detections,
+                    input_image.shape[1],  # 图像宽度
+                    input_image.shape[0],  # 图像高度
+                )
                 # 绘制检测框
                 annotated_image = self._draw_detections(input_image, detections)
                 # 更新结果
@@ -389,6 +312,28 @@ class DroneDetector:
                 if self.detection_image is not None
                 else None
             )
+
+    def logger_out_detection_stats(
+        self, total_duration, fc, span, detections, image_width, image_height
+    ):
+        # 将索引转换为实际频率
+        fc = (
+            fc
+            * self.data_processor.total_bandwidth_mhz
+            / self.data_processor.total_fft_length
+        )
+        for result in detections:
+            if result["class_id"] == 4:
+                left, top, right, bottom = result["bbox"]
+                duration = (right - left) / image_width * total_duration
+                freq_bandwidth = (bottom - top) / image_height * span
+                center_freq = fc + ((bottom + top) / 2) / image_height * span
+                # 时间和带宽日志
+                logger.info(
+                    f"Detected control signal - Duration: {duration*1e3:.2f} ms, "
+                    f"Freq Bandwidth: {freq_bandwidth:.2f} MHz, "
+                    f"Center Freq: {center_freq:.2f} MHz"
+                )
 
     def get_detection_results(self):
         """获取检测结果信息"""

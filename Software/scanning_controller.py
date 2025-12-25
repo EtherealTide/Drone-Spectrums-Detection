@@ -49,9 +49,9 @@ class ScanningController:
         self.control_lost_threshold = state.get_parameter(
             "Scanner", "control_lost_threshold", 50
         )
-        # non-scanning mode defaults
-        self.left_freq = 0
-        self.right_freq = self.scan_bandwidth_mhz
+        # default start_pt and end_pt
+        self.start_pt = 0
+        self.end_pt = self.state.fft_length
         # Control signal class identification
         self.control_signal_class_id = None  # 用于找到控制信号的框的中心位置
 
@@ -98,22 +98,23 @@ class ScanningController:
             tuple: (image, window_start_point, window_end_point)
         """
         if not self.enable_scanning:
-            # Non-scanning mode: return full image
-            start_pt = self.left_freq
-            end_pt = self.right_freq
+            # stay stilll
+            pass
 
         if self.scan_mode == ScanMode.SCANNING:
             # Scanning mode: fixed-step scanning
-            start_pt, end_pt = self._get_window_range_scanning(
+            self.start_pt, self.end_pt = self._get_window_range_scanning(
                 self.current_window_index
             )
         else:  # LOCKED
             # Locked mode: dynamic tracking
-            start_pt, end_pt = self._get_window_range_locked(self.locked_center_point)
+            self.start_pt, self.end_pt = self._get_window_range_locked(
+                self.locked_center_point
+            )
 
         # Slice image
-        image = self.data_processor.get_window_image(start_pt, end_pt)
-        return image, start_pt, end_pt
+        image = self.data_processor.get_window_image(self.start_pt, self.end_pt)
+        return image
 
     def _get_window_range_scanning(self, window_index):
         """
@@ -154,16 +155,12 @@ class ScanningController:
 
         return start_point, end_point
 
-    def update_state_machine(
-        self, detections, window_start_point, window_end_point, image_width
-    ):
+    def update_state_machine(self, detections, image_width):
         """
         Update state machine based on detection results
 
         Args:
             detections: List of detection results
-            window_start_point: Current window start FFT point
-            window_end_point: Current window end FFT point
             image_width: Width of detection image (pixels)
         """
         if not self.enable_scanning:
@@ -197,8 +194,8 @@ class ScanningController:
                 target_center_x_in_window = (bbox[1] + bbox[3]) / 2
 
                 # Convert to full FFT point index
-                window_width = window_end_point - window_start_point
-                target_center_point = window_start_point + int(
+                window_width = self.end_pt - self.start_pt
+                target_center_point = self.start_pt + int(
                     target_center_x_in_window / image_width * window_width
                 )
 
@@ -221,8 +218,8 @@ class ScanningController:
                 target_center_x_in_window = (bbox[1] + bbox[3]) / 2
 
                 # Calculate new center FFT point
-                window_width = window_end_point - window_start_point
-                new_center_point = window_start_point + int(
+                window_width = self.end_pt - self.start_pt
+                new_center_point = self.start_pt + int(
                     target_center_x_in_window / image_width * window_width
                 )
 
@@ -264,22 +261,18 @@ class ScanningController:
             "overlap_ratio": self.overlap_ratio,
             "control_lost_threshold": self.control_lost_threshold,
         }
-
+        start_freq = self.data_processor.get_point_to_frequency(self.start_pt)
+        end_freq = self.data_processor.get_point_to_frequency(self.end_pt)
         if not self.enable_scanning:
-            status["frequency_range_mhz"] = (
-                self.left_freq,
-                self.right_freq,
+            status.update(
+                {
+                    "scan_mode": "Disabled",
+                    "frequency_range_mhz": (start_freq, end_freq),
+                    "frequency_range_str": f"{start_freq:.1f}-{end_freq:.1f} MHz",
+                }
             )
-            status["frequency_range_str"] = f"{self.left_freq}-{self.right_freq} MHz"
-            status["scan_mode"] = "Disabled"
 
         if self.scan_mode == ScanMode.SCANNING:
-            start_pt, end_pt = self._get_window_range_scanning(
-                self.current_window_index
-            )
-            start_freq = self.data_processor.get_point_to_frequency(start_pt)
-            end_freq = self.data_processor.get_point_to_frequency(end_pt)
-
             status.update(
                 {
                     "window_index": self.current_window_index + 1,
@@ -291,9 +284,6 @@ class ScanningController:
             )
 
         elif self.scan_mode == ScanMode.LOCKED:
-            start_pt, end_pt = self._get_window_range_locked(self.locked_center_point)
-            start_freq = self.data_processor.get_point_to_frequency(start_pt)
-            end_freq = self.data_processor.get_point_to_frequency(end_pt)
             center_freq = self.data_processor.get_point_to_frequency(
                 self.locked_center_point
             )
