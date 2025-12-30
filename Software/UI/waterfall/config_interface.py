@@ -125,6 +125,7 @@ class WaterfallConfigInterface(QWidget):
                 self.state.enable_scanning,
                 ["Enabled", "Disabled"],
             ),
+            ("start_frequency_mhz", self.state.start_frequency_mhz, None),
         ]
         for name, value, options in scanner_params:
             self.add_parameter(detection_item, "Scanner", name, value, options)

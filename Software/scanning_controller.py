@@ -98,15 +98,21 @@ class ScanningController:
             tuple: (image, window_start_point, window_end_point)
         """
         if not self.enable_scanning:
-            # stay stilll
-            pass
-
-        if self.scan_mode == ScanMode.SCANNING:
+            # 获取state中设置的起始频率对应的FFT点
+            start_freq_mhz = self.state.start_frequency_mhz
+            self.start_pt = int(
+                start_freq_mhz
+                * 1e6
+                * self.data_processor.total_fft_length
+                / self.state.sample_rate
+            )
+            self.end_pt = self.start_pt + self.window_size
+        elif self.scan_mode == ScanMode.SCANNING:
             # Scanning mode: fixed-step scanning
             self.start_pt, self.end_pt = self._get_window_range_scanning(
                 self.current_window_index
             )
-        else:  # LOCKED
+        elif self.scan_mode == ScanMode.LOCKED:  # LOCKED
             # Locked mode: dynamic tracking
             self.start_pt, self.end_pt = self._get_window_range_locked(
                 self.locked_center_point
@@ -114,6 +120,7 @@ class ScanningController:
 
         # Slice image
         image = self.data_processor.get_window_image(self.start_pt, self.end_pt)
+
         return image
 
     def _get_window_range_scanning(self, window_index):

@@ -6,19 +6,24 @@
     "SPAN(MHz)": 100.0,
     "Channel_count": 20
   },
+  "Connection": {
+    "ip_address": "127.0.0.1",
+    "port": 5000
+  },
   "Scanner": {
     "enable_scanning": true,
     "scan_bandwidth_mhz": 100,
     "overlap_ratio": 0.5,
-    "control_lost_threshold": 50
+    "control_lost_threshold": 50,
+    "start_frequency_mhz": 1020
   },
   "Detection": {
     "conf_threshold": 0.25,
     "iou_threshold": 0.7
   },
   "UI_Spectrum": {
-    "spectrum_left_freq(MHz)": 0,
-    "spectrum_right_freq(MHz)": 2000
+    "spectrum_left_freq(MHz)": 1000,
+    "spectrum_right_freq(MHz)": 1300
   },
   "Data_Process": {
     "waterfall_height": 512

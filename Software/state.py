@@ -183,3 +183,7 @@ class State(QObject):
     @property
     def control_lost_threshold(self):
         return self.get_parameter("Scanner", "control_lost_threshold", 5)
+
+    @property
+    def start_frequency_mhz(self):
+        return self.get_parameter("Scanner", "start_frequency_mhz", 1000)

@@ -8,7 +8,7 @@ from pathlib import Path
 from openvino import Core
 from ultralytics import YOLO
 
-from scanning_controller import ScanningController, ScanMode
+from scanning_controller import ScanningController
 
 logger = logging.getLogger(__name__)
 
