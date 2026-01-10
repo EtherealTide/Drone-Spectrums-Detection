@@ -198,6 +198,9 @@ class MockDevice:
                 logging.error(f"加载文件 {file_path} 失败: {exc}", exc_info=True)
                 continue
             # 将数据压缩到512*512
+            # 如果数据维度是512*514，则进行转置
+            if data.shape[0] == 512 and data.shape[1] == 514:
+                data = data.T
             data = data[:512, :512]
             flat_data = np.asarray(data, dtype=np.float32).ravel()
             if flat_data.size == 0:

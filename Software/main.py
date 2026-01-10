@@ -102,9 +102,16 @@ class DroneDetectionSystem:
                     self.main_window.spectrumInterface.visualization_card.update_config()
 
             if group == "Data_Process":
-                self.data_processor.set_waterfall_parameters(
-                    height=self.state.waterfall_height,
-                )
+                if name == "waterfall_height":
+                    self.data_processor.set_waterfall_parameters(
+                        height=self.state.waterfall_height,
+                    )
+                else:
+                    self.data_processor.set_noise_filter_parameters(
+                        enable_noise_filter=self.state.enable_noise_filter,
+                        noise_filter_mode=self.state.noise_filter_mode,
+                        noise_alpha=self.state.noise_alpha,
+                    )   
                 if hasattr(self.main_window, "waterfallInterface"):
                     self.main_window.waterfallInterface.visualization_card.update_config()
 

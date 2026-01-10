@@ -274,14 +274,14 @@ class DroneDetector:
                     input_image.shape[1],  # 图像宽度
                 )
                 # 日志记录飞控信号持续时间和带宽
-                self.logger_out_detection_stats(
-                    50e-3,  # 假设总时长50ms
-                    self.scanning_controller.start_pt,  # 图像左侧频率
-                    self.state.scan_bandwidth_mhz,
-                    detections,
-                    input_image.shape[1],  # 图像宽度
-                    input_image.shape[0],  # 图像高度
-                )
+                # self.logger_out_detection_stats(
+                #     50e-3,  # 假设总时长50ms
+                #     self.scanning_controller.start_pt,  # 图像左侧频率
+                #     self.state.scan_bandwidth_mhz,
+                #     detections,
+                #     input_image.shape[1],  # 图像宽度
+                #     input_image.shape[0],  # 图像高度
+                # )
                 # 绘制检测框
                 annotated_image = self._draw_detections(input_image, detections)
                 # 更新结果

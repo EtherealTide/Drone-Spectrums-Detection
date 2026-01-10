@@ -57,6 +57,14 @@ class DataProcessor:
         self.batch_size = 0
 
         self.use_opencv_colormap = True
+
+        # --- Noise Filter State ---
+        self.enable_noise_filter = state.enable_noise_filter  # Default off
+        self.noise_filter_mode = state.noise_filter_mode  # "subtraction" or "threshold"
+        self.noise_floor = None
+        self.noise_alpha = state.noise_alpha  # Learning rate
+        self.noise_threshold_offset = 0.0  # Optional offset for threshold mode
+
         self._init_complete = True
 
     def start_processing(self):
@@ -120,8 +128,38 @@ class DataProcessor:
                             padded[: len(fft_data)] = fft_data
                             fft_data = padded
 
-                    # 转换为dB
-                    # fft_data = 20 * np.log10(np.abs(fft_data) + 1e-12)
+                    # --- Noise Filtering ---
+                    if self.enable_noise_filter:
+                        
+                        # === Mode 1: Spectral Subtraction (Asymmetric) ===
+                        if self.noise_filter_mode == "subtraction":
+                            if self.noise_floor is None:
+                                self.noise_floor = fft_data.astype(np.float32)
+
+                            # Asymmetric Update:
+                            # If Current > Floor: It might be a signal, update SLOWLY (or not at all)
+                            # If Current < Floor: The floor is too high, update NORMALLY (downward)
+                            diff = fft_data - self.noise_floor
+                            
+                            # Vectorized alpha: use normal alpha where current < floor, use 0.01*alpha where current > floor
+                            # This preserves long-duration signals from lifting the floor too much.
+                            alpha_vec = np.where(diff > 0, self.noise_alpha * 0.1, self.noise_alpha)
+                            
+                            self.noise_floor = (1 - alpha_vec) * self.noise_floor + alpha_vec * fft_data
+                            
+                            # Subtraction
+                            fft_data = fft_data - self.noise_floor
+                        
+                        # === Mode 2: Hard Thresholding (Mean Squelch) ===
+                        elif self.noise_filter_mode == "threshold":
+                            # Calculate mean power of this frame
+                            frame_mean = np.mean(fft_data)
+                            # Squelch everything below mean to a minimum value (e.g., -100 dB or just 0 if relative)
+                            # Assuming fft_data is dB-like or raw magnitude.
+                            # If we want a solid black background, we set it to the minimum value in the frame or a fixed floor.
+                            min_val = np.min(fft_data)
+                            fft_data = np.where(fft_data < frame_mean, min_val, fft_data)
+
                     processed_batch.append(fft_data)
 
                 # 保存原始dB值到buffer
@@ -297,3 +335,35 @@ class DataProcessor:
                     (self.waterfall_height, self.waterfall_width, 3), dtype=np.uint8
                 )
             logger.info(f"Waterfall parameters updated: height={self.waterfall_height}")
+
+    def set_noise_filter_parameters(self, enable_noise_filter: bool, noise_filter_mode: str = None, noise_alpha: float = None, noise_threshold_offset: float = None):
+        """
+        Enable/Disable noise filter and set parameters.
+        
+        Args:
+            enable_noise_filter: True to enable
+            noise_filter_mode: "subtraction" or "threshold" (default None to keep current)
+            noise_alpha: Learning rate (0.0 - 1.0) for subtraction mode.
+            noise_threshold_offset: Optional offset (reserved)
+        """
+        with self.data_lock:
+            self.enable_noise_filter = enable_noise_filter
+            
+            if noise_filter_mode is not None:
+                if noise_filter_mode in ["subtraction", "threshold"]:
+                    self.noise_filter_mode = noise_filter_mode
+                else:
+                    logger.warning(f"Invalid noise filter mode: {noise_filter_mode}")
+
+            if noise_alpha is not None:
+                self.noise_alpha = max(0.0, min(1.0, float(noise_alpha)))
+
+            if noise_threshold_offset is not None:
+                self.noise_threshold_offset = float(noise_threshold_offset)
+            
+            # Reset noise floor if disabling or switching modes (optional)
+            if not enable_noise_filter:
+                self.noise_floor = None
+                
+            logger.info(f"Noise Filter Set: enabled={enable_noise_filter}, mode={self.noise_filter_mode}, alpha={self.noise_alpha}")
+

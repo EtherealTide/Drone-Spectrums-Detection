@@ -149,6 +149,22 @@ class State(QObject):
     def waterfall_height(self):
         return self.get_parameter("Data_Process", "waterfall_height", self.fft_length)
 
+    @property
+    def enable_noise_filter(self):
+        return self.get_parameter("Data_Process", "enable_noise_filter", False)
+
+    @property
+    def noise_filter_mode(self):
+        return self.get_parameter("Data_Process", "noise_filter_mode", "subtraction")
+
+    @property
+    def noise_alpha(self):
+        return self.get_parameter("Data_Process", "noise_alpha", 0.05)
+
+    @property
+    def noise_threshold_offset(self):
+        return self.get_parameter("Data_Process", "noise_threshold_offset", 0.0)
+
     # ==================== connection status ====================
 
     @property

@@ -11,11 +11,11 @@
     "port": 5000
   },
   "Scanner": {
-    "enable_scanning": true,
+    "enable_scanning": false,
     "scan_bandwidth_mhz": 100,
     "overlap_ratio": 0.5,
     "control_lost_threshold": 50,
-    "start_frequency_mhz": 1020
+    "start_frequency_mhz": 1000
   },
   "Detection": {
     "conf_threshold": 0.25,
@@ -26,6 +26,9 @@
     "spectrum_right_freq(MHz)": 1300
   },
   "Data_Process": {
-    "waterfall_height": 512
+    "waterfall_height": 512,
+    "enable_noise_filter": true,
+    "noise_filter_mode": "threshold",
+    "noise_alpha": 0.03
   }
 }

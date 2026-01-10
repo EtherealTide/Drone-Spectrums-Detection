@@ -105,7 +105,10 @@ class WaterfallConfigInterface(QWidget):
         self.config_tree.addTopLevelItem(dataprocess_item)
         dataprocess_params = [
             ("waterfall_height", self.state.waterfall_height, None),
-        ]
+            ("enable_noise_filter", self.state.enable_noise_filter, ["Enabled", "Disabled"]),
+            ("noise_filter_mode", self.state.noise_filter_mode, ["subtraction", "threshold"]),
+            ("noise_alpha", self.state.noise_alpha, None),
+        ]   
         for name, value, options in dataprocess_params:
             self.add_parameter(dataprocess_item, "Data_Process", name, value, options)
         detection_item = QTreeWidgetItem(["Detection"])
@@ -171,22 +174,33 @@ class WaterfallConfigInterface(QWidget):
         def update_value():
             new_value = input_widget.currentText() if options else input_widget.text()
             try:
-                # 把Enabled/Disabled转换为布尔值
+                numeric_value = new_value 
+                
+                # 1. Handle Boolean (Enabled/Disabled)
                 if new_value == "Enabled":
                     numeric_value = True
                 elif new_value == "Disabled":
                     numeric_value = False
-                else:
-                    numeric_value = new_value
-                if new_value != "Enabled" and new_value != "Disabled":
-                    numeric_value = float(new_value)
-                    if numeric_value.is_integer():
-                        numeric_value = int(numeric_value)
+                
+                # 2. Handle Numbers (if original value was number)
+                # We interpret as number if it looks like one AND the original wasn't a string (unless it was a string that looked like a number, edge case)
+                # But safer logic: Try convert to float/int.
+                # If the user passed a STRING option "subtraction", keep it as string.
+                # If current_value is a number, we enforce number.
+                elif isinstance(current_value, (int, float)) and not isinstance(current_value, bool):
+                     numeric_value = float(new_value)
+                     if numeric_value.is_integer():
+                         numeric_value = int(numeric_value)
+                
+                # 3. Handle Strings (explicitly or fallback)
+                # If current_value was string, we just pass the new string (already done by default)
+                
+                # Log and Emit
                 self.parameter_change_request.emit(
                     param_group, param_name, numeric_value
                 )
                 logger.info(
-                    f"Request parameter update: {param_group}.{param_name} = {numeric_value}"
+                    f"Request parameter update: {param_group}.{param_name} = {numeric_value} (type: {type(numeric_value).__name__})"
                 )
             except ValueError:
                 logger.error(f"Invalid parameter value {param_name} = {new_value}")
