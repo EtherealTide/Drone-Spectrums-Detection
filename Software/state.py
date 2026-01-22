@@ -161,10 +161,6 @@ class State(QObject):
     def noise_alpha(self):
         return self.get_parameter("Data_Process", "noise_alpha", 0.05)
 
-    @property
-    def noise_threshold_offset(self):
-        return self.get_parameter("Data_Process", "noise_threshold_offset", 0.0)
-
     # ==================== connection status ====================
 
     @property

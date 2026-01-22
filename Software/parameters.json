@@ -11,7 +11,7 @@
     "port": 5000
   },
   "Scanner": {
-    "enable_scanning": false,
+    "enable_scanning": true,
     "scan_bandwidth_mhz": 100,
     "overlap_ratio": 0.5,
     "control_lost_threshold": 50,
@@ -27,8 +27,8 @@
   },
   "Data_Process": {
     "waterfall_height": 512,
-    "enable_noise_filter": true,
-    "noise_filter_mode": "threshold",
+    "enable_noise_filter": false,
+    "noise_filter_mode": "subtraction",
     "noise_alpha": 0.03
   }
 }

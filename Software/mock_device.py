@@ -27,6 +27,7 @@ class MockDevice:
         self.single_channel_fft = 512  # 单通道FFT点数
         self.channel_count = 20  # 固定20通道
         self.total_fft_length = self.single_channel_fft * self.channel_count  # 10240
+        self.packet_size = 128  # 每个包128个点
         self.send_interval = 0.001  # 发送间隔
 
         # 数据流相关
@@ -193,15 +194,10 @@ class MockDevice:
 
             try:
                 data = np.load(file_path)
-                print(f"加载文件 {file_path}，数据形状: {data.shape}")
             except Exception as exc:
                 logging.error(f"加载文件 {file_path} 失败: {exc}", exc_info=True)
                 continue
-            # 将数据压缩到512*512
-            # 如果数据维度是512*514，则进行转置
-            if data.shape[0] == 512 and data.shape[1] == 514:
-                data = data.T
-            data = data[:512, :512]
+
             flat_data = np.asarray(data, dtype=np.float32).ravel()
             if flat_data.size == 0:
                 logging.warning(f"文件 {file_path} 为空，跳过")
