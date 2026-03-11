@@ -1,6 +1,6 @@
-description: Ultralytics best model trained on spectrum.yaml
+description: Ultralytics YOLO26n model trained on /datasets/wireless-drone-spectrum-detection-2/data.yaml
 author: Ultralytics
-date: '2026-03-11T19:57:44.895374'
+date: '2026-03-02T09:48:15.361455'
 version: 8.4.19
 license: AGPL-3.0 License (https://ultralytics.com/license)
 docs: https://docs.ultralytics.com
@@ -21,9 +21,9 @@ names:
 args:
   batch: 1
   fraction: 1.0
-  half: true
-  int8: false
+  half: false
+  int8: true
   dynamic: false
   nms: false
 channels: 3
-end2end: false
+end2end: true

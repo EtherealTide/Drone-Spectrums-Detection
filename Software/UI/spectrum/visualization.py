@@ -7,22 +7,27 @@ import logging
 
 from ..utils.component import Component
 from ..settings.theme_manager import get_theme_manager
+from ipc import SHM_SPECTRUM_SHAPE, SHM_SPECTRUM_DTYPE
 
 logger = logging.getLogger(__name__)
 
 
 class SpectrumVisualizationCard(QWidget):
-    """Spectrum-only visualization (no waterfall/detection)."""
+    """Spectrum-only visualization; reads directly from shared-memory."""
 
-    def __init__(self, parent=None, data_processor=None, state=None, detector=None):
+    def __init__(self, parent=None, shm_spectrum=None, state=None, detector=None):
         super().__init__(parent)
         self.setObjectName("SpectrumVisualizationCard")
         self.component = Component()
         self.theme_manager = get_theme_manager()
-
-        self.data_processor = data_processor
         self.state = state
-        self.detector = detector  # kept for signature compatibility
+        # detector kept for signature compatibility (unused)
+
+        self._spec_arr = None
+        if shm_spectrum is not None:
+            self._spec_arr = np.frombuffer(
+                shm_spectrum.buf, dtype=SHM_SPECTRUM_DTYPE
+            ).reshape(SHM_SPECTRUM_SHAPE)
 
         self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_visualization)
@@ -129,14 +134,14 @@ class SpectrumVisualizationCard(QWidget):
 
     def update_visualization(self):
         try:
-            if self.data_processor:
-                spectrum_data = self.data_processor.get_latest_spectrum()
-                # 更改y轴范围以适应数据
-                if spectrum_data is not None:
-                    min_power = np.min(spectrum_data)
-                    max_power = np.max(spectrum_data)
-                    self.axis_y.setRange(min_power, max_power)
-                    self.update_spectrum(spectrum_data)
+            if self._spec_arr is not None and self.state:
+                total_fft = self.state.total_fft_length
+                total_fft = max(1, min(total_fft, SHM_SPECTRUM_SHAPE[0]))
+                spectrum_data = self._spec_arr[:total_fft].copy()
+                min_power = float(np.min(spectrum_data))
+                max_power = float(np.max(spectrum_data))
+                self.axis_y.setRange(min_power, max_power)
+                self.update_spectrum(spectrum_data)
         except Exception as e:
             logger.error(f"Spectrum visualization update failed: {e}", exc_info=True)
 

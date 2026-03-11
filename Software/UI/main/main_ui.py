@@ -49,7 +49,9 @@ class Widget(QFrame):
 class Window(QMainWindow):
     """Main application window fully based on PyQt6 widgets."""
 
-    def __init__(self, dataprocessor, state, detector):
+    def __init__(
+        self, shm_waterfall=None, shm_spectrum=None, shm_detection=None, state=None
+    ):
         super().__init__()
 
         # 设置窗口大小 - 修改为更合理的尺寸
@@ -68,9 +70,10 @@ class Window(QMainWindow):
         y = (screen.height() - height) // 2
         self.move(x, y)
 
-        self.data_processor = dataprocessor
+        self.shm_waterfall = shm_waterfall
+        self.shm_spectrum = shm_spectrum
+        self.shm_detection = shm_detection
         self.state = state
-        self.detector = detector
         self.logo_path = Path(__file__).parent / "logo.png"
         self._splash = None
         self.theme_manager = get_theme_manager()
@@ -129,14 +132,13 @@ class Window(QMainWindow):
         # Build sub interfaces
         self.spectrumInterface = SpectrumInterface(
             self,
-            data_processor=self.data_processor,
+            shm_spectrum=self.shm_spectrum,
             state=self.state,
-            detector=self.detector,
         )
         self.waterfallInterface = WaterfallInterface(
             self,
-            data_processor=self.data_processor,
-            detector=self.detector,
+            shm_waterfall=self.shm_waterfall,
+            shm_detection=self.shm_detection,
             state=self.state,
         )
         self.settingInterface = SettingsInterface(self, self.theme_manager)

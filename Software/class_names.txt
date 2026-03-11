@@ -4,4 +4,4 @@ Bluetooth
 Video-transmission signal
 Flight-control signal
 Fast-hopping
-Flight-control pattern
+Flight-control signal pattern

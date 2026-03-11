@@ -6,11 +6,10 @@ from ..settings.theme_manager import get_theme_manager
 
 
 class SpectrumInterface(QWidget):
-    def __init__(self, parent=None, data_processor=None, state=None, detector=None):
+    def __init__(self, parent=None, shm_spectrum=None, state=None, detector=None):
         super().__init__(parent)
-        self.data_processor = data_processor
+        self.shm_spectrum = shm_spectrum
         self.state = state
-        self.detector = detector
         self.setObjectName("SpectrumInterface")
         self.theme_manager = get_theme_manager()
         self.setup_ui()
@@ -27,8 +26,7 @@ class SpectrumInterface(QWidget):
         # Left: spectrum visualization
         self.visualization_card = SpectrumVisualizationCard(
             parent=self,
-            data_processor=self.data_processor,
-            detector=self.detector,
+            shm_spectrum=self.shm_spectrum,
             state=self.state,
         )
         self.splitter.addWidget(self.visualization_card)

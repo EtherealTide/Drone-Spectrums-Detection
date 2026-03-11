@@ -31,7 +31,7 @@ class MockDevice:
         self.send_interval = 0.001  # 发送间隔
 
         # 数据流相关
-        self.data_dir = Path(__file__).parent.parent.parent / "2"
+        self.data_dir = Path(__file__).parent.parent.parent / "data"
         self.npy_files = sorted(self.data_dir.glob("*.npy"))
         self._current_file_idx = 0
         self._buffer = np.array([], dtype=np.float32)

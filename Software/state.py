@@ -12,6 +12,11 @@ class State(QObject):
     connection_changed = pyqtSignal(bool)
     parameters_changed = pyqtSignal(dict)
 
+    # ── Runtime statistics signals (emitted by main-process QTimer from stats queues) ──
+    stats_updated = pyqtSignal(dict)  # DataProcessor stats
+    detection_updated = pyqtSignal(dict)  # Detector stats
+    scan_status_changed = pyqtSignal(dict)  # ScanningController status
+
     def __init__(self):
         super().__init__()
         self._communication_thread = False
@@ -25,6 +30,26 @@ class State(QObject):
         self.device_ip = "127.0.0.1"
         # self.device_ip = "192.168.1.100"
         self.device_port = 5000
+
+        # ── Runtime statistics (populated by main-process QTimer) ──────────────
+        self.processor_stats: dict = {
+            "frame_id": 0,
+            "max_value": 0.0,
+            "min_value": 0.0,
+            "batch_size": 0,
+        }
+        self.detection_stats: dict = {
+            "fps": 0.0,
+            "total_detections": 0,
+            "total_objects": 0,
+            "detection_count": 0,
+        }
+        self.scan_status: dict = {
+            "enabled": False,
+            "mode": "disabled",
+            "scan_mode": "Disabled",
+            "frequency_range_str": "N/A",
+        }
 
     def _load_parameters(self) -> dict:
         config_path = Path(__file__).parent / "parameters.json"
@@ -64,6 +89,11 @@ class State(QObject):
                 "spectrum_right_freq(MHz)": 200.0,
             },
             "UI_Waterfall": {"waterfall_height": 512},
+            "Data_Process": {
+                "enable_noise_filter": False,
+                "noise_filter_mode": "subtraction",
+                "noise_alpha": 0.05,
+            },
         }
 
     def save_parameters(self):
@@ -147,7 +177,7 @@ class State(QObject):
 
     @property
     def waterfall_height(self):
-        return self.get_parameter("Data_Process", "waterfall_height", self.fft_length)
+        return self.get_parameter("UI_Waterfall", "waterfall_height", self.fft_length)
 
     @property
     def enable_noise_filter(self):
@@ -160,6 +190,15 @@ class State(QObject):
     @property
     def noise_alpha(self):
         return self.get_parameter("Data_Process", "noise_alpha", 0.05)
+
+    @property
+    def total_fft_length(self) -> int:
+        """Derived: fft_length × channel_count."""
+        return self.fft_length * self.channel_count
+
+    @property
+    def total_bandwidth_mhz(self) -> float:
+        return self.get_parameter("Receiver", "Total_Bandwidth_MHz", 2000.0)
 
     # ==================== connection status ====================
 
