@@ -10,12 +10,11 @@ Process entry point: data_processor_process()
 import threading
 import time
 import numpy as np
-from collections import deque
 import logging
 import queue
 import cv2
 from multiprocessing.shared_memory import SharedMemory
-
+import torch
 from ipc import (
     SHM_WATERFALL_SHAPE,
     SHM_WATERFALL_DTYPE,
@@ -145,10 +144,11 @@ class DataProcessor:
         self.noise_floor = None
         self.waterfall_width = self.total_fft_length
         zero_line = np.zeros(self.waterfall_width, dtype=np.float32)
-        self.waterfall_buffer = deque(
-            [zero_line.copy() for _ in range(self.waterfall_height)],
-            maxlen=self.waterfall_height,
-        )
+        # self.waterfall_buffer = deque(
+        #     [zero_line.copy() for _ in range(self.waterfall_height)],
+        #     maxlen=self.waterfall_height,
+        # )
+        self._reset_waterfall_ring_buffer()
         self.latest_spectrum = None
         self.image_needs_update = False
         self.transfer_time_interval = 0.01
@@ -167,7 +167,33 @@ class DataProcessor:
         self._spec_arr = np.frombuffer(
             self._shm_spectrum.buf, dtype=SHM_SPECTRUM_DTYPE
         ).reshape(SHM_SPECTRUM_SHAPE)
+        self._spec_arr = np.frombuffer(
+            self._shm_spectrum.buf, dtype=SHM_SPECTRUM_DTYPE
+        ).reshape(SHM_SPECTRUM_SHAPE)
 
+        # ── 新增: PyTorch GPU 渲染引擎初始化 ─────────────────────────────────────
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        logger.info(f"DataProcessor Rendering Device: {self.device}")
+        
+        # 将 JET 色图做成张量存入 GPU (或 CPU 做 fallback)
+        self.jet_lut = self._generate_jet_lut() 
+
+    def _generate_jet_lut(self) -> torch.Tensor:
+        """在设备(GPU/CPU)上生成尺寸为 (256, 3) 的 JET 色彩查找表"""
+        color_map = np.arange(256, dtype=np.uint8).reshape(-1, 1)
+        bgr_colormap = cv2.applyColorMap(color_map, cv2.COLORMAP_JET)
+        bgr_colormap_uint8 = bgr_colormap.squeeze().astype(np.uint8)
+        return torch.from_numpy(bgr_colormap_uint8).to(self.device)   
+    def _reset_waterfall_ring_buffer(self):
+        """环形缓冲初始化函数，创建waterfall_ring和waterfall_view两个属性"""
+        self.waterfall_ring = np.zeros(
+            (self.waterfall_height, self.waterfall_width), dtype=np.float32
+        ) # 环形缓冲区：形状 [max_height, freq_bins]
+        self.waterfall_view = np.zeros(
+            (self.waterfall_height, self.waterfall_width), dtype=np.float32
+        ) # 固定大小的显示缓冲区：形状 [height, freq_bins]
+        self.ring_write_idx = 0 # 下一个写入位置
+        self.ring_count = 0 # ring表示当前环形缓冲区中有效数据行数
     # ── Run ───────────────────────────────────────────────────────────────────
 
     def run(self):
@@ -212,10 +238,11 @@ class DataProcessor:
                 self.total_fft_length = self.fft_length * self.channel_count
                 self.waterfall_width = self.total_fft_length
                 zero_line = np.zeros(self.waterfall_width, dtype=np.float32)
-                self.waterfall_buffer = deque(
-                    [zero_line.copy() for _ in range(self.waterfall_height)],
-                    maxlen=self.waterfall_height,
-                )
+                # self.waterfall_buffer = deque(
+                #     [zero_line.copy() for _ in range(self.waterfall_height)],
+                #     maxlen=self.waterfall_height,
+                # )
+                self._reset_waterfall_ring_buffer()
                 self.noise_floor = None
             logger.info(f"FFT length updated: {value}")
         elif group in ("UI_Waterfall", "Data_Process") and name == "waterfall_height":
@@ -223,10 +250,11 @@ class DataProcessor:
             with self.data_lock:
                 self.waterfall_height = new_h
                 zero_line = np.zeros(self.waterfall_width, dtype=np.float32)
-                self.waterfall_buffer = deque(
-                    [zero_line.copy() for _ in range(self.waterfall_height)],
-                    maxlen=self.waterfall_height,
-                )
+                # self.waterfall_buffer = deque(
+                #     [zero_line.copy() for _ in range(self.waterfall_height)],
+                #     maxlen=self.waterfall_height,
+                # )
+                self._reset_waterfall_ring_buffer()
             logger.info(f"Waterfall height updated: {new_h}")
         elif group == "Data_Process":
             with self.data_lock:
@@ -259,7 +287,7 @@ class DataProcessor:
                 except queue.Empty:
                     continue
 
-                while True:
+                while len(batch_frames) < 10:
                     try:
                         frame = self.fft_data_q.get_nowait()
                         batch_frames.append(frame)
@@ -312,7 +340,10 @@ class DataProcessor:
 
                 with self.data_lock:
                     for spectrum_db in processed_batch:
-                        self.waterfall_buffer.append(spectrum_db)
+                        self.waterfall_ring[self.ring_write_idx, :] = spectrum_db
+                        self.ring_write_idx = (self.ring_write_idx + 1) % self.waterfall_height
+                        if self.ring_count < self.waterfall_height:
+                            self.ring_count += 1
                     self.latest_spectrum = processed_batch[-1].copy()
                     self.processed_frame_count += len(batch_frames)
                     self.image_needs_update = True
@@ -324,64 +355,59 @@ class DataProcessor:
     # ── Image conversion loop ─────────────────────────────────────────────────
 
     def _image_conversion_loop(self):
-
         while self.system_running.value:
             try:
-                # if not self._running or not self.image_needs_update:
-                #     time.sleep(0.002)
-                #     continue
+                if not self._running or not self.image_needs_update:
+                    time.sleep(0.002)
+                    continue
 
                 with self.data_lock:
-                    waterfall_list = list(self.waterfall_buffer)
                     latest_spectrum = (
-                        self.latest_spectrum.copy()
-                        if self.latest_spectrum is not None
-                        else None
+                    self.latest_spectrum.copy() if self.latest_spectrum is not None else None
                     )
                     self.image_needs_update = False
+                    frame_id = self.processed_frame_count
+                    batch_sz = self.batch_size
+                # 将环形缓冲区重建成连续的瀑布图像（时间从上到下）
+                waterfall_array = self._rebuild_waterfall_image()
+                # PCIe上传到显存
+                gpu_tensor = torch.from_numpy(waterfall_array).to(self.device, non_blocking=True)
 
-                waterfall_array = np.array(waterfall_list, dtype=np.float32)
-                min_db = np.min(waterfall_array)
-                max_db = np.max(waterfall_array)
-                waterfall_normalized = (waterfall_array - min_db) / (
-                    max_db - min_db + 1e-12
-                )
+                # GPU纯张量计算(求最值、归一化、查表翻转)
+                t_min, t_max = torch.aminmax(gpu_tensor)
+                min_db = t_min.item()
+                max_db = t_max.item()
+                norm_tensor = (gpu_tensor - t_min) / (t_max - t_min + 1e-12)
+                idx_tensor = (norm_tensor * 255.0).to(torch.long)
+                idx_tensor = torch.flip(idx_tensor, dims=[0]).transpose(0, 1).contiguous()
+                color_tensor = self.jet_lut[idx_tensor]
+
+                # PCIe拉回主内存
+                bgr_image = color_tensor.cpu().numpy()
+                
+                total_fft = self.total_fft_length
+                wf_h = self.waterfall_height
+
+                # 写入操作系统跨进程共享内存
+
+                with self.waterfall_lock:
+                    # 这步通常是最慢的
+                    self._wf_arr[:total_fft, :wf_h, :] = bgr_image[:total_fft, :wf_h, :]
+
+
+                if latest_spectrum is not None:
+                    self._spec_arr[:total_fft] = latest_spectrum[:total_fft]
+
+                self.frame_counter.value += 1
 
                 with self.data_lock:
                     self.max_value = float(max_db)
                     self.min_value = float(min_db)
-                    frame_id = self.processed_frame_count
-                    batch_sz = self.batch_size
 
-                # Transpose: [height, width] → [width, height]
-                waterfall_normalized = np.flipud(
-                    waterfall_normalized
-                ).T  # (width, height)
-
-                gray_image = (waterfall_normalized * 255.0).astype(np.uint8)
-                bgr_image = cv2.applyColorMap(gray_image, cv2.COLORMAP_JET)
-                # bgr_image shape: (total_fft_length, waterfall_height, 3)
-
-                total_fft = self.total_fft_length
-                wf_h = self.waterfall_height
-
-                # ── Write to shared memory (under waterfall_lock) ─────────────
-                with self.waterfall_lock:
-                    self._wf_arr[:total_fft, :wf_h, :] = bgr_image[:total_fft, :wf_h, :]
-                self.frame_counter.value += 1
-
-                # ── Write spectrum to shared memory (no lock; display-only) ───
-                if latest_spectrum is not None:
-                    self._spec_arr[:total_fft] = latest_spectrum[:total_fft]
-
-                # ── Send stats to main process ────────────────────────────────
                 stats = {
-                    "frame_id": frame_id,
-                    "fps": self.fps,
-                    "max_value": float(max_db),
-                    "min_value": float(min_db),
-                    "batch_size": batch_sz,
-                    "waterfall_height": wf_h,
+                    "frame_id": frame_id, "fps": self.fps,
+                    "max_value": float(max_db), "min_value": float(min_db),
+                    "batch_size": batch_sz, "waterfall_height": wf_h,
                     "waterfall_width": total_fft,
                 }
                 try:
@@ -396,3 +422,24 @@ class DataProcessor:
             except Exception as e:
                 logger.error(f"Image conversion error: {e}", exc_info=True)
                 time.sleep(0.1)
+
+    def _rebuild_waterfall_image(self):
+        h = self.waterfall_height
+        w = self.waterfall_width
+        cnt = self.ring_count
+        write_idx = self.ring_write_idx
+
+        # Rebuild chronological waterfall into fixed staging buffer:
+        # oldest -> newest along axis-0
+        if cnt < h:
+            pad = h - cnt
+            self.waterfall_view[:pad, :] = 0.0
+            if cnt > 0:
+                self.waterfall_view[pad:, :] = self.waterfall_ring[:cnt, :]
+        else:
+            # cnt >= h 的情况，从环形缓冲区重建
+            tail = h - write_idx
+            self.waterfall_view[:tail, :] = self.waterfall_ring[write_idx:, :]
+            if write_idx > 0:
+                self.waterfall_view[tail:, :] = self.waterfall_ring[:write_idx, :]
+        return self.waterfall_view

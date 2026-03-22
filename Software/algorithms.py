@@ -11,7 +11,7 @@ import numpy as np
 import logging
 import cv2
 from pathlib import Path
-from openvino import Core
+import torch
 from ultralytics import YOLO
 from multiprocessing.shared_memory import SharedMemory
 
@@ -38,8 +38,7 @@ def detector_process(
     det_ctrl_q,
     system_running,
     init_params: dict,
-    model_path: str = "best.pt",
-    openvino_model_path: str = "best_openvino_model/",
+    model_path: str = "best.engine",
     class_file: str = "class_names.txt",
 ):
     """Entry point for the detector sub-process."""
@@ -57,7 +56,6 @@ def detector_process(
         det_ctrl_q,
         system_running,
         model_path=model_path,
-        openvino_model_path=openvino_model_path,
         class_file=class_file,
     )
     logger.info("DroneDetector initialized, waiting for START")
@@ -108,8 +106,7 @@ class DroneDetector:
         det_stats_q,
         det_ctrl_q,
         system_running,
-        model_path: str = "best.pt",
-        openvino_model_path: str = "best_openvino_model/",
+        model_path: str = "best.engine",
         class_file: str = "class_names.txt",
     ):
         self.system_running = system_running
@@ -118,7 +115,6 @@ class DroneDetector:
         self.frame_counter = frame_counter
         self.algorithm_path = Path(__file__).parent.absolute()
         self.model_path = self.algorithm_path / model_path
-        self.openvino_model_path = self.algorithm_path / openvino_model_path
         self.class_file = self.algorithm_path / class_file
 
         self.detection_lock = threading.Lock()
@@ -127,7 +123,6 @@ class DroneDetector:
         self.total_objects = 0
         self.fps = 0.0
 
-        self.use_openvino = False
         self.model = None
 
         self.class_names = self._load_class_names()
@@ -135,7 +130,7 @@ class DroneDetector:
 
         self.conf_threshold = init_params.get("conf_threshold", 0.25)
         self.iou_threshold = init_params.get("iou_threshold", 0.45)
-        self.image_size = 640
+        self.image_size = 512
 
         # ── Attach to shared memory ───────────────────────────────────────────
         self._shm_waterfall = SharedMemory(name=shm_waterfall_name)
@@ -248,25 +243,18 @@ class DroneDetector:
 
     def _load_model(self):
         try:
-            core = Core()
-            if "GPU" in core.available_devices and self.openvino_model_path.exists():
-                logger.info(f"Loading OpenVINO model: {self.openvino_model_path}")
-                self.model = YOLO(str(self.openvino_model_path))
-                self.use_openvino = True
-                logger.info("OpenVINO model loaded (GPU)")
-                self._warmup_model()
-                return
-        except Exception as e:
-            logger.warning(f"OpenVINO load failed: {e}")
-        try:
             logger.info(f"Loading PyTorch model: {self.model_path}")
             self.model = YOLO(str(self.model_path))
-            self.use_openvino = False
-            logger.info("PyTorch model loaded (CPU)")
+            if torch.cuda.is_available():
+                logger.info("CUDA available — using NVIDIA GPU for inference")
+            else:
+                logger.info("CUDA not available — using Intel CPU for inference")
             self._warmup_model()
         except Exception as e:
             logger.error(f"Model load failed: {e}")
             self.model = None
+
+        
 
     def _warmup_model(self):
         try:
@@ -285,11 +273,9 @@ class DroneDetector:
             "iou": self.iou_threshold,
             "verbose": False,
         }
-        if self.use_openvino:
-            kwargs["device"] = "intel:gpu"
-            kwargs["imgsz"] = 512
-        else:
-            kwargs["imgsz"] = self.image_size
+
+        kwargs["device"] = "cuda" if torch.cuda.is_available() else "cpu"
+        kwargs["imgsz"] = self.image_size
 
         results = self.model(image, **kwargs)
         detections = []
@@ -360,6 +346,11 @@ class DroneDetector:
                 if not self._running:
                     time.sleep(0.005)
                     continue
+
+                # 1. 核心修复：如果帧没更新，稍微休眠并重试，不重复计算！
+                if current_frame == last_frame:
+                    time.sleep(0.002)
+                    continue
                 last_frame = current_frame
 
                 if self.model is None:
@@ -369,7 +360,14 @@ class DroneDetector:
                 t0 = time.time()
                 elapsed = t0 - last_time
                 last_time = t0
-                self.fps = 1.0 / elapsed if elapsed > 0 else 0.0
+                
+                # 2. 帧率平滑：防止数值剧烈波动
+                inst_fps = 1.0 / elapsed if elapsed > 0 else 0.0
+                if self.fps == 0.0:
+                    self.fps = inst_fps
+                else:
+                    self.fps = self.fps * 0.9 + inst_fps * 0.1  # 平滑过渡
+
                 # Get current window image from shared waterfall memory
                 # shape: (window_width, waterfall_height, 3), freq on axis-0
                 input_image = self.scanning_controller.get_current_window_image()
