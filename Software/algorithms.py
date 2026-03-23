@@ -1,226 +1,68 @@
-# algorithms.py — Drone detection algorithm sub-process.
-#
-# Process entry: detector_process()
-# DroneDetector owns the ScanningController.  It attaches to the shared
-# waterfall memory and writes annotated detection images into the shared
-# detection memory block.
-import threading
-import time
-import queue as _queue
-import numpy as np
-import logging
-import cv2
+"""algorithms.py - Batch detector utilities for GPU inference.
+
+This module provides a reusable detector that accepts a batch of BGR images
+already on GPU and runs one-shot YOLO inference.
+"""
+
 from pathlib import Path
+import logging
+import time
+
+import cv2
+import numpy as np
 import torch
 from ultralytics import YOLO
-from multiprocessing.shared_memory import SharedMemory
-
-from scanning_controller import ScanningController
-from ipc import (
-    SHM_WATERFALL_SHAPE,
-    SHM_WATERFALL_DTYPE,
-    SHM_DETECTION_SHAPE,
-    SHM_DETECTION_DTYPE,
-)
 
 logger = logging.getLogger(__name__)
 
 
-# ── Process entry point ────────────────────────────────────────────────────────
-
-
-def detector_process(
-    shm_waterfall_name: str,
-    shm_detection_name: str,
-    frame_counter,
-    waterfall_lock,
-    det_stats_q,
-    det_ctrl_q,
-    system_running,
-    init_params: dict,
-    model_path: str = "best.engine",
-    class_file: str = "class_names.txt",
-):
-    """Entry point for the detector sub-process."""
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    )
-    detector = DroneDetector(
-        init_params,
-        shm_waterfall_name,
-        shm_detection_name,
-        frame_counter,
-        waterfall_lock,
-        det_stats_q,
-        det_ctrl_q,
-        system_running,
-        model_path=model_path,
-        class_file=class_file,
-    )
-    logger.info("DroneDetector initialized, waiting for START")
-
-    # Pre-run idle loop: accept SET_PARAM config and wait for START
-    while system_running.value:
-        try:
-            cmd = det_ctrl_q.get(timeout=1)
-        except _queue.Empty:
-            continue
-        if cmd.get("cmd") == "START":
-            logger.info("START received — running DroneDetector")
-            detector.run()  # blocks until STOP or system exit
-            logger.info("DroneDetector run() returned — back to idle")
-        elif cmd.get("cmd") == "SET_PARAM":
-            detector._handle_command(cmd)
-
-    # Process fully exiting — delete numpy views before closing shm
-    import gc
-
-    detector.scanning_controller.wf_arr = None
-    del detector._det_arr
-    gc.collect()
-    try:
-        detector._shm_waterfall.close()
-    except Exception:
-        pass
-    try:
-        detector._shm_detection.close()
-    except Exception:
-        pass
-    logger.info("Detector sub-process exited")
-
-
-# ── DroneDetector class ────────────────────────────────────────────────────────
-
-
-class DroneDetector:
-    """YOLO-based drone/signal detector running in its own sub-process."""
+class BatchDroneDetector:
+    """YOLO batch detector used by DataProcessor GPU pipeline."""
 
     def __init__(
         self,
         init_params: dict,
-        shm_waterfall_name: str,
-        shm_detection_name: str,
-        frame_counter,
-        waterfall_lock,
-        det_stats_q,
-        det_ctrl_q,
-        system_running,
         model_path: str = "best.engine",
         class_file: str = "class_names.txt",
     ):
-        self.system_running = system_running
-        self.det_stats_q = det_stats_q
-        self.det_ctrl_q = det_ctrl_q
-        self.frame_counter = frame_counter
         self.algorithm_path = Path(__file__).parent.absolute()
         self.model_path = self.algorithm_path / model_path
         self.class_file = self.algorithm_path / class_file
 
-        self.detection_lock = threading.Lock()
-        self.detection_count = 0
-        self.total_detections = 0
-        self.total_objects = 0
-        self.fps = 0.0
+        self.conf_threshold = float(init_params.get("conf_threshold", 0.25))
+        self.iou_threshold = float(init_params.get("iou_threshold", 0.45))
+        self.image_size = int(init_params.get("image_size", 512))
+        self.max_batch_windows = int(init_params.get("max_batch_windows", 16))
 
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = None
 
         self.class_names = self._load_class_names()
         self.class_colors = self._generate_colors()
-
-        self.conf_threshold = init_params.get("conf_threshold", 0.25)
-        self.iou_threshold = init_params.get("iou_threshold", 0.45)
-        self.image_size = 512
-
-        # ── Attach to shared memory ───────────────────────────────────────────
-        self._shm_waterfall = SharedMemory(name=shm_waterfall_name)
-        self._shm_detection = SharedMemory(name=shm_detection_name)
-        wf_arr = np.frombuffer(
-            self._shm_waterfall.buf, dtype=SHM_WATERFALL_DTYPE
-        ).reshape(SHM_WATERFALL_SHAPE)
-        self._det_arr = np.frombuffer(
-            self._shm_detection.buf, dtype=SHM_DETECTION_DTYPE
-        ).reshape(SHM_DETECTION_SHAPE)
-
-        # ── ScanningController shares the wf_arr numpy view ──────────────────
-        self.scanning_controller = ScanningController(
-            init_params, wf_arr, waterfall_lock
-        )
-        try:
-            ctrl_id = self.class_names.index("Flight-control signal")
-            self.scanning_controller.set_control_signal_class_id(ctrl_id)
-        except ValueError:
-            self.scanning_controller.set_control_signal_class_id(3)
-            logger.warning(
-                "'Flight-control signal' not found in class_names, fallback id=3"
-            )
+        self.flight_control_class_id = self._resolve_flight_control_class_id()
 
         self._load_model()
 
-    # ── Lifecycle ─────────────────────────────────────────────────────────────
-
-    def run(self):
-        """Start detection thread; block until STOP or system_running cleared."""
-        self._running = True
-        logger.info("Detector running")
-        detect_thread = threading.Thread(target=self._detection_loop, daemon=True)
-        detect_thread.start()
-
-        while self.system_running.value and self._running:
-            try:
-                cmd = self.det_ctrl_q.get_nowait()
-                self._handle_command(cmd)
-            except _queue.Empty:
-                pass
-            time.sleep(0.05)
-
-        detect_thread.join(timeout=5)
-
-    def _handle_command(self, cmd: dict):
-        if cmd.get("cmd") == "START":
-            # Handled by entry function; ignore if received here
-            return
-        if cmd.get("cmd") == "STOP":
-            self._running = False
-            logger.info("Detector stopping")
-            return
-        if cmd.get("cmd") != "SET_PARAM":
-            return
-        group = cmd.get("group", "")
-        name = cmd.get("name", "")
-        value = cmd.get("value")
-        if group == "Detection":
-            if name == "conf_threshold":
-                self.conf_threshold = float(value)
-            elif name == "iou_threshold":
-                self.iou_threshold = float(value)
-        elif group in ("Scanner", "Receiver", "UI_Waterfall"):
-            key_map = {
-                ("Scanner", "enable_scanning"): "enable_scanning",
-                ("Scanner", "scan_bandwidth_mhz"): "scan_bandwidth_mhz",
-                ("Scanner", "overlap_ratio"): "overlap_ratio",
-                ("Scanner", "control_lost_threshold"): "control_lost_threshold",
-                ("Receiver", "FFT_Length"): "fft_length",
-                ("UI_Waterfall", "waterfall_height"): "waterfall_height",
-            }
-            sc_key = key_map.get((group, name))
-            if sc_key:
-                self.scanning_controller.apply_params({sc_key: value})
-
-    # ── Model management ──────────────────────────────────────────────────────
-
-    def _load_class_names(self):
+    def _load_class_names(self) -> list[str]:
         try:
             if self.class_file.exists():
                 with open(self.class_file, "r", encoding="utf-8") as f:
                     names = [line.strip() for line in f if line.strip()]
-                logger.info(f"Loaded {len(names)} classes: {names}")
-                return names
-        except Exception as e:
-            logger.error(f"Class name load failed: {e}")
+                if names:
+                    logger.info("Loaded %d classes from %s", len(names), self.class_file)
+                    return names
+        except Exception as exc:
+            logger.error("Class name load failed: %s", exc)
         return ["drone", "object"]
 
-    def _generate_colors(self):
+    def _resolve_flight_control_class_id(self) -> int:
+        try:
+            return self.class_names.index("Flight-control signal")
+        except ValueError:
+            logger.warning("'Flight-control signal' not found, fallback class id=3")
+            return 3
+
+    def _generate_colors(self) -> list[tuple[int, int, int]]:
         predefined = [
             (0, 0, 255),
             (255, 0, 255),
@@ -231,11 +73,11 @@ class DroneDetector:
             (255, 0, 0),
         ]
         colors = []
-        for i in range(len(self.class_names)):
-            if i < len(predefined):
-                colors.append(predefined[i])
+        for idx in range(len(self.class_names)):
+            if idx < len(predefined):
+                colors.append(predefined[idx])
             else:
-                hue = int(180 * i / len(self.class_names))
+                hue = int(180 * idx / max(1, len(self.class_names)))
                 hsv = np.uint8([[[hue, 255, 255]]])
                 bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)[0][0]
                 colors.append(tuple(map(int, bgr)))
@@ -243,49 +85,105 @@ class DroneDetector:
 
     def _load_model(self):
         try:
-            logger.info(f"Loading PyTorch model: {self.model_path}")
+            logger.info("Loading YOLO model: %s", self.model_path)
             self.model = YOLO(str(self.model_path))
-            if torch.cuda.is_available():
-                logger.info("CUDA available — using NVIDIA GPU for inference")
-            else:
-                logger.info("CUDA not available — using Intel CPU for inference")
+            logger.info("Detector device: %s", self.device)
             self._warmup_model()
-        except Exception as e:
-            logger.error(f"Model load failed: {e}")
+        except Exception as exc:
+            logger.error("Model load failed: %s", exc)
             self.model = None
 
-        
-
     def _warmup_model(self):
+        if self.model is None:
+            return
         try:
-            fft_len = self.scanning_controller.fft_length
-            dummy = np.random.randint(0, 255, (fft_len, fft_len, 3), dtype=np.uint8)
-            _ = self._detect(dummy)
-            logger.info("Model warmup complete")
-        except Exception as e:
-            logger.warning(f"Model warmup failed: {e}")
+            dummy = torch.zeros(
+                (1, 3, self.image_size, self.image_size),
+                dtype=torch.float32,
+                device=self.device,
+            )
+            _ = self.model(dummy, device=str(self.device), verbose=False)
+            logger.info("Batch detector warmup complete")
+        except Exception as exc:
+            logger.warning("Batch detector warmup failed: %s", exc)
 
-    # ── Detection helpers ─────────────────────────────────────────────────────
+    def update_params(self, name: str, value):
+        if name == "conf_threshold":
+            self.conf_threshold = float(value)
+        elif name == "iou_threshold":
+            self.iou_threshold = float(value)
+        elif name == "image_size":
+            self.image_size = int(value)
 
-    def _detect(self, image) -> list:
+    def detect_batch(
+        self,
+        batched_bgr_tensor: torch.Tensor,
+        fallback_window: int = 0,
+    ) -> tuple[int, list[dict], float]:
+        """Run one-shot inference over a BGR image batch on GPU.
+
+        Args:
+            batched_bgr_tensor: [B, H, W, 3], uint8/float, expected on same device.
+
+        Returns:
+            (chosen_window_index, detections)
+            detections item format:
+              {
+                "window_index": int,
+                "bbox": [x1, y1, x2, y2],
+                "confidence": float,
+                "class_id": int,
+                "class_name": str,
+              }
+        """
+        if batched_bgr_tensor.ndim != 4 or batched_bgr_tensor.shape[-1] != 3:
+            raise ValueError("batched_bgr_tensor must be shaped [B, H, W, 3]")
+
+        batch_count = int(min(self.max_batch_windows, batched_bgr_tensor.shape[0]))
+        if batch_count <= 0:
+            return 0, [], 0.0
+
+        if self.model is None:
+            return 0, [], 0.0
+
+        images = batched_bgr_tensor[:batch_count]
+        if images.device != self.device:
+            images = images.to(self.device, non_blocking=True)
+        
+        # YOLO model expects [B, 3, H, W] float32 normalized to [0, 1].
+        yolo_input = images.permute(0, 3, 1, 2).contiguous().float() / 255.0
         kwargs = {
             "conf": self.conf_threshold,
             "iou": self.iou_threshold,
+            "imgsz": self.image_size,
+            "device": str(self.device),
             "verbose": False,
         }
 
-        kwargs["device"] = "cuda" if torch.cuda.is_available() else "cpu"
-        kwargs["imgsz"] = self.image_size
+        infer_t0 = time.perf_counter()
+        results = self.model(yolo_input, **kwargs)
+        infer_time_s = time.perf_counter() - infer_t0
+        all_detections: list[dict] = []
+        target_candidates: list[tuple[int, float]] = []
+        any_candidates: list[tuple[int, float]] = []
 
-        results = self.model(image, **kwargs)
-        detections = []
-        if results and results[0].boxes is not None:
-            for box in results[0].boxes:
-                x1, y1, x2, y2 = map(int, box.xyxy[0].cpu().numpy())
-                conf = float(box.conf[0].cpu().numpy())
-                cls_id = int(box.cls[0].cpu().numpy())
-                detections.append(
+        for window_idx, result in enumerate(results):
+            boxes = result.boxes
+            if boxes is None:
+                continue
+
+            for box in boxes:
+                x1, y1, x2, y2 = map(int, box.xyxy[0].tolist())
+                conf = float(box.conf[0].item())
+                cls_id = int(box.cls[0].item())
+                if cls_id == self.flight_control_class_id:
+                    target_candidates.append((window_idx, conf))
+
+                any_candidates.append((window_idx, conf))
+
+                all_detections.append(
                     {
+                        "window_index": window_idx,
                         "bbox": [x1, y1, x2, y2],
                         "confidence": conf,
                         "class_id": cls_id,
@@ -296,11 +194,28 @@ class DroneDetector:
                         ),
                     }
                 )
-        return detections
 
-    def _draw_detections(self, image, detections) -> np.ndarray:
-        annotated = image.copy()
+        if target_candidates:
+            # Prefer the strongest Flight-control signal detection.
+            chosen_index = max(target_candidates, key=lambda item: item[1])[0]
+        elif any_candidates:
+            # Fallback to strongest any-class detection.
+            chosen_index = max(any_candidates, key=lambda item: item[1])[0]
+        else:
+            chosen_index = int(max(0, fallback_window))
+
+        return chosen_index, all_detections, infer_time_s
+
+    def draw_detections(
+        self,
+        image_bgr: np.ndarray,
+        detections: list[dict],
+        window_index: int,
+    ) -> np.ndarray:
+        annotated = image_bgr.copy()
         for det in detections:
+            if det.get("window_index") != window_index:
+                continue
             x1, y1, x2, y2 = det["bbox"]
             conf = det["confidence"]
             cls_id = det["class_id"]
@@ -310,22 +225,18 @@ class DroneDetector:
                 if cls_id < len(self.class_colors)
                 else (0, 255, 0)
             )
+
             cv2.rectangle(annotated, (x1, y1), (x2, y2), color, 2)
             label = f"{class_name} {conf:.2f}"
             (lw, lh), baseline = cv2.getTextSize(
                 label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1
             )
-            cv2.rectangle(
-                annotated,
-                (x1, y1 - lh - baseline - 5),
-                (x1 + lw, y1),
-                color,
-                -1,
-            )
+            top = max(0, y1 - lh - baseline - 5)
+            cv2.rectangle(annotated, (x1, top), (x1 + lw, y1), color, -1)
             cv2.putText(
                 annotated,
                 label,
-                (x1, y1 - baseline - 5),
+                (x1, max(12, y1 - baseline - 5)),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.5,
                 (0, 0, 0),
@@ -333,84 +244,3 @@ class DroneDetector:
                 cv2.LINE_AA,
             )
         return annotated
-
-    # ── Main detection loop ───────────────────────────────────────────────────
-
-    def _detection_loop(self):
-        last_frame = -1
-        logger.info("Detection loop started")
-        last_time = time.time()
-        while self.system_running.value:
-            try:
-                current_frame = self.frame_counter.value
-                if not self._running:
-                    time.sleep(0.005)
-                    continue
-
-                # 1. 核心修复：如果帧没更新，稍微休眠并重试，不重复计算！
-                if current_frame == last_frame:
-                    time.sleep(0.002)
-                    continue
-                last_frame = current_frame
-
-                if self.model is None:
-                    time.sleep(0.1)
-                    continue
-
-                t0 = time.time()
-                elapsed = t0 - last_time
-                last_time = t0
-                
-                # 2. 帧率平滑：防止数值剧烈波动
-                inst_fps = 1.0 / elapsed if elapsed > 0 else 0.0
-                if self.fps == 0.0:
-                    self.fps = inst_fps
-                else:
-                    self.fps = self.fps * 0.9 + inst_fps * 0.1  # 平滑过渡
-
-                # Get current window image from shared waterfall memory
-                # shape: (window_width, waterfall_height, 3), freq on axis-0
-                input_image = self.scanning_controller.get_current_window_image()
-
-                detections = self._detect(input_image)
-
-                # Update state machine; pass frequency-axis size (axis-0)
-                self.scanning_controller.update_state_machine(
-                    detections, input_image.shape[0]
-                )
-
-                annotated = self._draw_detections(input_image, detections)
-
-                # Resize to fixed detection shape and write into shared memory
-                det_h, det_w = SHM_DETECTION_SHAPE[:2]
-                resized = cv2.resize(annotated, (det_w, det_h))
-                self._det_arr[:] = resized
-
-                with self.detection_lock:
-                    self.detection_count += 1
-                    if detections:
-                        self.total_objects += len(detections)
-                        self.total_detections += 1
-
-                # Send stats to main process (anti-overflow)
-                stats = {
-                    "detection_count": self.detection_count,
-                    "total_detections": self.total_detections,
-                    "total_objects": self.total_objects,
-                    "fps": self.fps,
-                    "scan_status": self.scanning_controller.get_status(),
-                }
-                try:
-                    self.det_stats_q.put_nowait(stats)
-                except _queue.Full:
-                    try:
-                        self.det_stats_q.get_nowait()
-                        self.det_stats_q.put_nowait(stats)
-                    except Exception:
-                        pass
-
-            except Exception as e:
-                logger.error(f"Detection error: {e}", exc_info=True)
-                time.sleep(0.1)
-
-        logger.info("Detection loop exited")

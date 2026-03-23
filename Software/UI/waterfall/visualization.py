@@ -7,8 +7,6 @@ import logging
 from ..utils.component import Component, BodyLabel
 from ..settings.theme_manager import get_theme_manager
 from ipc import (
-    SHM_WATERFALL_SHAPE,
-    SHM_WATERFALL_DTYPE,
     SHM_DETECTION_SHAPE,
     SHM_DETECTION_DTYPE,
 )
@@ -17,13 +15,13 @@ logger = logging.getLogger(__name__)
 
 
 class WaterfallVisualizationCard(QWidget):
-    """Shows detector result image (or raw waterfall as fallback).
+    """Shows selected detection slice image from shared memory.
 
     Reads image data directly from shared-memory numpy arrays.
     Stats are read from state.processor_stats / detection_stats / scan_status.
     """
 
-    def __init__(self, parent=None, shm_waterfall=None, shm_detection=None, state=None):
+    def __init__(self, parent=None, shm_detection=None, state=None):
         super().__init__(parent)
         self.setObjectName("WaterfallVisualizationCard")
         self.component = Component()
@@ -34,11 +32,9 @@ class WaterfallVisualizationCard(QWidget):
         # Attach to shared-memory numpy views
         self._wf_arr = None
         self._det_arr = None
-        if shm_waterfall is not None:
-            self._wf_arr = np.frombuffer(
-                shm_waterfall.buf, dtype=SHM_WATERFALL_DTYPE
-            ).reshape(SHM_WATERFALL_SHAPE)
+
         if shm_detection is not None:
+            # np.frombuffer returns a 1D array without copying data, and we need to reshape it to the expected dimensions
             self._det_arr = np.frombuffer(
                 shm_detection.buf, dtype=SHM_DETECTION_DTYPE
             ).reshape(SHM_DETECTION_SHAPE)
@@ -115,28 +111,8 @@ class WaterfallVisualizationCard(QWidget):
             if self._det_arr is not None:
                 display_image = self._det_arr.copy()
 
-            # Fallback to full waterfall slice
-            if (
-                display_image is None or display_image.size == 0
-            ) and self._wf_arr is not None:
-                total_fft = (
-                    self.state.total_fft_length
-                    if self.state
-                    else SHM_WATERFALL_SHAPE[0]
-                )
-                wf_h = (
-                    self.state.waterfall_height
-                    if self.state
-                    else SHM_WATERFALL_SHAPE[1]
-                )
-                total_fft = max(1, min(total_fft, SHM_WATERFALL_SHAPE[0]))
-                wf_h = max(1, min(wf_h, SHM_WATERFALL_SHAPE[1]))
-                display_image = self._wf_arr[:total_fft, :wf_h, :].copy()
-
+        
             if display_image is not None and display_image.size > 0:
-                # Transpose: axis-0=freq → rows; after transpose rows=time, cols=freq
-                if display_image.ndim == 3:
-                    display_image = np.transpose(display_image, (1, 0, 2))
                 self._update_label(self.result_label, display_image)
                 self.frame_displayed += 1
             else:
@@ -144,8 +120,7 @@ class WaterfallVisualizationCard(QWidget):
 
             processor_stats = self.state.processor_stats if self.state else {}
             detection_stats = self.state.detection_stats if self.state else {}
-            scan_status = self.state.scan_status if self.state else {}
-            self._update_stats(processor_stats, detection_stats, scan_status)
+            self._update_stats(processor_stats, detection_stats)
 
         except Exception as e:
             logger.error(f"Waterfall display error: {e}", exc_info=True)
@@ -160,7 +135,7 @@ class WaterfallVisualizationCard(QWidget):
         bytes_per_line = width * channels
 
         qimage = QImage(
-            image_array.data, width, height, bytes_per_line, QImage.Format.Format_RGB888
+            image_array.data, width, height, bytes_per_line, QImage.Format.Format_BGR888
         )
 
         pixmap = QPixmap.fromImage(qimage).scaled(
@@ -171,14 +146,15 @@ class WaterfallVisualizationCard(QWidget):
         )
         label.setPixmap(pixmap)
 
-    def _update_stats(self, stats: dict, detection_stats: dict, scan_status: dict):
+    def _update_stats(self, stats: dict, detection_stats: dict):
         sent_frames = getattr(self.state, "sent_frames", 0) if self.state else 0
         received_frames = getattr(self.state, "received_frames", 0) if self.state else 0
         processed_fps = stats.get("fps", 0.0)
         detection_frames = detection_stats.get("detection_count", 0)
-        detection_fps = detection_stats.get("fps", 0.0)
-        freq_range_str = scan_status.get("frequency_range_str", "N/A")
-        scan_mode = scan_status.get("scan_mode", "N/A")
+        yolo_fps = detection_stats.get("yolo_fps", 0.0)
+        yolo_infer_time_ms = detection_stats.get("yolo_infer_time_ms", 0.0)
+        selected_window = int(detection_stats.get("selected_window", 0))
+        window_count = int(detection_stats.get("window_count", 0))
 
         stats_table = f"""
         <table cellpadding='4' cellspacing='0' width='100%'>
@@ -189,12 +165,13 @@ class WaterfallVisualizationCard(QWidget):
             </tr>
             <tr>
                 <td>检测帧数: {detection_frames}</td>
-                <td>检测FPS: {detection_fps:.2f}</td>
+
                 <td>显示帧数: {self.frame_displayed}</td>
             </tr>
             <tr>
-                <td colspan='2'>频率范围: {freq_range_str}</td>
-                <td>当前扫描状态: {scan_mode}</td>
+                <td>YOLO FPS: {yolo_fps:.2f}</td>
+                <td>YOLO推理耗时: {yolo_infer_time_ms:.2f} ms</td>
+                <td>窗口: {selected_window + 1}/{max(1, window_count)}</td>
             </tr>
         </table>
         """

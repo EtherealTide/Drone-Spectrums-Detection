@@ -1,0 +1,144 @@
+2026-03-23 14:07:03,973 - __main__ - INFO - ============================================================
+2026-03-23 14:07:03,973 - __main__ - INFO - Initializing drone detection system...
+2026-03-23 14:07:03,984 - ipc - INFO - SharedMemory created - spectrum=wnsm_665d4791 detection=wnsm_0d92c182
+2026-03-23 14:07:03,984 - __main__ - INFO - Shared memory allocated
+2026-03-23 14:07:04,000 - __main__ - INFO - IPC objects created
+2026-03-23 14:07:04,001 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-23 14:07:04,003 - __main__ - INFO - DataProcessor process started
+2026-03-23 14:07:04,007 - __main__ - INFO - Communication process started
+2026-03-23 14:07:06,580 - communication - INFO - Communication process started
+2026-03-23 14:07:07,649 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-23 14:07:07,710 - algorithms - INFO - Loaded 7 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-23 14:07:07,710 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-23 14:07:07,712 - algorithms - INFO - Detector device: cuda
+2026-03-23 14:07:08,176 - algorithms - INFO - Batch detector warmup complete
+2026-03-23 14:07:08,177 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-23 14:07:08,493 - __main__ - INFO - System initialization complete
+2026-03-23 14:07:11,631 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-23 14:07:11,631 - communication - INFO - Receive loop started
+2026-03-23 14:07:11,646 - data_process - INFO - START received - running DataProcessor
+2026-03-23 14:07:11,646 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-23 14:07:11,647 - data_process - INFO - DataProcessor running
+2026-03-23 14:07:31,177 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-23 14:07:31,181 - communication - INFO - Receive loop exited
+2026-03-23 14:07:31,181 - communication - INFO - Disconnected from device
+2026-03-23 14:07:31,212 - data_process - INFO - DataProcessor stopping
+2026-03-23 14:07:32,162 - communication - INFO - Communication process exited
+2026-03-23 14:07:32,194 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-23 14:07:32,258 - data_process - INFO - DataProcessor subprocess exited
+2026-03-23 15:13:49,673 - __main__ - INFO - ============================================================
+2026-03-23 15:13:49,674 - __main__ - INFO - Initializing drone detection system...
+2026-03-23 15:13:49,699 - ipc - INFO - SharedMemory created - spectrum=wnsm_7169f396 detection=wnsm_d1178311
+2026-03-23 15:13:49,699 - __main__ - INFO - Shared memory allocated
+2026-03-23 15:13:49,702 - __main__ - INFO - IPC objects created
+2026-03-23 15:13:49,703 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-23 15:13:49,703 - __main__ - ERROR - System error: 'State' object has no attribute 'start_frequency_mhz'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\main.py", line 250, in main
+    system = DroneDetectionSystem()
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\main.py", line 55, in __init__
+    init_params = self._make_init_params()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\main.py", line 120, in _make_init_params
+    "start_frequency_mhz": self.state.start_frequency_mhz,
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'start_frequency_mhz'
+2026-03-23 15:14:28,505 - __main__ - INFO - ============================================================
+2026-03-23 15:14:28,505 - __main__ - INFO - Initializing drone detection system...
+2026-03-23 15:14:28,525 - ipc - INFO - SharedMemory created - spectrum=wnsm_729db951 detection=wnsm_a826b36b
+2026-03-23 15:14:28,525 - __main__ - INFO - Shared memory allocated
+2026-03-23 15:14:28,530 - __main__ - INFO - IPC objects created
+2026-03-23 15:14:28,531 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-23 15:14:28,534 - __main__ - INFO - DataProcessor process started
+2026-03-23 15:14:28,539 - __main__ - INFO - Communication process started
+2026-03-23 15:14:30,921 - communication - INFO - Communication process started
+2026-03-23 15:14:32,205 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-23 15:14:32,265 - algorithms - INFO - Loaded 7 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-23 15:14:32,265 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-23 15:14:32,269 - algorithms - INFO - Detector device: cuda
+2026-03-23 15:14:32,727 - algorithms - INFO - Batch detector warmup complete
+2026-03-23 15:14:32,728 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-23 15:14:32,967 - __main__ - ERROR - System error: 'State' object has no attribute 'control_lost_threshold'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\main.py", line 249, in main
+    system = DroneDetectionSystem()
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\main.py", line 92, in __init__
+    self.main_window = Window(
+                       ^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\main\main_ui.py", line 81, in __init__
+    self._build_interfaces()
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\main\main_ui.py", line 137, in _build_interfaces
+    self.waterfallInterface = WaterfallInterface(
+                              ^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\waterfall\waterfall_ui.py", line 16, in __init__
+    self.setup_ui()
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\waterfall\waterfall_ui.py", line 34, in setup_ui
+    self.config_interface = WaterfallConfigInterface(
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\waterfall\config_interface.py", line 36, in __init__
+    self.setup_ui()
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\waterfall\config_interface.py", line 58, in setup_ui
+    self.build_tree()
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\waterfall\config_interface.py", line 124, in build_tree
+    ("control_lost_threshold", self.state.control_lost_threshold, None),
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'control_lost_threshold'
+2026-03-23 15:16:29,104 - __main__ - INFO - ============================================================
+2026-03-23 15:16:29,104 - __main__ - INFO - Initializing drone detection system...
+2026-03-23 15:16:29,123 - ipc - INFO - SharedMemory created - spectrum=wnsm_ff9c4d0a detection=wnsm_883f93a6
+2026-03-23 15:16:29,124 - __main__ - INFO - Shared memory allocated
+2026-03-23 15:16:29,127 - __main__ - INFO - IPC objects created
+2026-03-23 15:16:29,128 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-23 15:16:29,130 - __main__ - INFO - DataProcessor process started
+2026-03-23 15:16:29,137 - __main__ - INFO - Communication process started
+2026-03-23 15:16:31,626 - communication - INFO - Communication process started
+2026-03-23 15:16:32,751 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-23 15:16:32,811 - algorithms - INFO - Loaded 7 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-23 15:16:32,811 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-23 15:16:32,814 - algorithms - INFO - Detector device: cuda
+2026-03-23 15:16:33,259 - algorithms - INFO - Batch detector warmup complete
+2026-03-23 15:16:33,260 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-23 15:16:33,558 - __main__ - INFO - System initialization complete
+2026-03-23 15:16:38,757 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-23 15:16:38,764 - data_process - INFO - START received - running DataProcessor
+2026-03-23 15:16:38,765 - communication - INFO - Receive loop started
+2026-03-23 15:16:38,765 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-23 15:17:09,860 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-23 15:17:09,864 - communication - INFO - Receive loop exited
+2026-03-23 15:17:09,865 - communication - INFO - Disconnected from device
+2026-03-23 15:17:09,908 - data_process - INFO - DataProcessor stopping
+2026-03-23 15:17:11,180 - communication - INFO - Communication process exited
+2026-03-23 15:17:11,183 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-23 15:17:11,255 - data_process - INFO - DataProcessor subprocess exited
+2026-03-23 15:17:36,258 - __main__ - INFO - ============================================================
+2026-03-23 15:17:36,258 - __main__ - INFO - Initializing drone detection system...
+2026-03-23 15:17:36,279 - ipc - INFO - SharedMemory created - spectrum=wnsm_ea6e4d90 detection=wnsm_1be28358
+2026-03-23 15:17:36,280 - __main__ - INFO - Shared memory allocated
+2026-03-23 15:17:36,281 - __main__ - INFO - IPC objects created
+2026-03-23 15:17:36,281 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-23 15:17:36,281 - __main__ - INFO - DataProcessor process started
+2026-03-23 15:17:36,293 - __main__ - INFO - Communication process started
+2026-03-23 15:17:38,679 - communication - INFO - Communication process started
+2026-03-23 15:17:39,924 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-23 15:17:39,984 - algorithms - INFO - Loaded 7 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-23 15:17:39,985 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-23 15:17:39,988 - algorithms - INFO - Detector device: cuda
+2026-03-23 15:17:40,451 - algorithms - INFO - Batch detector warmup complete
+2026-03-23 15:17:40,452 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-23 15:17:40,766 - __main__ - INFO - System initialization complete
+2026-03-23 15:17:43,425 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-23 15:17:43,437 - data_process - INFO - START received - running DataProcessor
+2026-03-23 15:17:43,437 - communication - INFO - Receive loop started
+2026-03-23 15:17:43,437 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-23 15:17:43,438 - data_process - INFO - DataProcessor running
+2026-03-23 15:17:55,983 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-23 15:17:55,984 - communication - ERROR - Receive error: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2026-03-23 15:17:55,984 - communication - ERROR - Failed to receive frame 569220 data
+2026-03-23 15:17:55,984 - communication - INFO - Receive loop exited
+2026-03-23 15:17:55,985 - communication - INFO - Disconnected from device
+2026-03-23 15:17:55,998 - data_process - INFO - DataProcessor stopping
+2026-03-23 15:18:00,602 - communication - INFO - Communication process exited
+2026-03-23 15:18:00,602 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-23 15:18:00,669 - data_process - INFO - DataProcessor subprocess exited

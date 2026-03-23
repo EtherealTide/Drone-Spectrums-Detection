@@ -118,20 +118,7 @@ class WaterfallConfigInterface(QWidget):
             ("conf_threshold", self.state.conf_threshold, None),
             ("iou_threshold", self.state.iou_threshold, None),
         ]
-        for name, value, options in detection_params:
-            self.add_parameter(detection_item, "Detection", name, value, options)
-        scanner_params = [
-            ("control_lost_threshold", self.state.control_lost_threshold, None),
-            ("scan_bandwidth_mhz", self.state.scan_bandwidth_mhz, None),
-            (
-                "enable_scanning",
-                self.state.enable_scanning,
-                ["Enabled", "Disabled"],
-            ),
-            ("start_frequency_mhz", self.state.start_frequency_mhz, None),
-        ]
-        for name, value, options in scanner_params:
-            self.add_parameter(detection_item, "Scanner", name, value, options)
+
 
     def add_parameter(
         self, parent_item, param_group, param_name, current_value, options

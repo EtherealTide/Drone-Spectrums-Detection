@@ -44,12 +44,7 @@ class State(QObject):
             "total_objects": 0,
             "detection_count": 0,
         }
-        self.scan_status: dict = {
-            "enabled": False,
-            "mode": "disabled",
-            "scan_mode": "Disabled",
-            "frequency_range_str": "N/A",
-        }
+
 
     def _load_parameters(self) -> dict:
         config_path = Path(__file__).parent / "parameters.json"
@@ -76,7 +71,7 @@ class State(QObject):
             "Detection": {
                 "conf_threshold": 0.25,
                 "iou_threshold": 0.45,
-                "image_size": 640,
+                "image_size": 512,
             },
             "Scanning": {
                 "enable_scanning": True,
@@ -219,22 +214,3 @@ class State(QObject):
     def channel_count(self):
         return self.get_parameter("Receiver", "Channel_count", 20)
 
-    @property
-    def enable_scanning(self):
-        return self.get_parameter("Scanner", "enable_scanning", False)
-
-    @property
-    def scan_bandwidth_mhz(self):
-        return self.get_parameter("Scanner", "scan_bandwidth_mhz", 100)
-
-    @property
-    def overlap_ratio(self):
-        return self.get_parameter("Scanner", "overlap_ratio", 0.5)
-
-    @property
-    def control_lost_threshold(self):
-        return self.get_parameter("Scanner", "control_lost_threshold", 5)
-
-    @property
-    def start_frequency_mhz(self):
-        return self.get_parameter("Scanner", "start_frequency_mhz", 1000)

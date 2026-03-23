@@ -50,7 +50,7 @@ class Window(QMainWindow):
     """Main application window fully based on PyQt6 widgets."""
 
     def __init__(
-        self, shm_waterfall=None, shm_spectrum=None, shm_detection=None, state=None
+        self,shm_spectrum=None, shm_detection=None, state=None
     ):
         super().__init__()
 
@@ -70,7 +70,6 @@ class Window(QMainWindow):
         y = (screen.height() - height) // 2
         self.move(x, y)
 
-        self.shm_waterfall = shm_waterfall
         self.shm_spectrum = shm_spectrum
         self.shm_detection = shm_detection
         self.state = state
@@ -137,7 +136,6 @@ class Window(QMainWindow):
         )
         self.waterfallInterface = WaterfallInterface(
             self,
-            shm_waterfall=self.shm_waterfall,
             shm_detection=self.shm_detection,
             state=self.state,
         )

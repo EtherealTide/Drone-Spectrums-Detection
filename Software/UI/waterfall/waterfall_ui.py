@@ -7,9 +7,8 @@ from ..settings.theme_manager import get_theme_manager
 
 
 class WaterfallInterface(QWidget):
-    def __init__(self, parent=None, shm_waterfall=None, shm_detection=None, state=None):
+    def __init__(self, parent=None, shm_detection=None, state=None):
         super().__init__(parent)
-        self.shm_waterfall = shm_waterfall
         self.shm_detection = shm_detection
         self.state = state
         self.setObjectName("WaterfallInterface")
@@ -27,7 +26,6 @@ class WaterfallInterface(QWidget):
 
         self.visualization_card = WaterfallVisualizationCard(
             parent=self,
-            shm_waterfall=self.shm_waterfall,
             shm_detection=self.shm_detection,
             state=self.state,
         )
