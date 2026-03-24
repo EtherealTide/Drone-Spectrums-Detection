@@ -105,10 +105,7 @@ class DataProcessor:
         self.frame_counter = frame_counter
         self.detection_lock = detection_lock
         self.system_running = system_running
-
-        self.fft_length = int(init_params.get("fft_length", 512))
-        self.channel_count = int(init_params.get("channel_count", 20))
-        self.total_fft_length = self.fft_length * self.channel_count
+        self.total_fft_length =  int(init_params.get("total_fft_length", 10240))
         self.total_bandwidth_mhz = float(init_params.get("total_bandwidth_mhz", 2000.0))
         self.start_frequency_mhz = float(init_params.get("start_frequency_mhz", 1000.0))
         self.waterfall_height = max(1, int(init_params.get("waterfall_height", 512)))
@@ -154,6 +151,10 @@ class DataProcessor:
         ).reshape(SHM_SPECTRUM_SHAPE)
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # 当前显卡型号
+        self.device_name = torch.cuda.get_device_name(self.device) if torch.cuda.is_available() else "CPU"
+        # 显卡cuda算力
+        self.device_capability = torch.cuda.get_device_capability(self.device) if torch.cuda.is_available() else (0, 0)
         logger.info("DataProcessor rendering device: %s", self.device)
         self.jet_lut = self._generate_jet_lut()
 
@@ -193,7 +194,7 @@ class DataProcessor:
                 self._handle_command(cmd)
             except queue.Empty:
                 pass
-            time.sleep(0.05)
+            time.sleep(0.1)
 
         self.process_thread.join(timeout=3)
         self.image_thread.join(timeout=3)
@@ -212,23 +213,13 @@ class DataProcessor:
         group = cmd.get("group", "")
         name = cmd.get("name", "")
         value = cmd.get("value")
-
-        if group == "Receiver" and name == "FFT_Length":
+            
+        if group == "Data_Process":
             with self.data_lock:
-                self.fft_length = int(value)
-                self.total_fft_length = self.fft_length * self.channel_count
-                self.waterfall_width = self.total_fft_length
-                self._reset_waterfall_ring_buffer()
-                self.noise_floor = None
-            logger.info("FFT length updated: %s", value)
-        elif group in ("UI_Waterfall", "Data_Process") and name == "waterfall_height":
-            new_h = max(1, int(value))
-            with self.data_lock:
-                self.waterfall_height = new_h
-                self._reset_waterfall_ring_buffer()
-            logger.info("Waterfall height updated: %s", new_h)
-        elif group == "Data_Process":
-            with self.data_lock:
+                if name == "waterfall_height":
+                    new_h = max(1, int(value))
+                    self.waterfall_height = new_h
+                    self._reset_waterfall_ring_buffer()
                 if name == "enable_noise_filter":
                     self.enable_noise_filter = bool(value)
                     if not self.enable_noise_filter:
@@ -344,7 +335,7 @@ class DataProcessor:
                 idx_tensor = torch.flip(idx_tensor, dims=[0]) 
                 color_tensor = self.jet_lut[idx_tensor]  # [H, W, 3]
 
-                window_w = self.fft_length
+                window_w = self.total_fft_length//20 # 暂时，注意以后修改
                 max_windows_by_width = color_tensor.shape[1] // max(1, window_w)
                 window_count = max(1, min(self.max_batch_windows, max_windows_by_width))
                 usable_width = window_count * window_w
@@ -431,9 +422,7 @@ class DataProcessor:
             "waterfall_width": self.total_fft_length,
         }
 
-        hz_per_bin = self.total_bandwidth_mhz / max(1, self.total_fft_length)
-        selected_start = self.start_frequency_mhz + selected_window * self.fft_length * hz_per_bin
-        selected_end = selected_start + self.fft_length * hz_per_bin
+        
 
         det_stats = {
             "detection_count": self.detection_count,
@@ -443,7 +432,8 @@ class DataProcessor:
             "yolo_infer_time_ms": self.yolo_infer_time_ms,
             "selected_window": selected_window,
             "window_count": window_count,
-            "freq_range_str": f"{selected_start:.2f} - {selected_end:.2f} MHz",
+            "inference device": str(self.device_name),
+            "compute capability": f"{self.device_capability[0]}.{self.device_capability[1]}",
         }
 
         self._put_latest(self.dp_stats_q, dp_stats)

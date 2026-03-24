@@ -125,7 +125,7 @@ class SpectrumVisualizationCard(QWidget):
             return
         max_freq = self.state.sample_rate
         freq_points = np.linspace(
-            0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+            0, max_freq / 1e6, self.state.total_fft_length
         )
         points = [
             QPointF(freq, power) for freq, power in zip(freq_points, spectrum_data)

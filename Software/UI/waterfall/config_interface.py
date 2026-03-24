@@ -5,12 +5,9 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QTreeWidget,
     QTreeWidgetItem,
-    QComboBox,
-    QLineEdit,
     QPushButton,
 )
 import logging
-
 from ..utils.component import Component
 from ..utils.custom_style import CONFIRM_BUTTON_STYLE
 from ..settings.theme_manager import get_theme_manager
@@ -85,18 +82,8 @@ class WaterfallConfigInterface(QWidget):
         receiver_item = QTreeWidgetItem(["Receiver"])
         self.config_tree.addTopLevelItem(receiver_item)
         receiver_params = [
-            (
-                "FFT_Length",
-                self.state.fft_length,
-                ["128", "256", "512", "1024", "2048", "4096", "8192"],
-            ),
-            (
-                "Decimation_factor",
-                self.state.decimation_factor,
-                ["4", "8", "16", "32", "64", "128", "256", "512", "1024"],
-            ),
             ("Centre_frequency(MHz)", self.state.center_frequency, None),
-            ("SPAN(MHz)", self.state.span, None),
+            ("SPAN(MHz)", self.state.span, ["1000", "200", "100", "50", "25", "12.5"]),
         ]
         for name, value, options in receiver_params:
             self.add_parameter(receiver_item, "Receiver", name, value, options)
@@ -118,20 +105,41 @@ class WaterfallConfigInterface(QWidget):
             ("conf_threshold", self.state.conf_threshold, None),
             ("iou_threshold", self.state.iou_threshold, None),
         ]
-
+        for name, value, options in detection_params:
+            self.add_parameter(detection_item, "Detection", name, value, options)
+        
+        ui_waterfall_item = QTreeWidgetItem(["UI Waterfall"])
+        self.config_tree.addTopLevelItem(ui_waterfall_item)
+        ui_waterfall_params = [
+            ("spectrum_left_freq(MHz)", self.state.waterfall_left_freq, None),
+            ("spectrum_right_freq(MHz)", self.state.waterfall_right_freq, None),
+        ]
+        for name, value, options in ui_waterfall_params:
+            self.add_parameter(ui_waterfall_item, "UI_Waterfall", name, value, options)
 
     def add_parameter(
         self, parent_item, param_group, param_name, current_value, options
     ):
-        param_item = QTreeWidgetItem([param_name])
+        '''
+        Args:
+            parent_item: 父级树节点(QTreeWidgetItem)
+            param_group: 参数组名称
+            param_name: 参数名称
+            current_value: 当前参数值
+            options: 选项列表，如果提供则使用下拉框，否则使用文本框
+        '''
+        # 核心思路：每一行是一个子树节点和一个包含标签、输入控件和按钮的Widget。
+        # 子树节点显示参数名称，Widget显示当前值和输入框。输入框的类型根据是否提供选项决定。
+        # 点击按钮时读取输入值并发出参数更新信号。
+        param_item = QTreeWidgetItem([param_name]) # 创建显示参数名称的树节点，放在第一列
         parent_item.addChild(param_item)
 
-        param_widget = QWidget()
+        param_widget = QWidget() 
         param_layout = QHBoxLayout(param_widget)
         param_layout.setContentsMargins(5, 5, 5, 5)
         param_layout.setSpacing(5)
 
-        value_label = self.component.create_label(
+        value_label = self.component.create_label( # 创建显示当前参数值的标签
             param_widget,
             str(current_value),
             None,
@@ -141,16 +149,14 @@ class WaterfallConfigInterface(QWidget):
         value_label.setFixedWidth(80)
         param_layout.addWidget(value_label)
         self._value_label_widgets.append(value_label)
-
+        # 创建输入控件，根据是否提供选项决定使用下拉框还是文本框，并设置初始值和样式
         if options:
-            input_widget = QComboBox(param_widget)
-            input_widget.addItems(options)
+            input_widget = self.component.create_combobox(param_widget, options)
             input_widget.setCurrentText(str(current_value))
             input_widget.setFixedWidth(120)
         else:
-            input_widget = QLineEdit(param_widget)
+            input_widget = self.component.create_line_edit(param_widget, width=120)
             input_widget.setText(str(current_value))
-            input_widget.setFixedWidth(120)
 
         param_layout.addWidget(input_widget)
 
@@ -192,12 +198,12 @@ class WaterfallConfigInterface(QWidget):
             except ValueError:
                 logger.error(f"Invalid parameter value {param_name} = {new_value}")
 
-        set_button.clicked.connect(update_value)
+        set_button.clicked.connect(update_value) # set按钮链接到更新函数，点击时读取输入值并发出参数更新信号
         param_layout.addWidget(set_button)
         param_layout.addStretch()
 
         param_item.setSizeHint(1, QSize(0, param_widget.sizeHint().height() + 10))
-        self.config_tree.setItemWidget(param_item, 1, param_widget)
+        self.config_tree.setItemWidget(param_item, 1, param_widget) # 将包含输入控件的Widget放到树节点的第二列
         self._value_labels[f"{param_group}.{param_name}"] = value_label
 
     def apply_palette(self, palette: dict):  # 用于应用主题调色板
@@ -263,7 +269,7 @@ class WaterfallConfigInterface(QWidget):
         self.connection_request.emit(checked)
 
         from PyQt6.QtCore import QTimer
-
+        # 无论连接成功与否，一秒后重新启用开关，一秒内用户无法再次切换，避免重复请求和状态混乱
         QTimer.singleShot(1000, lambda: self.connection_switch.setEnabled(True))
 
 

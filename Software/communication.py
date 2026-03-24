@@ -60,10 +60,7 @@ class Communication:
         self.status_q = status_q
         self.system_running = system_running
 
-        self.fft_length = init_params.get("fft_length", 512)
-        self.channel_count = init_params.get("channel_count", 20)
-        self.packet_size = init_params.get("packet_size", 128)
-        self.total_fft_length = self.fft_length * self.channel_count
+        self.total_fft_length = init_params.get("total_fft_length", 10240)
         self.bytes_per_sample = 4  # float32
 
         self.sock: socket.socket | None = None
@@ -112,9 +109,7 @@ class Communication:
         elif cmd_type == "SET_PARAM":
             name = cmd.get("name")
             value = cmd.get("value")
-            if name == "FFT_Length":
-                self.fft_length = value
-                self.total_fft_length = self.fft_length * self.channel_count
+            
         else:
             logger.warning(f"Unknown command: {cmd_type}")
 

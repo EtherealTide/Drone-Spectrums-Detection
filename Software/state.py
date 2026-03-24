@@ -15,7 +15,6 @@ class State(QObject):
     # ── Runtime statistics signals (emitted by main-process QTimer from stats queues) ──
     stats_updated = pyqtSignal(dict)  # DataProcessor stats
     detection_updated = pyqtSignal(dict)  # Detector stats
-    scan_status_changed = pyqtSignal(dict)  # ScanningController status
 
     def __init__(self):
         super().__init__()
@@ -23,7 +22,6 @@ class State(QObject):
         self.data_processing_thread = False
         self.detection_thread = False
         self.data_queue_status = "idle"
-        self.packet_size = 128
         self.sent_frames = 0
         self.received_frames = 0
         self._parameters = self._load_parameters()
@@ -62,29 +60,25 @@ class State(QObject):
     def _get_default_parameters(self) -> dict:
         return {
             "Receiver": {
-                "FFT_Length": 512,
-                "Decimation_factor": 100,
+                "FFT_Length": 10240,
                 "Centre_frequency(MHz)": 2400.0,
                 "SPAN(MHz)": 100.0,
-                "Channel_count": 20,
             },
             "Detection": {
                 "conf_threshold": 0.25,
                 "iou_threshold": 0.45,
                 "image_size": 512,
             },
-            "Scanning": {
-                "enable_scanning": True,
-                "scan_bandwidth_mhz": 100,
-                "overlap_ratio": 0.5,
-                "control_lost_threshold": 5,
-            },
             "UI_Spectrum": {
                 "spectrum_left_freq(MHz)": 0.0,
                 "spectrum_right_freq(MHz)": 200.0,
             },
-            "UI_Waterfall": {"waterfall_height": 512},
+            "UI_Waterfall": {
+                "spectrum_left_freq(MHz)": 0.0,
+                "spectrum_right_freq(MHz)": 200.0,
+            },
             "Data_Process": {
+                "waterfall_height": 512,
                 "enable_noise_filter": False,
                 "noise_filter_mode": "subtraction",
                 "noise_alpha": 0.05,
@@ -128,14 +122,7 @@ class State(QObject):
         )
 
     # ==================== common parameters ====================
-
-    @property
-    def fft_length(self):
-        return self.get_parameter("Receiver", "FFT_Length", 512)
-
-    @property
-    def decimation_factor(self):
-        return self.get_parameter("Receiver", "Decimation_factor", 100)
+    # 使用@property装饰器为常用参数提供便捷访问
 
     @property
     def center_frequency(self):
@@ -168,11 +155,18 @@ class State(QObject):
 
     @property
     def image_size(self):
-        return self.get_parameter("Detection", "image_size", 640)
-
+        return self.get_parameter("Detection", "image_size", 512)
     @property
     def waterfall_height(self):
-        return self.get_parameter("UI_Waterfall", "waterfall_height", self.fft_length)
+        return self.get_parameter("Data_Process", "waterfall_height", 512)
+
+    @property
+    def waterfall_left_freq(self):
+        return self.get_parameter("UI_Waterfall", "spectrum_left_freq(MHz)", 0.0)
+
+    @property
+    def waterfall_right_freq(self):
+        return self.get_parameter("UI_Waterfall", "spectrum_right_freq(MHz)", 200.0)
 
     @property
     def enable_noise_filter(self):
@@ -188,8 +182,7 @@ class State(QObject):
 
     @property
     def total_fft_length(self) -> int:
-        """Derived: fft_length × channel_count."""
-        return self.fft_length * self.channel_count
+        return self.get_parameter("Receiver", "FFT_Length", 10240)
 
     @property
     def total_bandwidth_mhz(self) -> float:
@@ -207,10 +200,3 @@ class State(QObject):
             self._communication_thread = value
             self.connection_changed.emit(value)
             logger.info(f"connection status changed: {value}")
-
-    # ==================== additional parameters ====================
-
-    @property
-    def channel_count(self):
-        return self.get_parameter("Receiver", "Channel_count", 20)
-

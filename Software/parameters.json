@@ -1,29 +1,25 @@
 {
   "Receiver": {
-    "FFT_Length": 512,
-    "Decimation_factor": 4,
+    "FFT_Length": 10240,
     "Centre_frequency(MHz)": 2400.0,
-    "SPAN(MHz)": 100.0,
-    "Channel_count": 20
+    "SPAN(MHz)": 100.0
   },
   "Connection": {
     "ip_address": "127.0.0.1",
     "port": 5000
   },
-  "Scanner": {
-    "enable_scanning": true,
-    "scan_bandwidth_mhz": 100,
-    "overlap_ratio": 0.5,
-    "control_lost_threshold": 50,
-    "start_frequency_mhz": 1000
-  },
   "Detection": {
     "conf_threshold": 0.25,
-    "iou_threshold": 0.7
+    "iou_threshold": 0.7,
+    "image_size": 512
   },
   "UI_Spectrum": {
     "spectrum_left_freq(MHz)": 1000,
     "spectrum_right_freq(MHz)": 1300
+  },
+  "UI_Waterfall": {
+    "spectrum_left_freq(MHz)": 1000,
+    "spectrum_right_freq(MHz)": 1100
   },
   "Data_Process": {
     "waterfall_height": 512,

@@ -153,6 +153,8 @@ class WaterfallVisualizationCard(QWidget):
         detection_frames = detection_stats.get("detection_count", 0)
         yolo_fps = detection_stats.get("yolo_fps", 0.0)
         yolo_infer_time_ms = detection_stats.get("yolo_infer_time_ms", 0.0)
+        inference_device = detection_stats.get("inference device", "N/A")
+        compute_capability = detection_stats.get("compute capability", "N/A")
         selected_window = int(detection_stats.get("selected_window", 0))
         window_count = int(detection_stats.get("window_count", 0))
 
@@ -165,12 +167,16 @@ class WaterfallVisualizationCard(QWidget):
             </tr>
             <tr>
                 <td>检测帧数: {detection_frames}</td>
-
-                <td>显示帧数: {self.frame_displayed}</td>
+                <td>推理设备: {inference_device}</td>
+                <td>计算能力: {compute_capability}(CUDA)</td>
+                
             </tr>
             <tr>
                 <td>YOLO FPS: {yolo_fps:.2f}</td>
                 <td>YOLO推理耗时: {yolo_infer_time_ms:.2f} ms</td>
+                <td>显示帧数: {self.frame_displayed}</td>
+            </tr>
+            <tr>
                 <td>窗口: {selected_window + 1}/{max(1, window_count)}</td>
             </tr>
         </table>

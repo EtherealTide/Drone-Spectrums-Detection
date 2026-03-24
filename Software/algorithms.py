@@ -59,8 +59,8 @@ class BatchDroneDetector:
         try:
             return self.class_names.index("Flight-control signal")
         except ValueError:
-            logger.warning("'Flight-control signal' not found, fallback class id=3")
-            return 3
+            logger.warning("'Flight-control signal' not found, fallback class id=4")
+            return 4
 
     def _generate_colors(self) -> list[tuple[int, int, int]]:
         predefined = [
@@ -112,8 +112,6 @@ class BatchDroneDetector:
             self.conf_threshold = float(value)
         elif name == "iou_threshold":
             self.iou_threshold = float(value)
-        elif name == "image_size":
-            self.image_size = int(value)
 
     def detect_batch(
         self,

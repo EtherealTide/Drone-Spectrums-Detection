@@ -85,18 +85,9 @@ class SpectrumConfigInterface(QWidget):
         receiver_item = QTreeWidgetItem(["Receiver"])
         self.config_tree.addTopLevelItem(receiver_item)
         receiver_params = [
-            (
-                "FFT_Length",
-                self.state.fft_length,
-                ["128", "256", "512", "1024", "2048", "4096", "8192"],
-            ),
-            (
-                "Decimation_factor",
-                self.state.decimation_factor,
-                ["4", "8", "16", "32", "64", "128", "256", "512", "1024"],
-            ),
+           
             ("Centre_frequency(MHz)", self.state.center_frequency, None),
-            ("SPAN(MHz)", self.state.span, None),
+            ("SPAN(MHz)", self.state.span, ["1000", "200", "100", "50", "25", "12.5"]),
         ]
         for name, value, options in receiver_params:
             self.add_parameter(receiver_item, "Receiver", name, value, options)
@@ -115,11 +106,6 @@ class SpectrumConfigInterface(QWidget):
         detection_params = [
             ("conf_threshold", self.state.conf_threshold, None),
             ("iou_threshold", self.state.iou_threshold, None),
-            (
-                "image_size",
-                self.state.image_size,
-                ["default", "512", "1024", "1280", "1600", "1920", "2048", "2560"],
-            ),
         ]
         for name, value, options in detection_params:
             self.add_parameter(detection_item, "Detection", name, value, options)
@@ -147,14 +133,12 @@ class SpectrumConfigInterface(QWidget):
         self._value_label_widgets.append(value_label)
 
         if options:
-            input_widget = QComboBox(param_widget)
-            input_widget.addItems(options)
+            input_widget = self.component.create_combobox(param_widget, options)
             input_widget.setCurrentText(str(current_value))
             input_widget.setFixedWidth(120)
         else:
-            input_widget = QLineEdit(param_widget)
+            input_widget = self.component.create_line_edit(param_widget, width=120)
             input_widget.setText(str(current_value))
-            input_widget.setFixedWidth(120)
 
         param_layout.addWidget(input_widget)
 

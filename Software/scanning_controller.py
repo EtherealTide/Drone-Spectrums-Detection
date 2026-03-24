@@ -41,11 +41,9 @@ class ScanningController:
         self.waterfall_lock = waterfall_lock
 
         # ── Parameters ────────────────────────────────────────────────────────
-        self.fft_length = init_params.get("fft_length", 512)
+        self.total_fft_length = init_params.get("total_fft_length", 10240)
         self.channel_count = init_params.get("channel_count", 20)
-        self.total_fft_length = init_params.get(
-            "total_fft_length", self.fft_length * self.channel_count
-        )
+        
         self.total_bandwidth_mhz = init_params.get("total_bandwidth_mhz", 2000.0)
         self.waterfall_height = init_params.get("waterfall_height", 512)
         self.enable_scanning = init_params.get("enable_scanning", False)
@@ -76,7 +74,7 @@ class ScanningController:
         return point * self.total_bandwidth_mhz / denom
 
     def _calculate_window_parameters(self):
-        self.window_size = max(1, int(self.scan_bandwidth_mhz / 100 * self.fft_length))
+        self.window_size = max(1, int(self.scan_bandwidth_mhz / 100 * 512))
         self.window_step = max(1, int(self.window_size * (1 - self.overlap_ratio)))
         total_pts = max(1, self.total_fft_length)
         self.total_windows = max(

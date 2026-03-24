@@ -142,3 +142,1920 @@ AttributeError: 'State' object has no attribute 'control_lost_threshold'
 2026-03-23 15:18:00,602 - communication - INFO - Communication process exited
 2026-03-23 15:18:00,602 - data_process - INFO - DataProcessor run() returned - back to idle
 2026-03-23 15:18:00,669 - data_process - INFO - DataProcessor subprocess exited
+2026-03-23 21:34:43,517 - __main__ - INFO - ============================================================
+2026-03-23 21:34:43,517 - __main__ - INFO - Initializing drone detection system...
+2026-03-23 21:34:43,556 - ipc - INFO - SharedMemory created - spectrum=wnsm_5f982706 detection=wnsm_5ee6acd2
+2026-03-23 21:34:43,557 - __main__ - INFO - Shared memory allocated
+2026-03-23 21:34:43,559 - __main__ - INFO - IPC objects created
+2026-03-23 21:34:43,559 - __main__ - ERROR - System error: property 'total_fft_length' of 'State' object has no setter
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\main.py", line 248, in main
+    system = DroneDetectionSystem()
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\main.py", line 50, in __init__
+    self.state = State()
+                 ^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\state.py", line 27, in __init__
+    self.total_fft_length = 10240  # Default value, can be overridden by parameters.json
+    ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: property 'total_fft_length' of 'State' object has no setter
+2026-03-23 21:36:08,534 - __main__ - INFO - ============================================================
+2026-03-23 21:36:08,534 - __main__ - INFO - Initializing drone detection system...
+2026-03-23 21:36:08,570 - ipc - INFO - SharedMemory created - spectrum=wnsm_de00aeec detection=wnsm_99d1c549
+2026-03-23 21:36:08,570 - __main__ - INFO - Shared memory allocated
+2026-03-23 21:36:08,574 - __main__ - INFO - IPC objects created
+2026-03-23 21:36:08,574 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-23 21:36:08,575 - __main__ - ERROR - System error: 'State' object has no attribute 'channel_count'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\main.py", line 248, in main
+    system = DroneDetectionSystem()
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\main.py", line 55, in __init__
+    init_params = self._make_init_params()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\main.py", line 109, in _make_init_params
+    "channel_count": self.state.channel_count,
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'channel_count'
+2026-03-23 21:36:26,604 - __main__ - INFO - ============================================================
+2026-03-23 21:36:26,604 - __main__ - INFO - Initializing drone detection system...
+2026-03-23 21:36:26,631 - ipc - INFO - SharedMemory created - spectrum=wnsm_5b19f52f detection=wnsm_169525b1
+2026-03-23 21:36:26,631 - __main__ - INFO - Shared memory allocated
+2026-03-23 21:36:26,631 - __main__ - INFO - IPC objects created
+2026-03-23 21:36:26,631 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-23 21:36:26,645 - __main__ - INFO - DataProcessor process started
+2026-03-23 21:36:26,649 - __main__ - INFO - Communication process started
+2026-03-23 21:36:29,042 - communication - INFO - Communication process started
+2026-03-23 21:36:30,337 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-23 21:36:30,431 - algorithms - INFO - Loaded 7 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-23 21:36:30,432 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-23 21:36:30,434 - algorithms - INFO - Detector device: cuda
+2026-03-23 21:36:30,955 - algorithms - INFO - Batch detector warmup complete
+2026-03-23 21:36:30,955 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-23 21:36:31,057 - __main__ - ERROR - System error: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\main.py", line 247, in main
+    system = DroneDetectionSystem()
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\main.py", line 92, in __init__
+    self.main_window = Window(
+                       ^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\main\main_ui.py", line 81, in __init__
+    self._build_interfaces()
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\main\main_ui.py", line 132, in _build_interfaces
+    self.spectrumInterface = SpectrumInterface(
+                             ^^^^^^^^^^^^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\home.py", line 15, in __init__
+    self.setup_ui()
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\home.py", line 35, in setup_ui
+    self.config_interface = SpectrumConfigInterface(
+                            ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\config_interface.py", line 36, in __init__
+    self.setup_ui()
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\config_interface.py", line 58, in setup_ui
+    self.build_tree()
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\config_interface.py", line 90, in build_tree
+    self.state.fft_length,
+    ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:37:06,968 - __main__ - INFO - ============================================================
+2026-03-23 21:37:06,968 - __main__ - INFO - Initializing drone detection system...
+2026-03-23 21:37:07,006 - ipc - INFO - SharedMemory created - spectrum=wnsm_d95d5d2b detection=wnsm_a487ed52
+2026-03-23 21:37:07,006 - __main__ - INFO - Shared memory allocated
+2026-03-23 21:37:07,012 - __main__ - INFO - IPC objects created
+2026-03-23 21:37:07,013 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-23 21:37:07,018 - __main__ - INFO - DataProcessor process started
+2026-03-23 21:37:07,022 - __main__ - INFO - Communication process started
+2026-03-23 21:37:09,548 - communication - INFO - Communication process started
+2026-03-23 21:37:10,649 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-23 21:37:10,712 - algorithms - INFO - Loaded 7 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-23 21:37:10,712 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-23 21:37:10,715 - algorithms - INFO - Detector device: cuda
+2026-03-23 21:37:11,230 - algorithms - INFO - Batch detector warmup complete
+2026-03-23 21:37:11,230 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-23 21:37:11,393 - __main__ - ERROR - System error: index 0 has type 'int' but 'str' is expected
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\main.py", line 247, in main
+    system = DroneDetectionSystem()
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\main.py", line 92, in __init__
+    self.main_window = Window(
+                       ^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\main\main_ui.py", line 81, in __init__
+    self._build_interfaces()
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\main\main_ui.py", line 137, in _build_interfaces
+    self.waterfallInterface = WaterfallInterface(
+                              ^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\waterfall\waterfall_ui.py", line 16, in __init__
+    self.setup_ui()
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\waterfall\waterfall_ui.py", line 34, in setup_ui
+    self.config_interface = WaterfallConfigInterface(
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\waterfall\config_interface.py", line 35, in __init__
+    self.setup_ui()
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\waterfall\config_interface.py", line 57, in setup_ui
+    self.build_tree()
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\waterfall\config_interface.py", line 91, in build_tree
+    self.add_parameter(receiver_item, "Receiver", name, value, options)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\waterfall\config_interface.py", line 146, in add_parameter
+    input_widget.addItems(options)
+TypeError: index 0 has type 'int' but 'str' is expected
+2026-03-23 21:39:17,896 - __main__ - INFO - ============================================================
+2026-03-23 21:39:17,896 - __main__ - INFO - Initializing drone detection system...
+2026-03-23 21:39:17,922 - ipc - INFO - SharedMemory created - spectrum=wnsm_3b510e8f detection=wnsm_f5c45d3a
+2026-03-23 21:39:17,926 - __main__ - INFO - Shared memory allocated
+2026-03-23 21:39:17,929 - __main__ - INFO - IPC objects created
+2026-03-23 21:39:17,929 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-23 21:39:17,934 - __main__ - INFO - DataProcessor process started
+2026-03-23 21:39:17,939 - __main__ - INFO - Communication process started
+2026-03-23 21:39:20,412 - communication - INFO - Communication process started
+2026-03-23 21:39:21,570 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-23 21:39:21,634 - algorithms - INFO - Loaded 7 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-23 21:39:21,634 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-23 21:39:21,637 - algorithms - INFO - Detector device: cuda
+2026-03-23 21:39:22,126 - algorithms - INFO - Batch detector warmup complete
+2026-03-23 21:39:22,126 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-23 21:39:22,406 - __main__ - INFO - System initialization complete
+2026-03-23 21:39:39,942 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-23 21:39:39,949 - data_process - INFO - START received - running DataProcessor
+2026-03-23 21:39:39,949 - communication - INFO - Receive loop started
+2026-03-23 21:39:39,950 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-23 21:39:39,951 - data_process - INFO - DataProcessor running
+2026-03-23 21:39:39,973 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,014 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,050 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,085 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,121 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,154 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,201 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,229 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,275 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,301 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,329 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,359 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,389 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,416 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,446 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,477 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,515 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,541 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,586 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,613 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,640 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,670 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,699 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,729 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,772 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,799 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,825 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,856 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,882 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,927 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,956 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:40,984 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,027 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,055 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,078 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,109 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,144 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,196 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,223 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,265 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,292 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,321 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,344 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,388 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,427 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,459 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,484 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,513 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,533 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,567 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,594 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,643 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,688 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,715 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,746 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,792 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,838 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,866 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,898 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,926 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,969 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:41,994 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,024 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,047 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,080 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,124 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,165 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,194 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,225 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,244 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,281 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,330 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,371 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,395 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,427 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,455 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,502 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,527 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,559 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,585 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,615 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,655 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,682 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,726 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,749 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,777 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,811 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,833 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,862 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,904 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,928 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:42,957 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,003 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,029 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,054 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,083 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,127 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,152 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,178 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,204 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,244 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,270 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,295 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,327 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,366 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,399 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,426 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,454 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,493 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,527 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,553 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,601 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,627 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,653 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,679 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,706 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,743 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,775 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,795 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,829 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,866 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,898 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,942 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,970 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:43,998 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,042 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,066 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,103 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,131 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,177 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,205 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,227 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,260 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,283 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,310 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,353 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,384 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,413 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,444 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,484 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,513 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,544 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,573 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,602 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,629 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,674 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,698 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,729 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,776 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,803 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,827 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,876 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,903 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,948 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:44,977 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,020 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,053 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,081 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,108 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,132 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,160 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,193 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,239 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,266 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,293 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,325 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,353 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,382 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,409 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,438 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,482 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,512 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,542 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,565 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,593 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,628 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,654 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,703 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,730 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,753 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,803 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,828 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,860 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,889 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,914 - UI.spectrum.visualization - ERROR - Spectrum visualization update failed: 'State' object has no attribute 'fft_length'
+Traceback (most recent call last):
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 144, in update_visualization
+    self.update_spectrum(spectrum_data)
+  File "c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\UI\spectrum\visualization.py", line 128, in update_spectrum
+    0, max_freq / 1e6, self.state.fft_length * self.state.channel_count
+                       ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'State' object has no attribute 'fft_length'
+2026-03-23 21:39:45,943 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-23 21:39:45,951 - communication - ERROR - Receive error: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2026-03-23 21:39:45,951 - communication - ERROR - Failed to receive frame 85219 data
+2026-03-23 21:39:45,952 - communication - INFO - Receive loop exited
+2026-03-23 21:39:45,952 - communication - INFO - Disconnected from device
+2026-03-23 21:39:45,955 - data_process - INFO - DataProcessor stopping
+2026-03-23 21:39:52,020 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-23 21:40:28,306 - communication - INFO - Communication process exited
+2026-03-23 21:40:28,361 - data_process - INFO - DataProcessor subprocess exited
+2026-03-23 21:40:32,645 - __main__ - INFO - ============================================================
+2026-03-23 21:40:32,645 - __main__ - INFO - Initializing drone detection system...
+2026-03-23 21:40:32,667 - ipc - INFO - SharedMemory created - spectrum=wnsm_f95e8b96 detection=wnsm_dbf3b862
+2026-03-23 21:40:32,667 - __main__ - INFO - Shared memory allocated
+2026-03-23 21:40:32,673 - __main__ - INFO - IPC objects created
+2026-03-23 21:40:32,673 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-23 21:40:32,676 - __main__ - INFO - DataProcessor process started
+2026-03-23 21:40:32,683 - __main__ - INFO - Communication process started
+2026-03-23 21:40:35,243 - communication - INFO - Communication process started
+2026-03-23 21:40:35,430 - __main__ - INFO - System initialization complete
+2026-03-23 21:40:35,909 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-23 21:40:35,986 - algorithms - INFO - Loaded 7 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-23 21:40:35,987 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-23 21:40:35,989 - algorithms - INFO - Detector device: cuda
+2026-03-23 21:40:36,427 - algorithms - INFO - Batch detector warmup complete
+2026-03-23 21:40:36,427 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-23 21:40:38,271 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-23 21:40:38,284 - data_process - INFO - START received - running DataProcessor
+2026-03-23 21:40:38,284 - communication - INFO - Receive loop started
+2026-03-23 21:40:38,286 - data_process - INFO - DataProcessor running
+2026-03-23 21:40:38,286 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-23 21:40:53,392 - __main__ - INFO - Parameter change: UI_Waterfall.spectrum_right_freq(MHz) = 1100
+2026-03-23 21:40:53,392 - state - INFO - parameter updated: UI_Waterfall.spectrum_right_freq(MHz) = 1100 (old 1300)
+2026-03-23 21:40:53,392 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-23 21:40:53,392 - UI.waterfall.config_interface - INFO - UI display refreshed: UI_Waterfall.spectrum_right_freq(MHz) = 1100
+2026-03-23 21:40:53,392 - UI.waterfall.config_interface - INFO - Request parameter update: UI_Waterfall.spectrum_right_freq(MHz) = 1100 (type: int)
+2026-03-23 21:40:55,502 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-23 21:40:55,525 - data_process - INFO - DataProcessor stopping
+2026-03-23 21:40:55,534 - communication - INFO - Receive loop exited
+2026-03-23 21:40:55,536 - communication - INFO - Disconnected from device
+2026-03-23 21:41:01,593 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-23 21:43:33,699 - communication - INFO - Communication process exited
+2026-03-23 21:43:33,785 - data_process - INFO - DataProcessor subprocess exited
+2026-03-23 21:43:42,478 - __main__ - INFO - ============================================================
+2026-03-23 21:43:42,479 - __main__ - INFO - Initializing drone detection system...
+2026-03-23 21:43:42,506 - ipc - INFO - SharedMemory created - spectrum=wnsm_9ada85c5 detection=wnsm_4463a6d4
+2026-03-23 21:43:42,506 - __main__ - INFO - Shared memory allocated
+2026-03-23 21:43:42,509 - __main__ - INFO - IPC objects created
+2026-03-23 21:43:42,510 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-23 21:43:42,515 - __main__ - INFO - DataProcessor process started
+2026-03-23 21:43:42,519 - __main__ - INFO - Communication process started
+2026-03-23 21:43:44,929 - communication - INFO - Communication process started
+2026-03-23 21:43:46,219 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-23 21:43:46,282 - algorithms - INFO - Loaded 7 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-23 21:43:46,282 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-23 21:43:46,286 - algorithms - INFO - Detector device: cuda
+2026-03-23 21:43:46,719 - algorithms - INFO - Batch detector warmup complete
+2026-03-23 21:43:46,719 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-23 21:43:47,051 - __main__ - INFO - System initialization complete
+2026-03-23 21:43:51,145 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-23 21:43:51,276 - data_process - INFO - START received - running DataProcessor
+2026-03-23 21:43:51,276 - communication - INFO - Receive loop started
+2026-03-23 21:43:51,277 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-23 21:43:51,278 - data_process - INFO - DataProcessor running
+2026-03-23 21:44:12,294 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-23 21:44:12,297 - communication - INFO - Receive loop exited
+2026-03-23 21:44:12,297 - communication - INFO - Disconnected from device
+2026-03-23 21:44:12,302 - data_process - INFO - DataProcessor stopping
+2026-03-23 21:44:12,945 - communication - INFO - Communication process exited
+2026-03-23 21:44:13,306 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-23 21:44:13,370 - data_process - INFO - DataProcessor subprocess exited
+2026-03-24 11:42:42,154 - __main__ - INFO - ============================================================
+2026-03-24 11:42:42,156 - __main__ - INFO - Initializing drone detection system...
+2026-03-24 11:42:42,202 - ipc - INFO - SharedMemory created - spectrum=wnsm_1bd0828a detection=wnsm_f1731437
+2026-03-24 11:42:42,202 - __main__ - INFO - Shared memory allocated
+2026-03-24 11:42:42,211 - __main__ - INFO - IPC objects created
+2026-03-24 11:42:42,214 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-24 11:42:42,220 - __main__ - INFO - DataProcessor process started
+2026-03-24 11:42:42,222 - __main__ - INFO - Communication process started
+2026-03-24 11:42:44,671 - communication - INFO - Communication process started
+2026-03-24 11:42:45,944 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-24 11:42:46,037 - algorithms - INFO - Loaded 7 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-24 11:42:46,037 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-24 11:42:46,042 - algorithms - INFO - Detector device: cuda
+2026-03-24 11:42:46,800 - __main__ - INFO - System initialization complete
+2026-03-24 11:42:47,032 - algorithms - INFO - Batch detector warmup complete
+2026-03-24 11:42:47,032 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-24 11:42:53,525 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-24 11:42:53,528 - data_process - INFO - START received - running DataProcessor
+2026-03-24 11:42:53,528 - communication - INFO - Receive loop started
+2026-03-24 11:42:53,529 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-24 11:42:53,530 - data_process - INFO - DataProcessor running
+2026-03-24 11:43:04,138 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-24 11:43:04,143 - communication - ERROR - Receive error: [WinError 10038] 在一个非套接字上尝试了一个操作。
+2026-03-24 11:43:04,143 - communication - ERROR - Failed to receive frame 143338 data
+2026-03-24 11:43:04,145 - communication - INFO - Receive loop exited
+2026-03-24 11:43:04,145 - communication - INFO - Disconnected from device
+2026-03-24 11:43:04,195 - data_process - INFO - DataProcessor stopping
+2026-03-24 11:43:10,313 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-24 11:43:20,490 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-24 11:43:20,493 - data_process - INFO - START received - running DataProcessor
+2026-03-24 11:43:20,493 - communication - INFO - Receive loop started
+2026-03-24 11:43:20,493 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-24 11:43:20,496 - data_process - INFO - DataProcessor running
+2026-03-24 11:43:23,744 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-24 11:43:23,747 - communication - ERROR - Receive error: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2026-03-24 11:43:23,747 - communication - ERROR - Failed to receive frame header
+2026-03-24 11:43:23,748 - communication - INFO - Receive loop exited
+2026-03-24 11:43:23,748 - communication - INFO - Disconnected from device
+2026-03-24 11:43:23,818 - data_process - INFO - DataProcessor stopping
+2026-03-24 11:43:28,650 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-24 11:43:28,678 - communication - INFO - Communication process exited
+2026-03-24 11:43:28,729 - data_process - INFO - DataProcessor subprocess exited
+2026-03-24 11:52:48,437 - __main__ - INFO - ============================================================
+2026-03-24 11:52:48,438 - __main__ - INFO - Initializing drone detection system...
+2026-03-24 11:52:48,460 - ipc - INFO - SharedMemory created - spectrum=wnsm_b5d3fd3c detection=wnsm_2c162665
+2026-03-24 11:52:48,460 - __main__ - INFO - Shared memory allocated
+2026-03-24 11:52:48,465 - __main__ - INFO - IPC objects created
+2026-03-24 11:52:48,465 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-24 11:52:48,473 - __main__ - INFO - DataProcessor process started
+2026-03-24 11:52:48,479 - __main__ - INFO - Communication process started
+2026-03-24 11:52:51,377 - communication - INFO - Communication process started
+2026-03-24 11:52:52,251 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-24 11:52:52,335 - algorithms - INFO - Loaded 3 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-24 11:52:52,336 - algorithms - WARNING - 'Flight-control signal' not found, fallback class id=3
+2026-03-24 11:52:52,336 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-24 11:52:52,339 - algorithms - INFO - Detector device: cuda
+2026-03-24 11:52:53,000 - algorithms - INFO - Batch detector warmup complete
+2026-03-24 11:52:53,002 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-24 11:52:53,121 - __main__ - INFO - System initialization complete
+2026-03-24 11:52:57,283 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-24 11:52:57,299 - data_process - INFO - START received - running DataProcessor
+2026-03-24 11:52:57,300 - communication - INFO - Receive loop started
+2026-03-24 11:52:57,302 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-24 11:52:57,304 - data_process - INFO - DataProcessor running
+2026-03-24 11:53:03,988 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-24 11:53:04,023 - communication - INFO - Receive loop exited
+2026-03-24 11:53:04,023 - communication - INFO - Disconnected from device
+2026-03-24 11:53:04,077 - data_process - INFO - DataProcessor stopping
+2026-03-24 11:53:10,189 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-24 12:10:10,195 - communication - INFO - Communication process exited
+2026-03-24 12:10:11,103 - data_process - INFO - DataProcessor subprocess exited
+2026-03-24 15:13:24,169 - __main__ - INFO - ============================================================
+2026-03-24 15:13:24,169 - __main__ - INFO - Initializing drone detection system...
+2026-03-24 15:13:24,190 - ipc - INFO - SharedMemory created - spectrum=wnsm_170db802 detection=wnsm_820769c6
+2026-03-24 15:13:24,190 - __main__ - INFO - Shared memory allocated
+2026-03-24 15:13:24,197 - __main__ - INFO - IPC objects created
+2026-03-24 15:13:24,198 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-24 15:13:24,202 - __main__ - INFO - DataProcessor process started
+2026-03-24 15:13:24,206 - __main__ - INFO - Communication process started
+2026-03-24 15:13:26,594 - communication - INFO - Communication process started
+2026-03-24 15:13:27,853 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-24 15:13:27,917 - algorithms - INFO - Loaded 3 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-24 15:13:27,918 - algorithms - WARNING - 'Flight-control signal' not found, fallback class id=3
+2026-03-24 15:13:27,918 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-24 15:13:27,921 - algorithms - INFO - Detector device: cuda
+2026-03-24 15:13:28,461 - algorithms - INFO - Batch detector warmup complete
+2026-03-24 15:13:28,462 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-24 15:13:28,669 - __main__ - INFO - System initialization complete
+2026-03-24 15:13:31,860 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-24 15:13:31,875 - data_process - INFO - START received - running DataProcessor
+2026-03-24 15:13:31,875 - communication - INFO - Receive loop started
+2026-03-24 15:13:31,877 - data_process - INFO - DataProcessor running
+:5000
+2026-03-24 15:13:44,425 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-24 15:13:44,426 - communication - ERROR - Receive error: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2026-03-24 15:13:44,427 - communication - ERROR - Failed to receive frame 151156 data
+2026-03-24 15:13:44,427 - communication - INFO - Receive loop exited
+2026-03-24 15:13:44,428 - communication - INFO - Disconnected from device
+2026-03-24 15:13:44,429 - data_process - INFO - DataProcessor stopping
+2026-03-24 15:13:50,542 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-24 15:13:54,106 - communication - INFO - Communication process exited
+2026-03-24 15:13:54,621 - data_process - INFO - DataProcessor subprocess exited
+2026-03-24 15:14:41,863 - __main__ - INFO - ============================================================
+2026-03-24 15:14:41,864 - __main__ - INFO - Initializing drone detection system...
+2026-03-24 15:14:41,886 - ipc - INFO - SharedMemory created - spectrum=wnsm_57d5a54c detection=wnsm_cfc88dc9
+2026-03-24 15:14:41,886 - __main__ - INFO - Shared memory allocated
+2026-03-24 15:14:41,888 - __main__ - INFO - IPC objects created
+2026-03-24 15:14:41,888 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-24 15:14:41,896 - __main__ - INFO - DataProcessor process started
+2026-03-24 15:14:41,901 - __main__ - INFO - Communication process started
+2026-03-24 15:14:44,488 - communication - INFO - Communication process started
+2026-03-24 15:14:45,551 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-24 15:14:45,619 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-24 15:14:45,619 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-24 15:14:45,622 - algorithms - INFO - Detector device: cuda
+2026-03-24 15:14:46,166 - algorithms - INFO - Batch detector warmup complete
+2026-03-24 15:14:46,167 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-24 15:14:46,368 - __main__ - INFO - System initialization complete
+2026-03-24 15:14:49,971 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-24 15:14:49,974 - data_process - INFO - START received - running DataProcessor
+2026-03-24 15:14:49,974 - communication - INFO - Receive loop started
+2026-03-24 15:14:49,975 - data_process - INFO - DataProcessor running
+2026-03-24 15:14:49,975 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-24 15:14:58,109 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-24 15:14:58,110 - communication - ERROR - Receive error: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2026-03-24 15:14:58,110 - communication - ERROR - Failed to receive frame 112778 data
+2026-03-24 15:14:58,110 - communication - INFO - Receive loop exited
+2026-03-24 15:14:58,110 - communication - INFO - Disconnected from device
+2026-03-24 15:14:58,210 - data_process - INFO - DataProcessor stopping
+2026-03-24 15:15:04,336 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-24 15:15:22,867 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-24 15:15:22,868 - data_process - INFO - START received - running DataProcessor
+2026-03-24 15:15:22,869 - communication - INFO - Receive loop started
+2026-03-24 15:15:22,869 - data_process - INFO - DataProcessor running
+:5000
+2026-03-24 15:15:35,446 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-24 15:15:35,448 - communication - INFO - Receive loop exited
+2026-03-24 15:15:35,448 - communication - INFO - Disconnected from device
+2026-03-24 15:15:35,526 - data_process - INFO - DataProcessor stopping
+2026-03-24 15:15:41,645 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-24 15:36:46,826 - __main__ - INFO - ============================================================
+2026-03-24 15:36:46,826 - __main__ - INFO - Initializing drone detection system...
+2026-03-24 15:36:46,840 - ipc - INFO - SharedMemory created - spectrum=wnsm_8392a20e detection=wnsm_66774615
+2026-03-24 15:36:46,851 - __main__ - INFO - Shared memory allocated
+2026-03-24 15:36:46,854 - __main__ - INFO - IPC objects created
+2026-03-24 15:36:46,855 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-24 15:36:46,858 - __main__ - INFO - DataProcessor process started
+2026-03-24 15:36:46,858 - __main__ - INFO - Communication process started
+2026-03-24 15:36:49,400 - communication - INFO - Communication process started
+2026-03-24 15:36:50,519 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-24 15:36:50,578 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-24 15:36:50,579 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-24 15:36:50,581 - algorithms - INFO - Detector device: cuda
+2026-03-24 15:36:51,076 - algorithms - INFO - Batch detector warmup complete
+2026-03-24 15:36:51,077 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-24 15:36:51,352 - __main__ - INFO - System initialization complete
+2026-03-24 15:37:33,331 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-24 15:37:33,343 - data_process - INFO - START received - running DataProcessor
+2026-03-24 15:37:33,344 - communication - INFO - Receive loop started
+2026-03-24 15:37:33,344 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-24 15:37:33,346 - data_process - INFO - DataProcessor running
+2026-03-24 15:37:37,350 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-24 15:37:37,354 - communication - INFO - Receive loop exited
+2026-03-24 15:37:37,354 - communication - INFO - Disconnected from device
+2026-03-24 15:37:37,365 - data_process - INFO - DataProcessor stopping
+2026-03-24 15:37:43,480 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-24 16:50:01,663 - communication - INFO - Communication process exited
+2026-03-24 16:50:02,028 - data_process - INFO - DataProcessor subprocess exited
+2026-03-24 19:41:42,930 - __main__ - INFO - ============================================================
+2026-03-24 19:41:42,931 - __main__ - INFO - Initializing drone detection system...
+2026-03-24 19:41:42,969 - ipc - INFO - SharedMemory created - spectrum=wnsm_57d69521 detection=wnsm_e4858afa
+2026-03-24 19:41:42,969 - __main__ - INFO - Shared memory allocated
+2026-03-24 19:41:42,969 - __main__ - INFO - IPC objects created
+2026-03-24 19:41:42,969 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-24 19:41:42,979 - __main__ - INFO - DataProcessor process started
+2026-03-24 19:41:42,981 - __main__ - INFO - Communication process started
+2026-03-24 19:41:45,628 - communication - INFO - Communication process started
+2026-03-24 19:41:46,690 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-24 19:41:46,802 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-24 19:41:46,803 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-24 19:41:46,806 - algorithms - INFO - Detector device: cuda
+2026-03-24 19:41:47,430 - algorithms - INFO - Batch detector warmup complete
+2026-03-24 19:41:47,430 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-24 19:41:47,540 - __main__ - INFO - System initialization complete
+2026-03-24 19:41:51,105 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-24 19:41:51,113 - data_process - INFO - START received - running DataProcessor
+2026-03-24 19:41:51,113 - communication - INFO - Receive loop started
+2026-03-24 19:41:51,114 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-24 19:41:51,115 - data_process - INFO - DataProcessor running
+2026-03-24 19:42:39,862 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-24 19:42:39,871 - communication - ERROR - Receive error: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2026-03-24 19:42:39,871 - communication - ERROR - Failed to receive frame 627205 data
+2026-03-24 19:42:39,872 - communication - INFO - Receive loop exited
+2026-03-24 19:42:39,872 - communication - INFO - Disconnected from device
+2026-03-24 19:42:39,948 - data_process - INFO - DataProcessor stopping
+2026-03-24 19:42:46,079 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-24 19:45:21,581 - communication - INFO - Communication process exited
+2026-03-24 19:45:22,336 - data_process - INFO - DataProcessor subprocess exited
+2026-03-24 19:45:33,322 - __main__ - INFO - ============================================================
+2026-03-24 19:45:33,323 - __main__ - INFO - Initializing drone detection system...
+2026-03-24 19:45:33,355 - ipc - INFO - SharedMemory created - spectrum=wnsm_1732ff67 detection=wnsm_74c7da95
+2026-03-24 19:45:33,355 - __main__ - INFO - Shared memory allocated
+2026-03-24 19:45:33,358 - __main__ - INFO - IPC objects created
+2026-03-24 19:45:33,360 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-24 19:45:33,364 - __main__ - INFO - DataProcessor process started
+2026-03-24 19:45:33,368 - __main__ - INFO - Communication process started
+2026-03-24 19:45:35,941 - communication - INFO - Communication process started
+2026-03-24 19:45:36,167 - __main__ - INFO - System initialization complete
+2026-03-24 19:45:36,630 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-24 19:45:36,693 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-24 19:45:36,693 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-24 19:45:36,696 - algorithms - INFO - Detector device: cuda
+2026-03-24 19:45:37,229 - algorithms - INFO - Batch detector warmup complete
+2026-03-24 19:45:37,229 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-24 19:45:39,381 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-24 19:45:39,387 - data_process - INFO - START received - running DataProcessor
+2026-03-24 19:45:39,387 - communication - INFO - Receive loop started
+2026-03-24 19:45:39,388 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-24 19:45:39,389 - data_process - INFO - DataProcessor running
+2026-03-24 19:46:15,636 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-24 19:46:15,637 - communication - ERROR - Receive error: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2026-03-24 19:46:15,637 - communication - ERROR - Failed to receive frame 1104816 data
+2026-03-24 19:46:15,638 - communication - INFO - Receive loop exited
+2026-03-24 19:46:15,638 - communication - INFO - Disconnected from device
+2026-03-24 19:46:15,642 - data_process - INFO - DataProcessor stopping
+2026-03-24 19:46:21,767 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-24 19:46:33,208 - communication - INFO - Communication process exited
+2026-03-24 19:46:33,969 - data_process - INFO - DataProcessor subprocess exited

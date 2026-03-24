@@ -186,14 +186,12 @@ class ConfigInterface(QWidget):
 
         # 输入控件
         if options:
-            input_widget = QComboBox(param_widget)
-            input_widget.addItems(options)
+            input_widget = self.component.create_combobox(param_widget, options)
             input_widget.setCurrentText(str(current_value))
-            input_widget.setFixedWidth(100)
+            input_widget.setFixedWidth(120)
         else:
-            input_widget = QLineEdit(param_widget)
+            input_widget = self.component.create_line_edit(param_widget, width=120)
             input_widget.setText(str(current_value))
-            input_widget.setFixedWidth(100)
 
         param_layout.addWidget(input_widget)
 

@@ -106,8 +106,6 @@ class DroneDetectionSystem:
 
     def _make_init_params(self) -> dict:
         return {
-            "fft_length": self.state.fft_length,
-            "channel_count": self.state.channel_count,
             "total_fft_length": self.state.total_fft_length,
             "total_bandwidth_mhz": self.state.total_bandwidth_mhz,
             "waterfall_height": self.state.waterfall_height,
@@ -117,6 +115,7 @@ class DroneDetectionSystem:
             "noise_alpha": self.state.noise_alpha,
             "conf_threshold": self.state.conf_threshold,
             "iou_threshold": self.state.iou_threshold,
+            "image_size": self.state.image_size,
             "sample_rate": self.state.sample_rate,
             "device_ip": self.state.device_ip,
             "device_port": self.state.device_port,
@@ -138,10 +137,6 @@ class DroneDetectionSystem:
         if latest_det:
             self.state.detection_stats.update(latest_det)
             self.state.detection_updated.emit(latest_det)
-            scan_status = latest_det.get("scan_status")
-            if isinstance(scan_status, dict):
-                self.state.scan_status.update(scan_status)
-                self.state.scan_status_changed.emit(scan_status)
 
         try:
             while True:
@@ -179,11 +174,11 @@ class DroneDetectionSystem:
             self.state.set_parameter(group, name, value)
             cmd = {"cmd": "SET_PARAM", "group": group, "name": name, "value": value}
 
-            if group == "Receiver" and name == "FFT_Length":
-                self.comm_ctrl_q.put_nowait({"cmd": "SEND_COMMAND", "command": "SET_FFT_LENGTH", "data": value})
-                self.dp_ctrl_q.put_nowait(cmd)
+            if group == "Receiver":
+                # 暂时什么都不做，理论上给下位机传指令
+                pass
             elif group == "UI_Waterfall":
-                self.dp_ctrl_q.put_nowait(cmd)
+                pass
             elif group == "UI_Spectrum":
                 if hasattr(self.main_window, "spectrumInterface"):
                     self.main_window.spectrumInterface.visualization_card.update_config()
