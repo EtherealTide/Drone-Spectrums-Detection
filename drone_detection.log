@@ -2059,3 +2059,232 @@ AttributeError: 'State' object has no attribute 'fft_length'
 2026-03-24 19:46:21,767 - data_process - INFO - DataProcessor run() returned - back to idle
 2026-03-24 19:46:33,208 - communication - INFO - Communication process exited
 2026-03-24 19:46:33,969 - data_process - INFO - DataProcessor subprocess exited
+2026-03-25 10:29:11,773 - __main__ - INFO - ============================================================
+2026-03-25 10:29:11,776 - __main__ - INFO - Initializing drone detection system...
+2026-03-25 10:29:11,843 - ipc - INFO - SharedMemory created - spectrum=wnsm_1e32b41c detection=wnsm_986da732
+2026-03-25 10:29:11,843 - __main__ - INFO - Shared memory allocated
+2026-03-25 10:29:11,849 - __main__ - INFO - IPC objects created
+2026-03-25 10:29:11,851 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-25 10:29:11,856 - __main__ - INFO - DataProcessor process started
+2026-03-25 10:29:11,858 - __main__ - INFO - Communication process started
+2026-03-25 10:29:14,291 - communication - INFO - Communication process started
+2026-03-25 10:29:15,528 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-25 10:29:15,615 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-25 10:29:15,615 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-25 10:29:15,620 - algorithms - INFO - Detector device: cuda
+2026-03-25 10:29:16,416 - __main__ - INFO - System initialization complete
+2026-03-25 10:29:16,685 - algorithms - INFO - Batch detector warmup complete
+2026-03-25 10:29:16,686 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-25 10:29:20,099 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-25 10:29:20,101 - data_process - INFO - START received - running DataProcessor
+2026-03-25 10:29:20,101 - communication - INFO - Receive loop started
+2026-03-25 10:29:20,103 - data_process - INFO - DataProcessor running
+:5000
+2026-03-25 10:29:36,339 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-25 10:29:36,340 - communication - INFO - Receive loop exited
+2026-03-25 10:29:36,341 - communication - INFO - Disconnected from device
+2026-03-25 10:29:36,359 - data_process - INFO - DataProcessor stopping
+2026-03-25 10:29:42,489 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-25 10:32:12,648 - communication - INFO - Communication process exited
+2026-03-25 10:32:12,752 - data_process - INFO - DataProcessor subprocess exited
+2026-03-25 10:32:22,368 - __main__ - INFO - ============================================================
+2026-03-25 10:32:22,368 - __main__ - INFO - Initializing drone detection system...
+2026-03-25 10:32:22,387 - ipc - INFO - SharedMemory created - spectrum=wnsm_d86c8a7a detection=wnsm_0fa4b76b
+2026-03-25 10:32:22,387 - __main__ - INFO - Shared memory allocated
+2026-03-25 10:32:22,391 - __main__ - INFO - IPC objects created
+2026-03-25 10:32:22,391 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-25 10:32:22,391 - __main__ - INFO - DataProcessor process started
+2026-03-25 10:32:22,399 - __main__ - INFO - Communication process started
+2026-03-25 10:32:24,924 - communication - INFO - Communication process started
+2026-03-25 10:32:26,277 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-25 10:32:26,345 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-25 10:32:26,346 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-25 10:32:26,348 - algorithms - INFO - Detector device: cuda
+2026-03-25 10:32:26,861 - algorithms - INFO - Batch detector warmup complete
+2026-03-25 10:32:26,861 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-25 10:32:27,101 - __main__ - INFO - System initialization complete
+2026-03-25 10:32:31,062 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-25 10:32:31,072 - data_process - INFO - START received - running DataProcessor
+2026-03-25 10:32:31,072 - communication - INFO - Receive loop started
+2026-03-25 10:32:31,072 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-25 10:32:31,074 - data_process - INFO - DataProcessor running
+2026-03-25 10:32:33,408 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-25 10:32:33,419 - communication - ERROR - Receive error: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2026-03-25 10:32:33,419 - communication - ERROR - Failed to receive frame 224289 data
+2026-03-25 10:32:33,420 - communication - INFO - Receive loop exited
+2026-03-25 10:32:33,420 - communication - INFO - Disconnected from device
+2026-03-25 10:32:33,488 - data_process - INFO - DataProcessor stopping
+2026-03-25 10:32:38,885 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-25 10:32:38,889 - communication - INFO - Receive loop started
+2026-03-25 10:32:38,890 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-25 10:32:39,596 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-25 10:32:39,597 - data_process - INFO - START received - running DataProcessor
+2026-03-25 10:32:39,599 - data_process - INFO - DataProcessor running
+2026-03-25 10:36:17,103 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-25 10:36:17,112 - communication - INFO - Receive loop exited
+2026-03-25 10:36:17,112 - communication - INFO - Disconnected from device
+2026-03-25 10:36:17,203 - data_process - INFO - DataProcessor stopping
+2026-03-25 10:36:23,310 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-25 10:37:26,439 - communication - INFO - Communication process exited
+2026-03-25 10:37:26,830 - data_process - INFO - DataProcessor subprocess exited
+2026-03-25 10:37:37,285 - __main__ - INFO - ============================================================
+2026-03-25 10:37:37,286 - __main__ - INFO - Initializing drone detection system...
+2026-03-25 10:37:37,304 - ipc - INFO - SharedMemory created - spectrum=wnsm_b629fa1a detection=wnsm_c839e58c
+2026-03-25 10:37:37,304 - __main__ - INFO - Shared memory allocated
+2026-03-25 10:37:37,313 - __main__ - INFO - IPC objects created
+2026-03-25 10:37:37,314 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-25 10:37:37,318 - __main__ - INFO - DataProcessor process started
+2026-03-25 10:37:37,321 - __main__ - INFO - Communication process started
+2026-03-25 10:37:39,796 - communication - INFO - Communication process started
+2026-03-25 10:37:40,975 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-25 10:37:41,039 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-25 10:37:41,040 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-25 10:37:41,042 - algorithms - INFO - Detector device: cuda
+2026-03-25 10:37:41,534 - algorithms - INFO - Batch detector warmup complete
+2026-03-25 10:37:41,534 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-25 10:37:41,788 - __main__ - INFO - System initialization complete
+2026-03-25 10:37:44,670 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-25 10:37:44,675 - data_process - INFO - START received - running DataProcessor
+2026-03-25 10:37:44,675 - communication - INFO - Receive loop started
+2026-03-25 10:37:44,676 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-25 10:37:44,677 - data_process - INFO - DataProcessor running
+2026-03-25 10:39:17,449 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-25 10:39:17,450 - communication - INFO - Receive loop exited
+2026-03-25 10:39:17,450 - communication - INFO - Disconnected from device
+2026-03-25 10:39:17,487 - data_process - INFO - DataProcessor stopping
+2026-03-25 10:39:23,607 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-25 10:40:01,056 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-25 10:40:01,059 - data_process - INFO - START received - running DataProcessor
+2026-03-25 10:40:01,059 - communication - INFO - Receive loop started
+2026-03-25 10:40:01,059 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-25 10:40:01,060 - data_process - INFO - DataProcessor running
+2026-03-25 10:40:21,793 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-25 10:40:21,795 - communication - INFO - Receive loop exited
+2026-03-25 10:40:21,796 - communication - INFO - Disconnected from device
+2026-03-25 10:40:21,858 - data_process - INFO - DataProcessor stopping
+2026-03-25 10:40:27,984 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-25 10:44:18,969 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-25 10:44:18,969 - data_process - INFO - START received - running DataProcessor
+2026-03-25 10:44:18,972 - communication - INFO - Receive loop started
+2026-03-25 10:44:18,972 - data_process - INFO - DataProcessor running
+:5000
+2026-03-25 10:44:33,786 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-25 10:44:33,793 - communication - ERROR - Receive error: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2026-03-25 10:44:33,793 - communication - ERROR - Failed to receive frame 1560119 data
+2026-03-25 10:44:33,793 - communication - INFO - Receive loop exited
+2026-03-25 10:44:33,793 - communication - INFO - Disconnected from device
+2026-03-25 10:44:33,840 - data_process - INFO - DataProcessor stopping
+2026-03-25 10:44:35,100 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-25 10:44:35,165 - data_process - INFO - DataProcessor subprocess exited
+2026-03-25 10:44:35,201 - communication - INFO - Communication process exited
+2026-03-25 10:51:42,422 - __main__ - INFO - ============================================================
+2026-03-25 10:51:42,428 - __main__ - INFO - Initializing drone detection system...
+2026-03-25 10:51:42,445 - ipc - INFO - SharedMemory created - spectrum=wnsm_59d7d2e8 detection=wnsm_28b1d1ae
+2026-03-25 10:51:42,445 - __main__ - INFO - Shared memory allocated
+2026-03-25 10:51:42,450 - __main__ - INFO - IPC objects created
+2026-03-25 10:51:42,450 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-25 10:51:42,451 - __main__ - INFO - DataProcessor process started
+2026-03-25 10:51:42,451 - __main__ - INFO - Communication process started
+2026-03-25 10:51:44,924 - communication - INFO - Communication process started
+2026-03-25 10:51:46,106 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-25 10:51:46,164 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-25 10:51:46,164 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-25 10:51:46,167 - algorithms - INFO - Detector device: cuda
+2026-03-25 10:51:46,649 - algorithms - INFO - Batch detector warmup complete
+2026-03-25 10:51:46,650 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-25 10:51:46,961 - __main__ - INFO - System initialization complete
+2026-03-25 10:51:50,324 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-25 10:51:50,325 - data_process - INFO - START received - running DataProcessor
+2026-03-25 10:51:50,328 - communication - INFO - Receive loop started
+2026-03-25 10:51:50,329 - data_process - INFO - DataProcessor running
+:5000
+2026-03-25 10:51:58,488 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-25 10:51:58,489 - communication - ERROR - Receive error: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2026-03-25 10:51:58,490 - communication - ERROR - Failed to receive frame 99289 data
+2026-03-25 10:51:58,490 - communication - INFO - Receive loop exited
+2026-03-25 10:51:58,490 - communication - INFO - Disconnected from device
+2026-03-25 10:51:58,566 - data_process - INFO - DataProcessor stopping
+2026-03-25 10:51:59,491 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-25 10:52:05,989 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-25 10:52:05,993 - data_process - INFO - START received - running DataProcessor
+2026-03-25 10:52:05,994 - communication - INFO - Receive loop started
+2026-03-25 10:52:05,995 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-25 10:52:05,996 - data_process - INFO - DataProcessor running
+2026-03-25 10:52:19,165 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-25 10:52:19,167 - communication - ERROR - Receive error: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2026-03-25 10:52:19,168 - communication - ERROR - Failed to receive frame 264110 data
+2026-03-25 10:52:19,168 - communication - INFO - Receive loop exited
+2026-03-25 10:52:19,168 - communication - INFO - Disconnected from device
+2026-03-25 10:52:19,255 - data_process - INFO - DataProcessor stopping
+2026-03-25 10:52:20,167 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-25 10:52:26,187 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-25 10:52:26,189 - data_process - INFO - START received - running DataProcessor
+2026-03-25 10:52:26,191 - communication - INFO - Receive loop started
+2026-03-25 10:52:26,191 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-25 10:52:26,192 - data_process - INFO - DataProcessor running
+2026-03-25 10:52:29,878 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-25 10:52:29,883 - communication - INFO - Receive loop exited
+2026-03-25 10:52:29,883 - communication - INFO - Disconnected from device
+2026-03-25 10:52:29,907 - data_process - INFO - DataProcessor stopping
+2026-03-25 10:52:30,536 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-25 10:52:30,539 - communication - INFO - Receive loop started
+2026-03-25 10:52:30,539 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-25 10:52:30,540 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-25 10:52:30,540 - data_process - INFO - START received - running DataProcessor
+2026-03-25 10:52:30,542 - data_process - INFO - DataProcessor running
+2026-03-25 10:52:31,528 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-25 10:52:31,529 - communication - ERROR - Receive error: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2026-03-25 10:52:31,529 - communication - ERROR - Failed to receive frame header
+2026-03-25 10:52:31,530 - communication - INFO - Receive loop exited
+2026-03-25 10:52:31,530 - communication - INFO - Disconnected from device
+2026-03-25 10:52:31,547 - data_process - INFO - DataProcessor stopping
+2026-03-25 10:52:32,206 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-25 10:52:32,209 - communication - INFO - Receive loop started
+2026-03-25 10:52:32,209 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-25 10:52:32,210 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-25 10:52:32,211 - data_process - INFO - START received - running DataProcessor
+2026-03-25 10:52:32,212 - data_process - INFO - DataProcessor running
+2026-03-25 10:52:33,173 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-25 10:52:33,174 - communication - INFO - Receive loop exited
+2026-03-25 10:52:33,174 - communication - INFO - Disconnected from device
+2026-03-25 10:52:33,217 - data_process - INFO - DataProcessor stopping
+2026-03-25 10:52:33,843 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-25 10:52:33,845 - communication - INFO - Receive loop started
+2026-03-25 10:52:33,845 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-25 10:52:33,846 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-25 10:52:33,847 - data_process - INFO - START received - running DataProcessor
+2026-03-25 10:52:33,848 - data_process - INFO - DataProcessor running
+2026-03-25 10:52:35,672 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-25 10:52:35,682 - communication - INFO - Receive loop exited
+2026-03-25 10:52:35,682 - communication - INFO - Disconnected from device
+2026-03-25 10:52:35,756 - data_process - INFO - DataProcessor stopping
+2026-03-25 10:52:36,699 - data_process - INFO - DataProcessor run() returned - back to idle
+2026-03-25 10:52:39,102 - communication - INFO - Communication process exited
+2026-03-25 10:52:39,782 - data_process - INFO - DataProcessor subprocess exited
+2026-03-25 10:55:53,780 - __main__ - INFO - ============================================================
+2026-03-25 10:55:53,780 - __main__ - INFO - Initializing drone detection system...
+2026-03-25 10:55:53,810 - ipc - INFO - SharedMemory created - spectrum=wnsm_427944a0 detection=wnsm_6610030c
+2026-03-25 10:55:53,810 - __main__ - INFO - Shared memory allocated
+2026-03-25 10:55:53,813 - __main__ - INFO - IPC objects created
+2026-03-25 10:55:53,814 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-03-25 10:55:53,817 - __main__ - INFO - DataProcessor process started
+2026-03-25 10:55:53,817 - __main__ - INFO - Communication process started
+2026-03-25 10:55:56,184 - communication - INFO - Communication process started
+2026-03-25 10:55:57,453 - data_process - INFO - DataProcessor rendering device: cuda
+2026-03-25 10:55:57,512 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-03-25 10:55:57,512 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-03-25 10:55:57,515 - algorithms - INFO - Detector device: cuda
+2026-03-25 10:55:57,990 - algorithms - INFO - Batch detector warmup complete
+2026-03-25 10:55:57,991 - data_process - INFO - DataProcessor initialized, waiting for START
+2026-03-25 10:55:58,282 - __main__ - INFO - System initialization complete
+2026-03-25 10:56:01,454 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-03-25 10:56:01,461 - data_process - INFO - START received - running DataProcessor
+2026-03-25 10:56:01,462 - communication - INFO - Receive loop started
+2026-03-25 10:56:01,463 - communication - INFO - Connected to 127.0.0.1:5000
+2026-03-25 10:56:27,270 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-03-25 10:56:27,270 - communication - ERROR - Receive error: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+2026-03-25 10:56:27,280 - communication - ERROR - Failed to receive frame 631628 data
+2026-03-25 10:56:27,280 - communication - INFO - Receive loop exited
+2026-03-25 10:56:27,280 - communication - INFO - Disconnected from device
+2026-03-25 10:56:27,287 - data_process - INFO - DataProcessor stopping
+2026-03-25 10:56:28,274 - data_process - INFO - DataProcessor run() returned - back to idle

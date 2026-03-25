@@ -135,7 +135,7 @@ class WaterfallVisualizationCard(QWidget):
         bytes_per_line = width * channels
 
         qimage = QImage(
-            image_array.data, width, height, bytes_per_line, QImage.Format.Format_BGR888
+            image_array.data, width, height, bytes_per_line, QImage.Format.Format_RGB888
         )
 
         pixmap = QPixmap.fromImage(qimage).scaled(

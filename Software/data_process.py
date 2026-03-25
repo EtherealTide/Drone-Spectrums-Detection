@@ -235,12 +235,8 @@ class DataProcessor:
 
     def _process_loop(self):
         last_time = time.perf_counter()
-        while self.system_running.value:
+        while self.system_running.value and self._running:
             try:
-                if not self._running:
-                    time.sleep(0.05)
-                    continue
-
                 batch_frames = []
                 try:
                     first_frame = self.fft_data_q.get(timeout=1)
@@ -310,9 +306,9 @@ class DataProcessor:
                 time.sleep(0.1)
 
     def _image_conversion_and_detect_loop(self):
-        while self.system_running.value:
+        while self.system_running.value and self._running:
             try:
-                if not self._running or not self.image_needs_update:
+                if not self.image_needs_update:
                     time.sleep(0.002)
                     continue
 
