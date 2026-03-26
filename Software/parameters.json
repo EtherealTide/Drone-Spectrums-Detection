@@ -1,5 +1,5 @@
 {
-  "Receiver": {
+  "Slave Computer": {
     "FFT_Length": 10240,
     "Centre_frequency(MHz)": 2400.0,
     "SPAN(MHz)": 100.0

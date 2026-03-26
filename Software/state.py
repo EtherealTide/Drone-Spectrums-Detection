@@ -1,4 +1,4 @@
-﻿from PyQt6.QtCore import QObject, pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSignal
 from pathlib import Path
 import json
 import logging
@@ -13,7 +13,7 @@ class State(QObject):
     parameters_changed = pyqtSignal(dict)
 
     # ── Runtime statistics signals (emitted by main-process QTimer from stats queues) ──
-    stats_updated = pyqtSignal(dict)  # DataProcessor stats
+    receiver_stats_updated = pyqtSignal(dict)  # Receiver stats
     detection_updated = pyqtSignal(dict)  # Detector stats
 
     def __init__(self):
@@ -22,19 +22,16 @@ class State(QObject):
         self.data_processing_thread = False
         self.detection_thread = False
         self.data_queue_status = "idle"
-        self.sent_frames = 0
-        self.received_frames = 0
         self._parameters = self._load_parameters()
         self.device_ip = "127.0.0.1"
         # self.device_ip = "192.168.1.100"
         self.device_port = 5000
 
         # ── Runtime statistics (populated by main-process QTimer) ──────────────
-        self.processor_stats: dict = {
-            "frame_id": 0,
-            "max_value": 0.0,
-            "min_value": 0.0,
-            "batch_size": 0,
+        self.receiver_stats: dict = {
+            "fps": 0.0,
+            "sent_frames": 0,
+            "received_frames": 0,
         }
         self.detection_stats: dict = {
             "fps": 0.0,
@@ -59,7 +56,7 @@ class State(QObject):
 
     def _get_default_parameters(self) -> dict:
         return {
-            "Receiver": {
+            "Slave Computer": {
                 "FFT_Length": 10240,
                 "Centre_frequency(MHz)": 2400.0,
                 "SPAN(MHz)": 100.0,
@@ -126,11 +123,11 @@ class State(QObject):
 
     @property
     def center_frequency(self):
-        return self.get_parameter("Receiver", "Centre_frequency(MHz)", 2400.0)
+        return self.get_parameter("Slave Computer", "Centre_frequency(MHz)", 2400.0)
 
     @property
     def span(self):
-        return self.get_parameter("Receiver", "SPAN(MHz)", 100.0)
+        return self.get_parameter("Slave Computer", "SPAN(MHz)", 100.0)
 
     @property
     def spectrum_left_freq(self):
@@ -182,11 +179,11 @@ class State(QObject):
 
     @property
     def total_fft_length(self) -> int:
-        return self.get_parameter("Receiver", "FFT_Length", 10240)
+        return self.get_parameter("Slave Computer", "FFT_Length", 10240)
 
     @property
     def total_bandwidth_mhz(self) -> float:
-        return self.get_parameter("Receiver", "Total_Bandwidth_MHz", 2000.0)
+        return self.get_parameter("Slave Computer", "Total_Bandwidth_MHz", 2000.0)
 
     # ==================== connection status ====================
 

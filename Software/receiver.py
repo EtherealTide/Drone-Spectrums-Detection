@@ -1,9 +1,10 @@
-"""communication.py — TCP socket communication sub-process.
+"""receiver.py — TCP socket communication & real-time DSP sub-process.
 
-Receives FFT frame data from the hardware device and pushes it into
-fft_data_q for the DataProcessor process to consume.
+Receives FFT frame data from the hardware device, performs noise filtering
+on the 1D arrays immediately, and writes them into shared memory ring buffers
+for the inference engine to consume without any IPC data queue overhead.
 
-Process entry point: communication_process()
+Process entry point: receiver_process()
 """
 
 import socket
@@ -15,53 +16,92 @@ import numpy as np
 import time
 import json
 from pathlib import Path
+from multiprocessing.shared_memory import SharedMemory
+
+from ipc import (
+    SHM_SPECTRUM_DTYPE,
+    SHM_SPECTRUM_SHAPE,
+    SHM_WATERFALL_DTYPE,
+    SHM_WATERFALL_SHAPE,
+)
 
 logger = logging.getLogger(__name__)
 
 
-# ── Process entry point ───────────────────────────────────────────────────────
-
-
-def communication_process(
-    fft_data_q,
+def receiver_process(
     ctrl_q,
     status_q,
+    shm_spectrum_name: str,
+    shm_waterfall_name: str,
+    ring_write_idx,
+    ring_count,
     system_running,
     init_params: dict,
 ):
-    """Entry point for the communication sub-process.
-
-    Args:
-        fft_data_q:     Output queue for FFT frame dicts (→ DataProcessor).
-        ctrl_q:         Control command queue from main process.
-        status_q:       Output queue for connection-status events (→ main process).
-        system_running: mp.Value('b') global kill switch.
-        init_params:    Dict with 'fft_length', 'channel_count', 'packet_size'.
-    """
+    """Entry point for the real-time receiver and DSP sub-process."""
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
-    comm = Communication(fft_data_q, ctrl_q, status_q, system_running, init_params)
-    comm.run()
+    receiver = DataReceiver(
+        ctrl_q,
+        status_q,
+        shm_spectrum_name,
+        shm_waterfall_name,
+        ring_write_idx,
+        ring_count,
+        system_running,
+        init_params,
+    )
+    receiver.run()
 
 
-# ── Communication class ───────────────────────────────────────────────────────
-
-
-class Communication:
-    """TCP communication handler, isolated inside its own process."""
-
+class DataReceiver:
     PACKET_MAGIC = 0xAABBCCDD
 
-    def __init__(self, fft_data_q, ctrl_q, status_q, system_running, init_params: dict):
-        self.fft_data_q = fft_data_q
+    def __init__(
+        self,
+        ctrl_q,
+        status_q,
+        shm_spectrum_name: str,
+        shm_waterfall_name: str,
+        ring_write_idx,
+        ring_count,
+        system_running,
+        init_params: dict,
+    ):
         self.ctrl_q = ctrl_q
         self.status_q = status_q
         self.system_running = system_running
 
-        self.total_fft_length = init_params.get("total_fft_length", 10240)
-        self.bytes_per_sample = 4  # float32
+        self.total_fft_length = int(init_params.get("total_fft_length", 10240))
+        self.waterfall_height = max(1, int(init_params.get("waterfall_height", 512)))
+        self.bytes_per_sample = 4
+
+        # DSP params
+        self.enable_noise_filter = bool(init_params.get("enable_noise_filter", False))
+        self.noise_filter_mode = init_params.get("noise_filter_mode", "subtraction")
+        self.noise_alpha = float(init_params.get("noise_alpha", 0.05))
+        self.noise_floor = None
+
+        # Shared memory linkage
+        self.ring_write_idx = ring_write_idx
+        self.ring_count = ring_count
+        
+        self._shm_spectrum = SharedMemory(name=shm_spectrum_name)
+        self._shm_waterfall = SharedMemory(name=shm_waterfall_name)
+        
+        self._spec_arr = np.frombuffer(
+            self._shm_spectrum.buf, dtype=SHM_SPECTRUM_DTYPE
+        ).reshape(SHM_SPECTRUM_SHAPE)
+        
+        self._waterfall_ring = np.frombuffer(
+            self._shm_waterfall.buf, dtype=SHM_WATERFALL_DTYPE
+        ).reshape(SHM_WATERFALL_SHAPE)
+
+        # Init shared states
+        self.ring_write_idx.value = 0
+        self.ring_count.value = 0
 
         self.sock: socket.socket | None = None
         self.receive_thread: threading.Thread | None = None
@@ -80,11 +120,8 @@ class Communication:
             logger.error(f"Failed to load command protocol: {e}")
             return None
 
-    # ── Main process loop ─────────────────────────────────────────────────────
-
     def run(self):
-        """Main loop: polls control queue; receive thread handles socket data."""
-        logger.info("Communication process started")
+        logger.info("DataReceiver process started")
         while self.system_running.value:
             try:
                 cmd = self.ctrl_q.get(timeout=0.1)
@@ -92,11 +129,22 @@ class Communication:
             except queue.Empty:
                 pass
             except Exception as e:
-                logger.error(f"Communication ctrl loop error: {e}", exc_info=True)
+                logger.error(f"DataReceiver ctrl loop error: {e}", exc_info=True)
 
         if self._connected:
             self._disconnect()
-        logger.info("Communication process exited")
+            
+        import gc
+        del self._spec_arr
+        del self._waterfall_ring
+        gc.collect()
+        try:
+            self._shm_spectrum.close()
+            self._shm_waterfall.close()
+        except:
+            pass
+            
+        logger.info("DataReceiver process exited")
 
     def _handle_command(self, cmd: dict):
         cmd_type = cmd.get("cmd")
@@ -107,13 +155,27 @@ class Communication:
         elif cmd_type == "SEND_COMMAND":
             self.send_command(cmd["command_name"], cmd["value"])
         elif cmd_type == "SET_PARAM":
-            name = cmd.get("name")
+            group = cmd.get("group", "")
+            name = cmd.get("name", "")
             value = cmd.get("value")
             
+            if group == "Data_Process":
+                if name == "waterfall_height":
+                    self.waterfall_height = max(1, int(value))
+                    # Reset ring state on resize
+                    self.ring_write_idx.value = 0
+                    self.ring_count.value = 0
+                elif name == "enable_noise_filter":
+                    self.enable_noise_filter = bool(value)
+                    if not self.enable_noise_filter:
+                        self.noise_floor = None
+                elif name == "noise_filter_mode" and value in ("subtraction", "threshold"):
+                    self.noise_filter_mode = value
+                elif name == "noise_alpha":
+                    self.noise_alpha = max(0.0, min(1.0, float(value)))
+
         else:
             logger.warning(f"Unknown command: {cmd_type}")
-
-    # ── Connection management ─────────────────────────────────────────────────
 
     def _connect(self, ip: str, port: int):
         if self._connected:
@@ -149,8 +211,6 @@ class Communication:
         self.status_q.put({"event": "disconnected"})
         logger.info("Disconnected from device")
 
-    # ── Command sending ───────────────────────────────────────────────────────
-
     def send_command(self, command_name: str, value: int) -> bool:
         if not self.sock:
             logger.error("Cannot send command: not connected")
@@ -172,62 +232,45 @@ class Communication:
             logger.error(f"Send command failed: {e}")
             return False
 
-    # ── Data reception ────────────────────────────────────────────────────────
-
     def _receive_loop(self):
-        """Blocking receive loop — runs in a dedicated thread within this process."""
-        logger.info("Receive loop started")
-
+        logger.info("Receiver loop started")
+        last_time= time.perf_counter()
         while self._connected and self.system_running.value:
             try:
-                # ── Frame header: [magic(4)] [frame_id(4)] [data_length(4)] ──
                 header = self._recv_exact(12)
                 if not header:
-                    logger.error("Failed to receive frame header")
                     break
 
                 magic, frame_id, data_length = struct.unpack(">III", header)
-
                 if magic != self.PACKET_MAGIC:
-                    logger.warning(f"Magic mismatch: 0x{magic:08X}, resyncing…")
                     if not self._fast_sync():
                         break
                     continue
 
                 frame_data = self._recv_exact(data_length)
                 if not frame_data:
-                    logger.error(f"Failed to receive frame {frame_id} data")
                     continue
 
                 fft_data = np.frombuffer(frame_data, dtype=np.float32)
                 self.sent_frames = frame_id
                 self.received_frames += 1
-
-                # Report frame counts to main process periodically
+                
+                # 计算性能
+                t0 = time.perf_counter()
+                elapsed = t0 - last_time
+                last_time = t0
+                receive_fps = 1.0 / elapsed if elapsed > 0 else 0.0
                 if self.received_frames % 100 == 0:
                     self.status_q.put(
                         {
                             "event": "frame_stats",
                             "sent_frames": self.sent_frames,
                             "received_frames": self.received_frames,
+                            "receive_fps": receive_fps,
                         }
                     )
 
-                # ── Anti-overflow: discard oldest frame if queue is full ───────
-                frame_dict = {
-                    "timestamp": time.time(),
-                    "data": fft_data,
-                    "length": len(fft_data),
-                    "frame_id": frame_id,
-                }
-                try:
-                    self.fft_data_q.put_nowait(frame_dict)
-                except queue.Full:
-                    try:
-                        self.fft_data_q.get_nowait()
-                        self.fft_data_q.put_nowait(frame_dict)
-                    except Exception:
-                        pass
+                self._process_and_store_frame(fft_data)
 
             except Exception as e:
                 if self._connected:
@@ -235,10 +278,54 @@ class Communication:
                 break
 
         self._connected = False
-        logger.info("Receive loop exited")
+        logger.info("Receiver loop exited")
+
+    def _process_and_store_frame(self, fft_data: np.ndarray):
+        """Perform DSP noise filtering and write to shared memory rings."""
+        # 1. Padding if size mismatch
+        if len(fft_data) != self.total_fft_length:
+            if len(fft_data) > self.total_fft_length:
+                fft_data = fft_data[: self.total_fft_length]
+            else:
+                padded = np.zeros(self.total_fft_length, dtype=fft_data.dtype)
+                padded[: len(fft_data)] = fft_data
+                fft_data = padded
+
+        # 2. Noise Filter
+        if self.enable_noise_filter:
+            if self.noise_filter_mode == "subtraction":
+                if self.noise_floor is None:
+                    self.noise_floor = fft_data.astype(np.float32)
+                diff = fft_data - self.noise_floor
+                alpha_vec = np.where(
+                    diff > 0,
+                    self.noise_alpha * 0.1,
+                    self.noise_alpha,
+                )
+                self.noise_floor = (
+                    (1.0 - alpha_vec) * self.noise_floor + alpha_vec * fft_data
+                )
+                fft_data = fft_data - self.noise_floor
+            elif self.noise_filter_mode == "threshold":
+                frame_mean = np.mean(fft_data)
+                min_val = np.min(fft_data)
+                fft_data = np.where(fft_data < frame_mean, min_val, fft_data)
+
+        # 3. Write to Spectrum Shared Memory
+        self._spec_arr[:self.total_fft_length] = fft_data
+
+        # 4. Write to Waterfall Ring Buffer Shared Memory
+        with self.ring_write_idx.get_lock(), self.ring_count.get_lock():
+            idx = self.ring_write_idx.value
+            self._waterfall_ring[idx, :self.total_fft_length] = fft_data
+            
+            # Move index backwards as requested previously
+            self.ring_write_idx.value = (idx - 1) % self.waterfall_height
+            if self.ring_count.value < self.waterfall_height:
+                self.ring_count.value += 1
+
 
     def _fast_sync(self) -> bool:
-        """Scan byte-by-byte until the magic word is found."""
         magic_bytes = struct.pack(">I", self.PACKET_MAGIC)
         buf = bytearray()
         for _ in range(100_000):
@@ -252,15 +339,12 @@ class Communication:
                 if len(buf) > 4:
                     buf.pop(0)
                 if len(buf) == 4 and bytes(buf) == magic_bytes:
-                    logger.info("Resync successful")
                     return True
-            except Exception:
+            except:
                 return False
-        logger.error("Resync failed after 100 KB")
         return False
 
     def _recv_exact(self, num_bytes: int):
-        """Receive exactly num_bytes from the socket."""
         data = bytearray()
         while len(data) < num_bytes:
             if not self.system_running.value:
@@ -268,15 +352,10 @@ class Communication:
             try:
                 chunk = self.sock.recv(num_bytes - len(data))
                 if not chunk:
-                    logger.error(
-                        f"Socket returned empty data "
-                        f"({len(data)}/{num_bytes} bytes received)"
-                    )
                     return None
                 data.extend(chunk)
             except socket.timeout:
                 continue
-            except Exception as e:
-                logger.error(f"Receive error: {e}")
+            except:
                 return None
         return bytes(data)

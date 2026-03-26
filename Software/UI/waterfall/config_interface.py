@@ -1,4 +1,4 @@
-﻿from PyQt6.QtCore import Qt, QSize, pyqtSignal
+from PyQt6.QtCore import Qt, QSize, pyqtSignal
 from PyQt6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -79,14 +79,14 @@ class WaterfallConfigInterface(QWidget):
         connection_item.setSizeHint(1, QSize(0, switch_widget.sizeHint().height() + 10))
         self.config_tree.setItemWidget(connection_item, 1, switch_widget)
 
-        receiver_item = QTreeWidgetItem(["Receiver"])
+        receiver_item = QTreeWidgetItem(["Slave Computer"])
         self.config_tree.addTopLevelItem(receiver_item)
         receiver_params = [
             ("Centre_frequency(MHz)", self.state.center_frequency, None),
             ("SPAN(MHz)", self.state.span, ["1000", "200", "100", "50", "25", "12.5"]),
         ]
         for name, value, options in receiver_params:
-            self.add_parameter(receiver_item, "Receiver", name, value, options)
+            self.add_parameter(receiver_item, "Slave Computer", name, value, options)
 
         dataprocess_item = QTreeWidgetItem(["Data Process"])
         self.config_tree.addTopLevelItem(dataprocess_item)

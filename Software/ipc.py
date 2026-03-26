@@ -24,11 +24,15 @@ logger = logging.getLogger(__name__)
 MAX_FFT_LENGTH = 1024  # max single-channel FFT points
 MAX_CHANNEL_COUNT = 20  # fixed channel count
 MAX_TOTAL_FFT = MAX_FFT_LENGTH * MAX_CHANNEL_COUNT  # 20480 points max
+MAX_WATERFALL_HEIGHT = 1024 # max waterfall history depth
 
 # ── Array specifications ───────────────────────────────────────────────────────
 
 SHM_SPECTRUM_SHAPE = (MAX_TOTAL_FFT,)  # (fft_pts,)
 SHM_SPECTRUM_DTYPE = np.float32
+
+SHM_WATERFALL_SHAPE = (MAX_WATERFALL_HEIGHT, MAX_TOTAL_FFT)
+SHM_WATERFALL_DTYPE = np.float32
 
 SHM_DETECTION_SHAPE = (512, 512, 3)  # fixed UI display output
 SHM_DETECTION_DTYPE = np.uint8
@@ -48,6 +52,7 @@ def create_shared_memory():
     """
     specs = [
         (SHM_SPECTRUM_SHAPE, SHM_SPECTRUM_DTYPE),
+        (SHM_WATERFALL_SHAPE, SHM_WATERFALL_DTYPE),
         (SHM_DETECTION_SHAPE, SHM_DETECTION_DTYPE),
     ]
     blocks = []
@@ -58,13 +63,14 @@ def create_shared_memory():
         np.frombuffer(shm.buf, dtype=dtype)[:] = 0  # initialise to zeros
         blocks.append(shm)
 
-    shm_spectrum, shm_detection = blocks
+    shm_spectrum, shm_waterfall, shm_detection = blocks
     logger.info(
         "SharedMemory created - "
         f"spectrum={shm_spectrum.name} "
+        f"waterfall={shm_waterfall.name} "
         f"detection={shm_detection.name}"
     )
-    return shm_spectrum, shm_detection
+    return shm_spectrum, shm_waterfall, shm_detection
 
 
 def cleanup_shared_memory(*shm_blocks):
@@ -91,18 +97,18 @@ def create_ipc_objects() -> dict:
         mp.Process(target=fn, args=(ipc["fft_data_q"], ipc["system_running"]))
     """
     return {
-        # Data-flow queues
-        "fft_data_q": mp.Queue(maxsize=50),
-        "dp_stats_q": mp.Queue(maxsize=20),
+        # Status queues
         "det_stats_q": mp.Queue(maxsize=20),
         "comm_status_q": mp.Queue(maxsize=10),
         # Control queues (main -> workers)
         "comm_ctrl_q": mp.Queue(),
-        "dp_ctrl_q": mp.Queue(),
+        "det_ctrl_q": mp.Queue(),
         # Kept for compatibility with old control routing.
         "det_ctrl_q": mp.Queue(),
         # Synchronization primitives
         "frame_counter": mp.Value("i", 0),
+        "ring_write_idx": mp.Value("i", 0),
+        "ring_count": mp.Value("i", 0),
         "detection_lock": mp.Lock(),
         # Global kill switch
         "system_running": mp.Value("b", True),

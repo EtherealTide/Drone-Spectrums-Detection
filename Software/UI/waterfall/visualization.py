@@ -1,4 +1,4 @@
-﻿from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QSizePolicy
 from PyQt6.QtGui import QImage, QPixmap
 import numpy as np
@@ -118,9 +118,9 @@ class WaterfallVisualizationCard(QWidget):
             else:
                 self.result_label.setText("等待检测/瀑布图数据...")
 
-            processor_stats = self.state.processor_stats if self.state else {}
+            receiver_stats = self.state.receiver_stats if self.state else {}
             detection_stats = self.state.detection_stats if self.state else {}
-            self._update_stats(processor_stats, detection_stats)
+            self._update_stats(receiver_stats, detection_stats)
 
         except Exception as e:
             logger.error(f"Waterfall display error: {e}", exc_info=True)
@@ -146,10 +146,10 @@ class WaterfallVisualizationCard(QWidget):
         )
         label.setPixmap(pixmap)
 
-    def _update_stats(self, stats: dict, detection_stats: dict):
-        sent_frames = getattr(self.state, "sent_frames", 0) if self.state else 0
-        received_frames = getattr(self.state, "received_frames", 0) if self.state else 0
-        processed_fps = stats.get("fps", 0.0)
+    def _update_stats(self, receiver_stats: dict, detection_stats: dict):
+        sent_frames = receiver_stats.get("sent_frames", 0) if receiver_stats else 0
+        received_frames = receiver_stats.get("received_frames", 0) if receiver_stats else 0
+        receive_fps = receiver_stats.get("receive_fps", 0.0)
         detection_frames = detection_stats.get("detection_count", 0)
         yolo_fps = detection_stats.get("yolo_fps", 0.0)
         yolo_infer_time_ms = detection_stats.get("yolo_infer_time_ms", 0.0)
@@ -163,7 +163,7 @@ class WaterfallVisualizationCard(QWidget):
             <tr>
                 <td width='33%'>发送帧数: {sent_frames}</td>
                 <td width='33%'>接收帧数: {received_frames}</td>
-                <td width='34%'>数据处理FPS: {processed_fps:.2f}</td>
+                <td width='34%'>接受FPS: {receive_fps:.2f}</td>
             </tr>
             <tr>
                 <td>检测帧数: {detection_frames}</td>

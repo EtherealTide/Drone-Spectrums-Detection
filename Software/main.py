@@ -10,8 +10,8 @@ from PyQt6.QtCore import QTimer
 sys.path.insert(0, str(Path(__file__).parent))
 
 from ipc import create_shared_memory, cleanup_shared_memory, create_ipc_objects
-from communication import communication_process
-from data_process import data_processor_process
+from receiver import receiver_process
+from inference_engine import inference_engine_process
 from state import State
 from UI.main.main_ui import Window
 
@@ -31,18 +31,18 @@ class DroneDetectionSystem:
         logger.info("Initializing drone detection system...")
         self.app = QApplication(sys.argv)
 
-        self.shm_spectrum, self.shm_detection = create_shared_memory()
+        self.shm_spectrum, self.shm_waterfall, self.shm_detection = create_shared_memory()
         logger.info("Shared memory allocated")
 
         ipc = create_ipc_objects()
-        self.fft_data_q = ipc["fft_data_q"]
-        self.dp_stats_q = ipc["dp_stats_q"]
         self.det_stats_q = ipc["det_stats_q"]
         self.comm_status_q = ipc["comm_status_q"]
         self.comm_ctrl_q = ipc["comm_ctrl_q"]
-        self.dp_ctrl_q = ipc["dp_ctrl_q"]
+        self.det_ctrl_q = ipc["det_ctrl_q"]
         self.det_ctrl_q = ipc["det_ctrl_q"]
         self.frame_counter = ipc["frame_counter"]
+        self.ring_write_idx = ipc["ring_write_idx"]
+        self.ring_count = ipc["ring_count"]
         self.detection_lock = ipc["detection_lock"]
         self.system_running = ipc["system_running"]
         logger.info("IPC objects created")
@@ -55,13 +55,13 @@ class DroneDetectionSystem:
         init_params = self._make_init_params()
 
         self._proc_dp = mp.Process(
-            target=data_processor_process,
+            target=inference_engine_process,
             args=(
-                self.fft_data_q,
-                self.dp_stats_q,
-                self.dp_ctrl_q,
+                self.det_ctrl_q,
                 self.shm_detection.name,
-                self.shm_spectrum.name,
+                self.shm_waterfall.name,
+                self.ring_write_idx,
+                self.ring_count,
                 self.frame_counter,
                 self.detection_lock,
                 self.system_running,
@@ -69,25 +69,28 @@ class DroneDetectionSystem:
                 self.det_stats_q,
             ),
             daemon=True,
-            name="DataProcessorProcess",
+            name="InferenceEngineProcess",
         )
         self._proc_dp.start()
-        logger.info("DataProcessor process started")
+        logger.info("InferenceEngine process started")
 
         self._proc_comm = mp.Process(
-            target=communication_process,
+            target=receiver_process,
             args=(
-                self.fft_data_q,
                 self.comm_ctrl_q,
                 self.comm_status_q,
+                self.shm_spectrum.name,
+                self.shm_waterfall.name,
+                self.ring_write_idx,
+                self.ring_count,
                 self.system_running,
                 init_params,
             ),
             daemon=True,
-            name="CommunicationProcess",
+            name="ReceiverProcess",
         )
         self._proc_comm.start()
-        logger.info("Communication process started")
+        logger.info("Receiver process started")
 
         self.main_window = Window(
             shm_spectrum=self.shm_spectrum,
@@ -122,13 +125,6 @@ class DroneDetectionSystem:
         }
 
     def _poll_stats_queues(self):
-        latest_dp: dict | None = None
-        try:
-            while True: latest_dp = self.dp_stats_q.get_nowait()
-        except _queue.Empty: pass
-        if latest_dp:
-            self.state.processor_stats.update(latest_dp)
-            self.state.stats_updated.emit(latest_dp)
 
         latest_det: dict | None = None
         try:
@@ -143,7 +139,7 @@ class DroneDetectionSystem:
                 event = self.comm_status_q.get_nowait()
                 self._handle_comm_event(event)
         except _queue.Empty: pass
-
+        
     def _handle_comm_event(self, event: dict):
         evt = event.get("event", "")
         if evt == "connected":
@@ -153,8 +149,8 @@ class DroneDetectionSystem:
         elif evt == "disconnected":
             self.state.connection_changed.emit(False)
         elif evt == "frame_stats":
-            self.state.sent_frames = event.get("sent_frames", self.state.sent_frames)
-            self.state.received_frames = event.get("received_frames", self.state.received_frames)
+            self.state.receiver_stats.update(event)
+            self.state.receiver_stats_updated.emit(event)
 
     def _setup_connections(self):
         for iface_name in ("spectrumInterface", "waterfallInterface"):
@@ -171,11 +167,11 @@ class DroneDetectionSystem:
     def _handle_parameter_change(self, group: str, name: str, value):
         logger.info(f"Parameter change: {group}.{name} = {value}")
         try:
-            self.state.set_parameter(group, name, value)
+            
             cmd = {"cmd": "SET_PARAM", "group": group, "name": name, "value": value}
 
-            if group == "Receiver":
-                # 暂时什么都不做，理论上给下位机传指令
+            if group == "Slave Computer":
+                # 理论上调整下位机，暂时忽略
                 pass
             elif group == "UI_Waterfall":
                 pass
@@ -183,17 +179,19 @@ class DroneDetectionSystem:
                 if hasattr(self.main_window, "spectrumInterface"):
                     self.main_window.spectrumInterface.visualization_card.update_config()
             elif group == "Data_Process":
-                self.dp_ctrl_q.put_nowait(cmd)
+                self.det_ctrl_q.put_nowait(cmd)
+                self.comm_ctrl_q.put_nowait(cmd)
             elif group == "Detection":
-                # We merged det into dp! So send to dp
-                self.dp_ctrl_q.put_nowait(cmd)
+                # We merged dp into det! So send to det
+                self.det_ctrl_q.put_nowait(cmd)
+            self.state.set_parameter(group, name, value)
         except Exception as e:
             logger.error(f"Parameter change failed: {e}", exc_info=True)        
 
     def _connect_device(self):
         try:
             self.comm_ctrl_q.put_nowait({"cmd": "CONNECT", "ip": self.state.device_ip, "port": self.state.device_port})
-            self.dp_ctrl_q.put_nowait({"cmd": "START"})
+            self.det_ctrl_q.put_nowait({"cmd": "START"})
             for iface_name in ("waterfallInterface", "spectrumInterface"):      
                 iface = getattr(self.main_window, iface_name, None)
                 if iface and hasattr(iface, "visualization_card"):
@@ -203,7 +201,7 @@ class DroneDetectionSystem:
 
     def _disconnect_device(self):
         try:
-            self.dp_ctrl_q.put_nowait({"cmd": "STOP"})
+            self.det_ctrl_q.put_nowait({"cmd": "STOP"})
             self.comm_ctrl_q.put_nowait({"cmd": "DISCONNECT"})
             for iface_name in ("waterfallInterface", "spectrumInterface"):      
                 iface = getattr(self.main_window, iface_name, None)
@@ -232,7 +230,7 @@ class DroneDetectionSystem:
         if sp_card: sp_card._spec_arr = None
         gc.collect()
 
-        cleanup_shared_memory(self.shm_spectrum, self.shm_detection)
+        cleanup_shared_memory(self.shm_spectrum, self.shm_waterfall, self.shm_detection)
 
     def run(self) -> int:
         self.main_window.show()

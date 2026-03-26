@@ -17,18 +17,18 @@ QPushButton:pressed {
     background-color: #3e8e41;
 }
 """
-# 从上到下所有参数解释：
-# border: none;               # 无边框
-# padding: 5px 10px;         # 内边距，上下5px，左右10px
-# font-family: 'Segoe UI';   # 字体
-# font-size: 16px;           # 字体大小
-# color: white;              # 字体颜色
-# text-align: center;        # 文字居中
-# text-decoration: none;     # 无下划线
-# margin: 4px 2px;          # 外边距，上下4px，左右2px
-# border-radius: 4px;       # 边框圆角4px
-# 鼠标悬停时背景颜色变为#45a049
-# 鼠标按下时背景颜色变为#3e8e41
+# 浠庝笂鍒颁笅鎵€鏈夊弬鏁拌В閲婏細
+# border: none;               # 鏃犺竟妗?
+# padding: 5px 10px;         # 鍐呰竟璺濓紝涓婁笅5px锛屽乏鍙?0px
+# font-family: 'Segoe UI';   # 瀛椾綋
+# font-size: 16px;           # 瀛椾綋澶у皬
+# color: white;              # 瀛椾綋棰滆壊
+# text-align: center;        # 鏂囧瓧灞呬腑
+# text-decoration: none;     # 鏃犱笅鍒掔嚎
+# margin: 4px 2px;          # 澶栬竟璺濓紝涓婁笅4px锛屽乏鍙?px
+# border-radius: 4px;       # 杈规鍦嗚4px
+# 榧犳爣鎮仠鏃惰儗鏅鑹插彉涓?45a049
+# 榧犳爣鎸変笅鏃惰儗鏅鑹插彉涓?3e8e41
 ADD_BUTTON_STYLE = (
     BUTTON_STYLE
     + """
