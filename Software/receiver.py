@@ -255,18 +255,24 @@ class DataReceiver:
                 self.sent_frames = frame_id
                 self.received_frames += 1
                 
-                # 计算性能
-                t0 = time.perf_counter()
-                elapsed = t0 - last_time
-                last_time = t0
-                receive_fps = 1.0 / elapsed if elapsed > 0 else 0.0
-                if self.received_frames % 100 == 0:
+                # 计算性能（基于1000帧的块平均 + 指数平滑，进一步消除调度和网络缓冲区抖动）
+                if self.received_frames % 1000 == 0:
+                    t0 = time.perf_counter()
+                    elapsed = t0 - last_time
+                    last_time = t0
+                    inst_receive_fps = 1000.0 / elapsed if elapsed > 0 else 0.0
+                    
+                    if not hasattr(self, 'smoothed_receive_fps'):
+                        self.smoothed_receive_fps = inst_receive_fps
+                    else:
+                        self.smoothed_receive_fps = self.smoothed_receive_fps * 0.9 + inst_receive_fps * 0.1
+
                     self.status_q.put(
                         {
                             "event": "frame_stats",
                             "sent_frames": self.sent_frames,
                             "received_frames": self.received_frames,
-                            "receive_fps": receive_fps,
+                            "receive_fps": self.smoothed_receive_fps,
                         }
                     )
 

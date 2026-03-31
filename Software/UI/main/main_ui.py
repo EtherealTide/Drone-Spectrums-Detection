@@ -27,6 +27,7 @@ from UI.spectrum.home import SpectrumInterface
 from UI.settings.settings_interface import SettingsInterface
 from UI.settings.theme_manager import get_theme_manager
 from UI.waterfall.waterfall_ui import WaterfallInterface
+from UI.performance.performance_ui import PerformanceUI
 
 
 class Widget(QFrame):
@@ -50,7 +51,7 @@ class Window(QMainWindow):
     """Main application window fully based on PyQt6 widgets."""
 
     def __init__(
-        self,shm_spectrum=None, shm_detection=None, state=None
+        self,shm_spectrum=None, shm_detection=None, state=None, perf_manager=None
     ):
         super().__init__()
 
@@ -73,6 +74,7 @@ class Window(QMainWindow):
         self.shm_spectrum = shm_spectrum
         self.shm_detection = shm_detection
         self.state = state
+        self.perf_manager = perf_manager
         self.logo_path = Path(__file__).parent / "logo.png"
         self._splash = None
         self.theme_manager = get_theme_manager()
@@ -140,15 +142,18 @@ class Window(QMainWindow):
             state=self.state,
         )
         self.settingInterface = SettingsInterface(self, self.theme_manager)
+        self.performanceInterface = PerformanceUI(self.perf_manager, self)
+        
         self.albumInterface = Widget("Album Interface", self)
         self.albumInterface1 = Widget("Album Interface 1", self)
 
-        self._add_page("Spectrum", self.spectrumInterface, "🏠")
+        self._add_page("Spectrum", self.spectrumInterface, "📡")
         self._add_page(
             "Waterfall",
             self.waterfallInterface,
-            "📊",
+            "🌊",
         )
+        self._add_page("Performance", self.performanceInterface, "📈")
         # self._add_page("Albums", self.albumInterface, "🖥️")
         # self._add_page("Album 1", self.albumInterface1, "📂")
         self._add_page("Settings", self.settingInterface, "⚙️")

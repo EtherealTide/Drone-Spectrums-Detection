@@ -49,6 +49,9 @@ class DroneDetectionSystem:
 
         self.state = State()
 
+        from UI.performance.stats_manager import PerformanceManager
+        self.perf_manager = PerformanceManager(self.state)
+
         self._proc_comm: mp.Process | None = None
         self._proc_dp: mp.Process | None = None
 
@@ -96,6 +99,7 @@ class DroneDetectionSystem:
             shm_spectrum=self.shm_spectrum,
             shm_detection=self.shm_detection,
             state=self.state,
+            perf_manager=self.perf_manager
         )
 
         self._stats_timer = QTimer()
@@ -215,6 +219,7 @@ class DroneDetectionSystem:
         event.accept()
 
     def _cleanup(self):
+        self.perf_manager.save_to_excel()
         import gc
         self.system_running.value = False
         for proc in (self._proc_comm, self._proc_dp):
