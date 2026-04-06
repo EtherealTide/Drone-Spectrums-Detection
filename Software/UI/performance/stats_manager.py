@@ -65,7 +65,7 @@ class PerformanceManager(QObject):
             cpu_util = 0.0
         
         # GPU utilization with nvidia-smi, limit the call rate to prevent blocking
-        if not hasattr(self, '_last_gpu_time') or current_time - self._last_gpu_time >= 1.0:
+        if not hasattr(self, '_last_gpu_time') or current_time - self._last_gpu_time >= 0.5:
             self._last_gpu_time = current_time
             self._last_gpu_util = 0.0
             try:

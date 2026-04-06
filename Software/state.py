@@ -23,7 +23,7 @@ class State(QObject):
         self.detection_thread = False
         self.data_queue_status = "idle"
         self._parameters = self._load_parameters()
-        self.device_ip = "127.0.0.1"
+        self.device_ip = "mock"
         # self.device_ip = "192.168.1.100"
         self.device_port = 5000
 

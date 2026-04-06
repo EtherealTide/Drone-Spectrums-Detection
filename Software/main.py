@@ -3,7 +3,6 @@ import sys
 import logging
 import queue as _queue
 from pathlib import Path
-
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtCore import QTimer
 
@@ -109,14 +108,11 @@ class DroneDetectionSystem:
         self._setup_connections()
         self.main_window.closeEvent = self._close_event
 
-        logger.info("System initialization complete")
-
     def _make_init_params(self) -> dict:
         return {
             "total_fft_length": self.state.total_fft_length,
             "total_bandwidth_mhz": self.state.total_bandwidth_mhz,
             "waterfall_height": self.state.waterfall_height,
-            "max_batch_windows": 16,
             "enable_noise_filter": self.state.enable_noise_filter,
             "noise_filter_mode": self.state.noise_filter_mode,
             "noise_alpha": self.state.noise_alpha,

@@ -86,7 +86,7 @@ class BatchDroneDetector:
     def _load_model(self):
         try:
             logger.info("Loading YOLO model: %s", self.model_path)
-            self.model = YOLO(str(self.model_path))
+            self.model = YOLO(str(self.model_path), task="detect")
             logger.info("Detector device: %s", self.device)
             self._warmup_model()
         except Exception as exc:

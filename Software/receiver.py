@@ -4,6 +4,11 @@ Receives FFT frame data from the hardware device, performs noise filtering
 on the 1D arrays immediately, and writes them into shared memory ring buffers
 for the inference engine to consume without any IPC data queue overhead.
 
+Mock 模式：当 ip == "mock" 时，不再建立 TCP 连接，而是直接挂载
+  mock_device.py 创建的两块命名共享内存：
+    mock_fft_shm  (DATA SHM)  —— 读取帧数据
+    mock_cmd_shm  (CMD SHM)   —— 写入配置指令
+
 Process entry point: receiver_process()
 """
 
@@ -23,7 +28,16 @@ from ipc import (
     SHM_SPECTRUM_SHAPE,
     SHM_WATERFALL_DTYPE,
     SHM_WATERFALL_SHAPE,
+    MAX_TOTAL_FFT,
 )
+
+# ── Mock SHM 常量（与 mock_device.py 保持一致）─────────────────────────────────
+MOCK_DATA_SHM_NAME = "mock_fft_shm"
+MOCK_CMD_SHM_NAME = "mock_cmd_shm"
+# 头部 24 B：write_seq(8) + read_seq(8) + consumer_ready(4) + reserved(4)
+DATA_SHM_HEADER = 24
+DATA_SHM_SIZE = DATA_SHM_HEADER + MAX_TOTAL_FFT * 4   # + float32 数组
+CMD_SHM_SIZE = 16  # cmd_seq(8) + cmd_code(4) + cmd_value(4)
 
 logger = logging.getLogger(__name__)
 
@@ -83,6 +97,8 @@ class DataReceiver:
         self.noise_filter_mode = init_params.get("noise_filter_mode", "subtraction")
         self.noise_alpha = float(init_params.get("noise_alpha", 0.05))
         self.noise_floor = None
+        self.profile_timing = bool(init_params.get("profile_timing", True))
+        self.profile_interval = max(1, int(init_params.get("profile_interval_receiver", 1000)))
 
         # Shared memory linkage
         self.ring_write_idx = ring_write_idx
@@ -109,7 +125,29 @@ class DataReceiver:
         self.sent_frames = 0
         self.received_frames = 0
 
+        # ── Mock SHM 模式 ─────────────────────────────────────────────────────
+        self._is_mock = False
+        self._mock_data_shm: SharedMemory | None = None
+        self._mock_cmd_shm: SharedMemory | None = None
+        # DATA SHM 视图
+        self._mock_seq_view: np.ndarray | None = None          # uint64 write_seq  [0:8]
+        self._mock_read_seq_view: np.ndarray | None = None     # uint64 read_seq   [8:16]
+        self._mock_consumer_ready: np.ndarray | None = None    # uint32            [16:20]
+        self._mock_data_view: np.ndarray | None = None         # float32 帧数据    [24:]
+        self._mock_cmd_seq: int = 0                            # 本地 cmd 序列号计数器
+
         self.command_protocol = self._load_command_protocol()
+        self._profile_acc = {
+            "recv_header_ms": 0.0,
+            "recv_payload_ms": 0.0,
+            "frombuffer_ms": 0.0,
+            "padding_ms": 0.0,
+            "noise_ms": 0.0,
+            "spec_write_ms": 0.0,
+            "ring_write_ms": 0.0,
+            "process_total_ms": 0.0,
+            "loop_total_ms": 0.0,
+        }
 
     def _load_command_protocol(self):
         protocol_path = Path(__file__).parent / "command.json"
@@ -121,7 +159,6 @@ class DataReceiver:
             return None
 
     def run(self):
-        logger.info("DataReceiver process started")
         while self.system_running.value:
             try:
                 cmd = self.ctrl_q.get(timeout=0.1)
@@ -181,6 +218,9 @@ class DataReceiver:
         if self._connected:
             logger.warning("Already connected")
             return
+        if ip == "mock":
+            self._connect_mock()
+            return
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.connect((ip, port))
@@ -197,6 +237,56 @@ class DataReceiver:
             self.status_q.put({"event": "connection_failed", "error": str(e)})
             self.sock = None
 
+    def _connect_mock(self):
+        """挂载 mock_device.py 创建的共享内存，启动 SHM 帧消费线程"""
+        try:
+            self._mock_data_shm = SharedMemory(
+                name=MOCK_DATA_SHM_NAME, create=False
+            )
+            self._mock_cmd_shm = SharedMemory(
+                name=MOCK_CMD_SHM_NAME, create=False
+            )
+
+            # DATA SHM 视图（与 mock_device.py 头部布局对应）
+            self._mock_seq_view = np.frombuffer(
+                self._mock_data_shm.buf, dtype=np.uint64, count=1, offset=0
+            )
+            self._mock_read_seq_view = np.frombuffer(
+                self._mock_data_shm.buf, dtype=np.uint64, count=1, offset=8
+            )
+            self._mock_consumer_ready = np.frombuffer(
+                self._mock_data_shm.buf, dtype=np.uint32, count=1, offset=16
+            )
+            self._mock_data_view = np.frombuffer(
+                self._mock_data_shm.buf, dtype=np.float32,
+                count=MAX_TOTAL_FFT, offset=DATA_SHM_HEADER
+            )
+
+            # 初始化本地 cmd 序列号并同步至 SHM
+            self._mock_cmd_seq = 0
+            struct.pack_into("<Q", self._mock_cmd_shm.buf, 0, 0)
+
+            self._is_mock = True
+            self._connected = True
+            self.receive_thread = threading.Thread(
+                target=self._mock_receive_loop, daemon=True
+            )
+            self.receive_thread.start()
+            self.status_q.put({"event": "connected", "ip": "mock", "port": 0})
+            logger.info("Mock SHM Mode Connected: attached to shared memory")
+        except Exception as e:
+            logger.error(f"Mock 连接失败: {e}")
+            self.status_q.put({"event": "connection_failed", "error": str(e)})
+            self._is_mock = False
+            for attr in ("_mock_data_shm", "_mock_cmd_shm"):
+                shm = getattr(self, attr)
+                if shm is not None:
+                    try:
+                        shm.close()
+                    except Exception:
+                        pass
+                    setattr(self, attr, None)
+
     def _disconnect(self):
         self._connected = False
         if self.sock:
@@ -208,10 +298,62 @@ class DataReceiver:
         if self.receive_thread:
             self.receive_thread.join(timeout=2)
             self.receive_thread = None
+
+        # 释放 mock SHM 句柄（receiver 只是挂载者，不 unlink）
+        if self._is_mock:
+            # 通知 producer 断开（_mock_receive_loop 的 finally 块也会做，双重保障）
+            if self._mock_consumer_ready is not None:
+                self._mock_consumer_ready[0] = 0
+
+            # 必须先释放所有 numpy 视图，再调用 shm.close()，
+            # 否则会抛 BufferError: cannot close exported pointers exist
+            import gc
+            self._mock_seq_view = None
+            self._mock_read_seq_view = None
+            self._mock_consumer_ready = None
+            self._mock_data_view = None
+            gc.collect()
+
+            for attr in ("_mock_data_shm", "_mock_cmd_shm"):
+                shm: SharedMemory | None = getattr(self, attr)
+                if shm is not None:
+                    try:
+                        shm.close()
+                    except Exception:
+                        pass
+                    setattr(self, attr, None)
+            self._is_mock = False
+
         self.status_q.put({"event": "disconnected"})
         logger.info("Disconnected from device")
 
     def send_command(self, command_name: str, value: int) -> bool:
+        # ── Mock 模式：通过 cmd_shm 传递指令 ────────────────────────────────
+        if self._is_mock:
+            if self._mock_cmd_shm is None:
+                logger.error("Mock cmd SHM not attached")
+                return False
+            try:
+                if not self.command_protocol:
+                    logger.error("Command protocol not loaded")
+                    return False
+                cmd_info = self.command_protocol["commands"].get(command_name)
+                if not cmd_info:
+                    logger.error(f"Unknown command: {command_name}")
+                    return False
+                code = int(cmd_info["code"], 16)
+                # 先写指令内容，再递增序列号（mock_device 检测到变化后读取）
+                struct.pack_into("<I", self._mock_cmd_shm.buf, 8, code)
+                struct.pack_into("<I", self._mock_cmd_shm.buf, 12, value)
+                self._mock_cmd_seq += 1
+                struct.pack_into("<Q", self._mock_cmd_shm.buf, 0, self._mock_cmd_seq)
+                logger.info(f"✓ Mock cmd sent: {command_name} = {value}")
+                return True
+            except Exception as e:
+                logger.error(f"Mock send command failed: {e}")
+                return False
+
+        # ── 真实硬件：TCP 发送 ───────────────────────────────────────────────
         if not self.sock:
             logger.error("Cannot send command: not connected")
             return False
@@ -237,7 +379,10 @@ class DataReceiver:
         last_time= time.perf_counter()
         while self._connected and self.system_running.value:
             try:
+
+
                 header = self._recv_exact(12)
+
                 if not header:
                     break
 
@@ -251,7 +396,9 @@ class DataReceiver:
                 if not frame_data:
                     continue
 
+
                 fft_data = np.frombuffer(frame_data, dtype=np.float32)
+
                 self.sent_frames = frame_id
                 self.received_frames += 1
                 
@@ -278,6 +425,7 @@ class DataReceiver:
 
                 self._process_and_store_frame(fft_data)
 
+
             except Exception as e:
                 if self._connected:
                     logger.error(f"Receive loop error: {e}", exc_info=True)
@@ -286,9 +434,9 @@ class DataReceiver:
         self._connected = False
         logger.info("Receiver loop exited")
 
-    def _process_and_store_frame(self, fft_data: np.ndarray):
+    def _process_and_store_frame(self, fft_data: np.ndarray) -> float:
         """Perform DSP noise filtering and write to shared memory rings."""
-        # 1. Padding if size mismatch
+
         if len(fft_data) != self.total_fft_length:
             if len(fft_data) > self.total_fft_length:
                 fft_data = fft_data[: self.total_fft_length]
@@ -297,7 +445,6 @@ class DataReceiver:
                 padded[: len(fft_data)] = fft_data
                 fft_data = padded
 
-        # 2. Noise Filter
         if self.enable_noise_filter:
             if self.noise_filter_mode == "subtraction":
                 if self.noise_floor is None:
@@ -316,11 +463,8 @@ class DataReceiver:
                 frame_mean = np.mean(fft_data)
                 min_val = np.min(fft_data)
                 fft_data = np.where(fft_data < frame_mean, min_val, fft_data)
-
-        # 3. Write to Spectrum Shared Memory
         self._spec_arr[:self.total_fft_length] = fft_data
 
-        # 4. Write to Waterfall Ring Buffer Shared Memory
         with self.ring_write_idx.get_lock(), self.ring_count.get_lock():
             idx = self.ring_write_idx.value
             self._waterfall_ring[idx, :self.total_fft_length] = fft_data
@@ -329,7 +473,83 @@ class DataReceiver:
             self.ring_write_idx.value = (idx - 1) % self.waterfall_height
             if self.ring_count.value < self.waterfall_height:
                 self.ring_count.value += 1
+        
 
+
+    def _mock_receive_loop(self):
+        """Mock SHM 帧消费循环，替代 TCP _receive_loop。
+
+        同步语义（与 mock_device._send_loop 配对）：
+          1. 置 consumer_ready = 1，通知 producer 可以开始写帧
+          2. 自旋等待 write_seq 变化（producer 写完新帧）
+          3. 零拷贝读取：只 copy 一次到本地 ndarray，供 DSP 处理
+          4. 递增 read_seq，通知 producer 可以写下一帧（流量控制反馈）
+          5. 退出时置 consumer_ready = 0，producer 自动暂停
+
+        无 sleep、无系统调用（copy 除外），吞吐量由 DSP 处理速度决定。
+        """
+        logger.info("Mock SHM receiver loop started")
+
+        # ── 握手：同步初始序列号，通知 producer 开始生产 ─────────────────────
+        init_seq = int(self._mock_seq_view[0])
+        self._mock_read_seq_view[0] = init_seq   # 与当前 write_seq 对齐
+        self._mock_consumer_ready[0] = 1          # 通知 producer 可以发数据
+        last_seq = init_seq
+
+        last_time = time.perf_counter()
+
+        try:
+            while self._connected and self.system_running.value:
+                # ── 等待新帧 ──────────────────────────────────────────────────
+                # time.sleep(0) = sched_yield：立即让出 CPU，几乎立刻重新调度。
+                # 避免纯 pass 自旋占满核心、挤占推理引擎的 CPU 资源。
+                curr_seq = int(self._mock_seq_view[0])
+                if curr_seq == last_seq:
+                    time.sleep(0)  # sched_yield: 让出 CPU，立即重新调度
+                    continue
+
+                # ── 新帧到达 ──────────────────────────────────────────────────
+
+
+                # 一次 memcpy：从 SHM 复制到本地 ndarray（防撕裂读）
+                fft_data = self._mock_data_view[: self.total_fft_length].copy()
+                
+                # 递增 read_seq，解除 producer 的流控阻塞
+                self._mock_read_seq_view[0] = curr_seq
+                last_seq = curr_seq
+
+                self.sent_frames = curr_seq
+                self.received_frames += 1
+
+                # 每 1000 帧上报 FPS
+                if self.received_frames % 1000 == 0:
+                    now = time.perf_counter()
+                    elapsed = now - last_time
+                    last_time = now
+                    inst_fps = 1000.0 / elapsed if elapsed > 0 else 0.0
+                    if not hasattr(self, "smoothed_receive_fps"):
+                        self.smoothed_receive_fps = inst_fps
+                    else:
+                        self.smoothed_receive_fps = (
+                            self.smoothed_receive_fps * 0.9 + inst_fps * 0.1
+                        )
+                    self.status_q.put(
+                        {
+                            "event": "frame_stats",
+                            "sent_frames": self.sent_frames,
+                            "received_frames": self.received_frames,
+                            "receive_fps": self.smoothed_receive_fps,
+                        }
+                    )
+
+                self._process_and_store_frame(fft_data)
+
+        finally:
+            # 无论何种原因退出，都通知 producer 暂停
+            if self._mock_consumer_ready is not None:
+                self._mock_consumer_ready[0] = 0
+            self._connected = False
+            logger.info("Mock SHM receiver loop exited")
 
     def _fast_sync(self) -> bool:
         magic_bytes = struct.pack(">I", self.PACKET_MAGIC)
