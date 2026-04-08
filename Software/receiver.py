@@ -500,12 +500,12 @@ class DataReceiver:
 
         try:
             while self._connected and self.system_running.value:
-                # ── 等待新帧 ──────────────────────────────────────────────────
-                # time.sleep(0) = sched_yield：立即让出 CPU，几乎立刻重新调度。
-                # 避免纯 pass 自旋占满核心、挤占推理引擎的 CPU 资源。
+                # ── 纯自旋等待新帧 ────────────────────────────────────────────
+                # 不使用 time.sleep(0)：Windows 上 sched_yield 实际睡 30~50μs，
+                # 在帧间隔 < 10μs 的场景下是主要瓶颈（FPS 从 100k 跌至 30k）。
+                # receiver 运行在独立进程，自旋不影响推理引擎。
                 curr_seq = int(self._mock_seq_view[0])
                 if curr_seq == last_seq:
-                    time.sleep(0)  # sched_yield: 让出 CPU，立即重新调度
                     continue
 
                 # ── 新帧到达 ──────────────────────────────────────────────────

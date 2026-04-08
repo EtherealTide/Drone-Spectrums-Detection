@@ -1,8 +1,8 @@
 """mock_device.py — 模拟下位机，通过共享内存传输FFT数据。
 
 不再使用 TCP 回环套接字，改为：
-  1. 从硬盘 .npy 文件读取原始FFT数据
-  2. 将帧数据写入命名共享内存 (mock_fft_shm)
+  1. 初始化时从硬盘批量预加载帧到内存（消除热路径磁盘IO）
+  2. 将帧数据写入命名共享内存 (mock_fft_shm)，单槽流控
   3. 通过命名共享内存 (mock_cmd_shm) 接收来自 receiver 的配置指令
 
 共享内存布局
@@ -50,11 +50,22 @@ DATA_SHM_SIZE = DATA_SHM_HEADER + MAX_TOTAL_FFT * 4         # + float32 数组
 
 CMD_SHM_SIZE = 16   # cmd_seq(8) + cmd_code(4) + cmd_value(4)
 
+# 预加载参数：初始化时批量加载，热路径只做 scalar 填充 + 2KB 信号嵌入
+# 每个 512×512 的 .npy 文件 → 512 帧；100 个文件 → ~51200 帧
+# 内存：只存信号（512 pts）+ 最小值，100 文件 ≈ 100 MB
+PRELOAD_FILES = 100
+
 
 class MockDevice:
-    """模拟下位机设备：从磁盘读取FFT数据并写入共享内存"""
+    """模拟下位机设备：预加载信号+最小值，全速写入共享内存（单槽流控）。
 
-    def __init__(self):
+    预加载策略（内存高效）：
+      只存 512 点原始信号 + 每帧最小值，不存完整 10240 点帧。
+      100 文件 × 512 帧/文件 ≈ 51200 帧，内存 ~100 MB（全帧存储需 ~2 GB）。
+    热路径（_send_loop）：scalar 填充背景 + 2KB 信号嵌入，无磁盘 IO。
+    """
+
+    def __init__(self, preload_files: int = PRELOAD_FILES):
         self.running = False
         self.send_thread: threading.Thread | None = None
         self.command_thread: threading.Thread | None = None
@@ -63,13 +74,21 @@ class MockDevice:
         self.single_channel_fft = 512
         self.channel_count = 20
         self.total_fft_length = self.single_channel_fft * self.channel_count
-        self.send_interval = 0.001  # 帧间隔 (s)，约 1000 fps
 
-        # ── 数据源 ────────────────────────────────────────────────────────────
+        # ── 数据源（仅用于预加载，热路径不访问）──────────────────────────────────
         self.data_dir = Path(__file__).parent.parent.parent / "data"
         self.npy_files = sorted(self.data_dir.glob("*.npy"))
         self._current_file_idx = 0
-        self._buffer = np.array([], dtype=np.float32)
+
+        # ── 预加载缓冲（初始化后填充，SET_FFT_LENGTH 触发重建）────────────────────
+        # _preloaded_signals:  (n_frames, single_channel_fft) float32 — 原始 512 点
+        # _preloaded_min_vals: (n_frames,)                    float32 — 每帧最小值
+        self.preload_files = max(1, int(preload_files))
+        self._preloaded_signals: np.ndarray = np.empty(0, dtype=np.float32)
+        self._preloaded_min_vals: np.ndarray = np.empty(0, dtype=np.float32)
+        self._preload_count: int = 0
+        self._preload_dirty: bool = False
+        self._preloaded_frames()  # 初始化时完成所有磁盘 IO
 
         self.frame_id = 0
 
@@ -87,8 +106,9 @@ class MockDevice:
         self._cmd_seq_view: np.ndarray | None = None            # uint64 cmd_seq    [0:8]
 
         logging.info(
-            f"MockDevice initialized: single_channel_fft={self.single_channel_fft}, "
-            f"total_fft_length={self.total_fft_length}"
+            f"MockDevice Initialized: single_channel_fft={self.single_channel_fft}, "
+            f"total_fft_length={self.total_fft_length}, "
+            f"preload_files={self.preload_files}, preload_count={self._preload_count}"
         )
 
     # ── 生命周期 ───────────────────────────────────────────────────────────────
@@ -173,7 +193,7 @@ class MockDevice:
                     logging.warning(f"释放共享内存 {name} 时出错: {exc}")
                 setattr(self, attr, None)
 
-        logging.info("模拟设备已停止")
+        logging.info("Mock device has stopped")
 
     # ── 内部方法 ───────────────────────────────────────────────────────────────
 
@@ -183,7 +203,7 @@ class MockDevice:
             stale = SharedMemory(name=name, create=False)
             stale.close()
             stale.unlink()
-            logging.info(f"已清理残留共享内存: {name}")
+            logging.info(f"Cleaned up stale shared memory: {name}")
         except FileNotFoundError:
             pass
         except Exception as exc:
@@ -200,110 +220,132 @@ class MockDevice:
                 cmd_value = struct.unpack_from("<I", self._cmd_shm.buf, 12)[0]
                 last_cmd_seq = curr_seq
 
-                if cmd_code == 0x01:  # SET_FFT_LENGTH
-                    self.single_channel_fft = cmd_value
-                    self.total_fft_length = self.single_channel_fft * self.channel_count
-                    logging.info(
-                        f"✓ 接收到指令: SET_FFT_LENGTH = {cmd_value}, "
-                        f"total_fft_length = {self.total_fft_length}"
-                    )
-                else:
-                    logging.warning(f"⚠ 未知指令码: 0x{cmd_code:02X}")
-
             time.sleep(0.01)
 
-        logging.info("指令轮询线程已退出")
 
     def _send_loop(self):
-        """数据生产循环，将帧数据写入共享内存。
+        """数据生产循环（预加载帧热路径 + 单槽流控）。
 
-        等待语义（模拟 TCP accept + 发送窗口=1）：
-          1. 阻塞等待 consumer_ready == 1（上位机已挂载 SHM）
-          2. 每帧写入前等待 read_seq 追上 write_seq（consumer 已消费上一帧）
-          3. 写入帧数据后递增 write_seq，无人工限速
+          1. 等待 consumer_ready == 1（上位机挂载 SHM）
+          2. 纯自旋等待 read_seq == write_seq（consumer 消费完上一帧）
+             注意：不能用 time.sleep(0)——Windows 上实际睡 30~50μs，
+             在帧间隔 < 10μs 的高速场景下会严重限速。
+          3. 从预加载帧数组取帧（纯 memcpy，无磁盘 IO），写入 SHM，递增 write_seq
         """
-        logging.info("Data Producer Process is activated, waiting for consumer to connect...")
+        logging.info("Data production thread started, waiting for consumer...")
 
-        # ── 阶段一：等待 consumer 挂载（等价于 TCP accept 阻塞）────────────
+        # ── 等待 consumer 挂载 ────────────────────────────────────────────────
         while self.running and int(self._data_consumer_ready[0]) == 0:
             time.sleep(0.05)
         if not self.running:
-            logging.info("数据生产线程已退出（等待期间停止）")
+            logging.info("Data production thread exited (stopped during wait)")
             return
-        logging.info("The Consumer has connected, the data production process has started.")
+        logging.info("Consumer connected, starting data production")
+
+        preload_idx = 0  # 预加载帧轮转索引
 
         while self.running:
             try:
-                # ── 阶段二：流量控制（等价于 TCP 发送窗口 = 1）──────────────
-                # 等待 consumer 消费完上一帧。使用 time.sleep(0)（sched_yield）
-                # 而非纯 pass：立即让出 CPU 给推理引擎，再几乎立刻被重新调度，
-                # 不引入实质延迟（< 10 μs）但大幅降低对其他进程的 CPU 压力。
+
+                # ── 流量控制：纯自旋等待 consumer 消费完上一帧 ───────────────
+                # 用纯 spin 而非 time.sleep(0)，原因：receiver 处理一帧 < 10μs，
+                # sleep 的调度开销远大于等待时间，反而成为瓶颈。
                 while (
                     self.running
                     and int(self._data_consumer_ready[0]) != 0
                     and int(self._data_seq_view[0]) != int(self._data_read_seq_view[0])
                 ):
-                    time.sleep(0)  # sched_yield: 让出 CPU，立即重新调度
+                    pass  # 纯自旋，帧间隔极短，spin 代价可忽略
 
                 if not self.running:
                     break
 
                 # consumer 断开后暂停，重新等待
                 if int(self._data_consumer_ready[0]) == 0:
-                    logging.info("The Consumer has disconnected, the data production process has paused, waiting for reconnection...")
+                    logging.info("Consumer disconnected, pausing production, waiting for reconnect...")
                     while self.running and int(self._data_consumer_ready[0]) == 0:
                         time.sleep(0.05)
                     if self.running:
-                        logging.info("The Consumer has reconnected, the data production process has resumed.")
+                        logging.info("Consumer reconnected, resuming production")
                     continue
 
-                # ── 阶段三：写入帧数据 ───────────────────────────────────────
-                raw_fft_data = self._generate_raw_fft_data()
-                full_frame = self._prepare_full_frame(raw_fft_data)
-
-                # 先写数据，再递增序列号（consumer 检测到 write_seq 变化即读取）
-                self._data_frame_view[: self.total_fft_length] = full_frame
+                # ── 热路径：scalar 填背景 + 嵌入 512 点信号 ──────────────────
+                fft_len = self.total_fft_length
+                ch_fft = self.single_channel_fft
+                min_val = self._preloaded_min_vals[preload_idx]
+                self._data_frame_view[:fft_len] = min_val
+                self._data_frame_view[5120 : 5120 + ch_fft] = (
+                    self._preloaded_signals[preload_idx]
+                )
                 self._data_seq_view[0] += 1
                 self.frame_id += 1
+                preload_idx = (preload_idx + 1) % self._preload_count
 
             except Exception as exc:
                 if self.running:
                     logging.error(f"数据生产异常: {exc}", exc_info=True)
                 break
 
-        logging.info("数据生产线程已退出")
 
-    def _generate_raw_fft_data(self) -> np.ndarray:
-        """从 .npy 文件缓冲区取出单通道 FFT 数据"""
+    # ── 预加载（所有磁盘 IO 只在此处发生）────────────────────────────────────────
+
+    def _preloaded_frames(self):
+        """加载 preload_files 个 512×512 的 .npy 文件，提取信号和最小值。
+
+        存储结构（内存高效）：
+          _preloaded_signals  : (n_frames, ch_fft) float32  — 原始 512 点信号
+          _preloaded_min_vals : (n_frames,)        float32  — 每帧最小值（热路径填背景用）
+
+        热路径布局：
+          _data_frame_view[:fft_len]           = min_val  （scalar 广播填充背景）
+          _data_frame_view[5120 : 5120+ch_fft] = signal   （嵌入 512 点信号）
+
+        内存估算（100 文件 × 512 帧）：
+          信号: 51200 × 512 × 4 B ≈  100 MB
+          最小值: 51200 × 4 B      ≈    0.2 MB
+          合计 ≈ 100 MB（全帧存储需 ~2 GB）
+        """
+        ch_fft = self.single_channel_fft
+        fft_len = self.total_fft_length
+        t0 = time.perf_counter()
+
+        # 加载 preload_files 个文件（文件不足则循环复用）
+        raw_chunks: list[np.ndarray] = []
+        loaded = 0
+        while loaded < self.preload_files:
+            chunk = self._load_file_chunk()
+            if chunk.size > 0:
+                raw_chunks.append(chunk)
+                loaded += 1
+
+        if not raw_chunks:
+            raise RuntimeError(f"无法加载任何 .npy 文件（目录: {self.data_dir}）")
+
+        raw_all = np.concatenate(raw_chunks)     # 所有原始点拼接
+        n_frames = len(raw_all) // ch_fft
+        if n_frames == 0:
+            raise RuntimeError(f"数据量不足: {len(raw_all)} 点 < {ch_fft} 点/帧")
+
+        # 切分为 (n_frames, ch_fft) —— 每行是一帧的 512 点信号
+        raw_matrix = raw_all[: n_frames * ch_fft].reshape(n_frames, ch_fft)
+
+        # 向量化计算每帧最小值，只保留信号和最小值（不构建完整帧）
+        self._preloaded_signals = np.ascontiguousarray(raw_matrix, dtype=np.float32)
+        self._preloaded_min_vals = raw_matrix.min(axis=1).astype(np.float32)
+        self._preload_count = n_frames
+        self._preload_dirty = False
+
+        elapsed_ms = (time.perf_counter() - t0) * 1000
+        mem_mb = (self._preloaded_signals.nbytes + self._preloaded_min_vals.nbytes) / 1024 / 1024
+        logging.info(
+            f"Preloaded {self.preload_files} files → {n_frames} frames, "
+            f"Memory: {mem_mb:.1f} MB, Time: {elapsed_ms:.1f} ms"
+        )
+
+    def _load_file_chunk(self) -> np.ndarray:
+        """循环加载下一个有效的 .npy 文件并展平为 float32"""
         if not self.npy_files:
             raise RuntimeError(f"未在目录 {self.data_dir} 中找到任何 .npy 文件")
-
-        while self._buffer.size < self.single_channel_fft:
-            chunk = self._load_next_file_chunk()
-            if chunk.size == 0:
-                continue
-            self._buffer = (
-                chunk if self._buffer.size == 0
-                else np.concatenate((self._buffer, chunk))
-            )
-
-        raw = self._buffer[: self.single_channel_fft]
-        self._buffer = self._buffer[self.single_channel_fft :]
-        return raw
-
-    def _prepare_full_frame(self, raw_fft_data: np.ndarray) -> np.ndarray:
-        """
-        模拟下位机数据填充逻辑：
-          前 5120 点填充最小值，接着放 single_channel_fft 点原始数据，
-          剩余部分继续填充最小值。
-        """
-        min_val = np.min(raw_fft_data)
-        full_frame = np.full(self.total_fft_length, min_val, dtype=np.float32)
-        full_frame[5120 : 5120 + self.single_channel_fft] = raw_fft_data
-        return full_frame
-
-    def _load_next_file_chunk(self) -> np.ndarray:
-        """循环加载下一个有效的 .npy 文件"""
         total = len(self.npy_files)
         for _ in range(total):
             path = self.npy_files[self._current_file_idx]
@@ -318,17 +360,9 @@ class MockDevice:
                 logging.warning(f"文件 {path} 为空，跳过")
                 continue
             return flat
-
         logging.error("无法从任何 .npy 文件中获取有效数据")
         return np.array([], dtype=np.float32)
 
-    def set_fft_length(self, length: int):
-        """外部调用：设置单通道FFT长度"""
-        self.single_channel_fft = length
-        self.total_fft_length = self.single_channel_fft * self.channel_count
-        logging.info(
-            f"单通道FFT长度已设置为: {length}, 总长度: {self.total_fft_length}"
-        )
 
 
 if __name__ == "__main__":
@@ -338,5 +372,5 @@ if __name__ == "__main__":
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        logging.info("收到停止信号")
+        logging.info("Received external stop signal")
         device.stop()
