@@ -68,6 +68,10 @@ def inference_engine_process(
     del engine._det_arr
     del engine._waterfall_ring
     gc.collect()
+
+    # Save timing profile to CSV
+    engine._save_profile_to_csv()
+
     try:
         engine._shm_detection.close()
         engine._shm_waterfall.close()
@@ -129,18 +133,71 @@ class InferenceEngine:
         self._waterfall_ring = np.frombuffer(
             self._shm_waterfall.buf, dtype=SHM_WATERFALL_DTYPE
         ).reshape(SHM_WATERFALL_SHAPE)
-        
-        self.waterfall_view = np.zeros(
-            (self.waterfall_height, self.waterfall_width), dtype=np.float32
-        )
-
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # 分配 pinned memory 的 torch tensor，再通过 .numpy() 暴露 numpy 视图，两者共享底层内存
+        self.gpu_ring = torch.empty(
+            (self.waterfall_height, self.waterfall_width),
+            dtype=torch.float32,
+            device=self.device,
+        )
+        # 用于 CPU→GPU 的 pinned 中转缓冲（存未排序的原始 ring 数据）
+        self._ring_pin = torch.empty(
+            (self.waterfall_height, self.waterfall_width),
+            dtype=torch.float32,
+        ).pin_memory()
+        self._ring_pin_np = self._ring_pin.numpy()
+
+        
         self.device_name = torch.cuda.get_device_name(self.device) if torch.cuda.is_available() else "CPU"
         self.device_capability = torch.cuda.get_device_capability(self.device) if torch.cuda.is_available() else (0, 0)
         logger.info("InferenceEngine rendering device: %s", self.device)
         self.jet_lut = self._generate_jet_lut()
 
         self.detector = BatchDroneDetector(init_params)
+
+        self.profiling_records = []
+
+    def _save_profile_to_csv(self):
+        import os
+        import csv
+        from pathlib import Path
+        import datetime
+        
+        if not self.profiling_records:
+            return
+            
+        output_dir = Path(__file__).parent.parent / "Output"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        csv_path = output_dir / f"timing_profile_detailed.csv"
+        
+        try:
+            with open(csv_path, mode='w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                headers = [
+                    "Frame", "Rebuild_Waterfall(ms)","Normalization(ms)", "RGB_Mapping(ms)", 
+                    "Pre_Processing(ms)", "Inference(ms)", "Post_Processing(ms)","Copy_To_CPU(ms)", "Drawing(ms)", "Total_Time(ms)"
+                ]
+                writer.writerow(headers)
+                
+                for idx, record in enumerate(self.profiling_records):
+                    row = [
+                        idx + 1,
+                        f"{record.get('rebuild_waterfall', 0.0)*1000:.3f}",
+                        f"{record.get('normalization', 0.0)*1000:.3f}",
+                        f"{record.get('rgb_mapping', 0.0)*1000:.3f}",
+                        f"{record.get('pre_processing', 0.0)*1000:.3f}",
+                        f"{record.get('inference', 0.0)*1000:.3f}",
+                        f"{record.get('post_processing', 0.0)*1000:.3f}",
+                        f"{record.get('copy_to_cpu', 0.0)*1000:.3f}",
+                        f"{record.get('drawing', 0.0)*1000:.3f}",
+                        f"{record.get('total', 0.0)*1000:.3f}",
+                    ]
+                    writer.writerow(row)
+                    
+            logger.info("Detailed performance profiling saved to %s", csv_path)
+        except Exception as e:
+            logger.error("Failed to save detailed profiling to CSV: %s", e)
 
     def _generate_jet_lut(self) -> torch.Tensor:
         color_map = np.arange(256, dtype=np.uint8).reshape(-1, 1)
@@ -163,7 +220,11 @@ class InferenceEngine:
             if name == "waterfall_height":
                 self.waterfall_height = max(1, int(value))
                 if self.waterfall_height != self.waterfall_view.shape[0]:
-                    self.waterfall_view = np.zeros((self.waterfall_height, self.waterfall_width), dtype=np.float32)
+                    self._waterfall_pin = torch.empty(
+                        (self.waterfall_height, self.waterfall_width),
+                        dtype=torch.float32,
+                    ).pin_memory()
+                    self.waterfall_view = self._waterfall_pin.numpy()
             elif name == "max_batch_windows":
                 self.max_batch_windows = max(1, int(value))
         elif group == "Detection":
@@ -198,19 +259,30 @@ class InferenceEngine:
                 last_processed_idx = current_idx
                 self.inference_frame_count += 1
                 
-                # Copy from shared memory ring to local view safely yet lockless-friendly
-                self._rebuild_waterfall_image(current_idx, cnt)
+                t_start_total = time.perf_counter()
+
+                # ------ Phase 1: Rebuild Waterfall ------
+                t0 = time.perf_counter()
+                gpu_tensor = self._rebuild_waterfall_gpu(current_idx, cnt)
+                t_rebuild = time.perf_counter() - t0
                 
-                # GPU Mapping & Tensors
-                gpu_tensor = torch.from_numpy(self.waterfall_view).to(self.device, non_blocking=True)
+                # ------ Phase 2: Normalization ------
+                t1 = time.perf_counter()
                 t_min, t_max = torch.aminmax(gpu_tensor)
                 min_db = float(t_min.item())
                 max_db = float(t_max.item())
 
                 norm_tensor = (gpu_tensor - t_min) / (t_max - t_min + 1e-12)
                 idx_tensor = (norm_tensor * 255.0).to(torch.long)
-                color_tensor = self.jet_lut[idx_tensor]  # [H, W, 3]
+                t_norm = time.perf_counter() - t1
 
+                # ------ Phase 3: RGB Mapping ------
+                t2 = time.perf_counter()
+                color_tensor = self.jet_lut[idx_tensor]  # [H, W, 3]
+                t_rgb = time.perf_counter() - t2
+
+                # ------ Phase 4: Slicing (Pre-process 1) ------
+                t3 = time.perf_counter()
                 window_w = self.total_fft_length // 20
                 max_windows_by_width = color_tensor.shape[1] // max(1, window_w)
                 window_count = max(1, min(self.max_batch_windows, max_windows_by_width))
@@ -223,21 +295,28 @@ class InferenceEngine:
                     .permute(1, 0, 2, 3)
                     .contiguous()
                 )
+                t_slice = time.perf_counter() - t3
             
-                selected_window, detections, infer_time_s = self.detector.detect_batch(
+                # ------ Phase 5: YOLO Pre-process, Inference & Post-process ------
+                selected_window, detections, algo_timings = self.detector.detect_batch(
                     batched_tensor,
                     fallback_window=self.last_selected_window,
                 )
+                
+                t_preprocess = t_slice + algo_timings.get("preprocess", 0.0)
+                t_infer = algo_timings.get("infer", 0.0)
+                t_postprocess = algo_timings.get("postprocess", 0.0)
+                
+
+                # ------ Phase 6: Drawing & Wrap up ------
+                t4 = time.perf_counter()
                 selected_window = int(max(0, min(selected_window, window_count - 1)))
-                self.yolo_infer_time_ms = infer_time_s * 1000.0
-                if infer_time_s > 0:
-                    inst_yolo_fps = 1.0 / infer_time_s
-                    if self.yolo_fps <= 0:
-                        self.yolo_fps = inst_yolo_fps
-                    else:
-                        self.yolo_fps = self.yolo_fps * 0.9 + inst_yolo_fps * 0.1
+                
 
                 selected_image = batched_tensor[selected_window].cpu().numpy()
+                t_copy_to_cpu = time.perf_counter() - t4
+
+                t5 = time.perf_counter()
                 annotated = self.detector.draw_detections(
                     selected_image,
                     detections,
@@ -249,6 +328,29 @@ class InferenceEngine:
 
                 with self.detection_lock:
                     self._det_arr[:] = resized
+                    
+                t_draw = time.perf_counter() - t5
+                
+                t_total = time.perf_counter() - t_start_total
+                infer_time_s = t_total
+                self.yolo_infer_time_ms = infer_time_s * 1000.0
+                if infer_time_s > 0:
+                    inst_yolo_fps = 1.0 / infer_time_s
+                    if self.yolo_fps <= 0:
+                        self.yolo_fps = inst_yolo_fps
+                    else:
+                        self.yolo_fps = self.yolo_fps * 0.9 + inst_yolo_fps * 0.1
+                self.profiling_records.append({
+                    "rebuild_waterfall": t_rebuild,
+                    "normalization": t_norm,
+                    "rgb_mapping": t_rgb,
+                    "pre_processing": t_preprocess,
+                    "inference": t_infer,
+                    "post_processing": t_postprocess,
+                    "copy_to_cpu": t_copy_to_cpu,
+                    "drawing": t_draw,
+                    "total": t_total
+                })
 
                 self.frame_counter.value += 1
                 self.detection_count += 1
@@ -301,15 +403,23 @@ class InferenceEngine:
             except Exception:
                 pass
 
-    def _rebuild_waterfall_image(self, write_idx: int, cnt: int):
+    def _rebuild_waterfall_gpu(self, write_idx: int, cnt: int) -> torch.Tensor:
+        """把 ring buffer 直接上传 GPU 并在 GPU 端完成时序重排。"""
         h = self.waterfall_height
+        w = self.waterfall_width
+        src = self._waterfall_ring[:h, :w]  # numpy view，零拷贝
+
         if cnt < h:
-            pad = h - cnt
-            self.waterfall_view[:pad, :] = 0.0
-            if cnt > 0:
-                self.waterfall_view[pad:, :] = self._waterfall_ring[:cnt, :self.waterfall_width]
+            # Ring 未满：有效数据在 [0:cnt]，其余补零
+            self._ring_pin_np[:cnt] = src[:cnt]   # memcpy → pinned
+            self._ring_pin_np[cnt:] = 0.0
+            self.gpu_ring.copy_(self._ring_pin, non_blocking=True)
+            # 数据本身已按时序排列，直接返回
+            return self.gpu_ring
         else:
-            tail = h - write_idx
-            self.waterfall_view[:tail, :] = self._waterfall_ring[write_idx:h, :self.waterfall_width]
-            if write_idx > 0:
-                self.waterfall_view[tail:, :] = self._waterfall_ring[:write_idx, :self.waterfall_width]
+            # Ring 已满：write_idx 是"下一个写入位置"（最旧的一行）
+            # 直接整块 memcpy，不做 CPU 重排
+            self._ring_pin_np[:] = src
+            self.gpu_ring.copy_(self._ring_pin, non_blocking=True)
+            # GPU 端：roll(-write_idx) 把 write_idx 行移到第 0 行（最旧→最顶）
+            return torch.roll(self.gpu_ring, -write_idx, dims=0)

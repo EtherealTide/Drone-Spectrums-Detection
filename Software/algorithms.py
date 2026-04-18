@@ -117,32 +117,20 @@ class BatchDroneDetector:
         self,
         batched_bgr_tensor: torch.Tensor,
         fallback_window: int = 0,
-    ) -> tuple[int, list[dict], float]:
-        """Run one-shot inference over a BGR image batch on GPU.
-
-        Args:
-            batched_bgr_tensor: [B, H, W, 3], uint8/float, expected on same device.
-
-        Returns:
-            (chosen_window_index, detections)
-            detections item format:
-              {
-                "window_index": int,
-                "bbox": [x1, y1, x2, y2],
-                "confidence": float,
-                "class_id": int,
-                "class_name": str,
-              }
-        """
+    ) -> tuple[int, list[dict], dict]:
+        """Run one-shot inference over a BGR image batch on GPU."""
+        
+        t_start = time.perf_counter()
+        
         if batched_bgr_tensor.ndim != 4 or batched_bgr_tensor.shape[-1] != 3:
             raise ValueError("batched_bgr_tensor must be shaped [B, H, W, 3]")
 
         batch_count = int(min(self.max_batch_windows, batched_bgr_tensor.shape[0]))
         if batch_count <= 0:
-            return 0, [], 0.0
+            return 0, [], {"preprocess": 0.0, "infer": 0.0, "postprocess": 0.0}
 
         if self.model is None:
-            return 0, [], 0.0
+            return 0, [], {"preprocess": 0.0, "infer": 0.0, "postprocess": 0.0}
 
         images = batched_bgr_tensor[:batch_count]
         if images.device != self.device:
@@ -158,9 +146,10 @@ class BatchDroneDetector:
             "verbose": False,
         }
 
-        infer_t0 = time.perf_counter()
+        t_preprocess = time.perf_counter()
         results = self.model(yolo_input, **kwargs)
-        infer_time_s = time.perf_counter() - infer_t0
+        t_infer = time.perf_counter()
+        
         all_detections: list[dict] = []
         target_candidates: list[tuple[int, float]] = []
         any_candidates: list[tuple[int, float]] = []
@@ -169,16 +158,14 @@ class BatchDroneDetector:
             boxes = result.boxes
             if boxes is None:
                 continue
-
-            for box in boxes:
-                x1, y1, x2, y2 = map(int, box.xyxy[0].tolist())
-                conf = float(box.conf[0].item())
-                cls_id = int(box.cls[0].item())
+            data = boxes.data.cpu().tolist()
+            for row in data:
+                x1, y1, x2, y2 = int(row[0]), int(row[1]), int(row[2]), int(row[3])
+                conf = row[4]
+                cls_id = int(row[5])
                 if cls_id == self.flight_control_class_id:
                     target_candidates.append((window_idx, conf))
-
                 any_candidates.append((window_idx, conf))
-
                 all_detections.append(
                     {
                         "window_index": window_idx,
@@ -192,7 +179,6 @@ class BatchDroneDetector:
                         ),
                     }
                 )
-
         if target_candidates:
             # Prefer the strongest Flight-control signal detection.
             chosen_index = max(target_candidates, key=lambda item: item[1])[0]
@@ -202,7 +188,15 @@ class BatchDroneDetector:
         else:
             chosen_index = int(max(0, fallback_window))
 
-        return chosen_index, all_detections, infer_time_s
+        t_postprocess = time.perf_counter()
+        
+        timings = {
+            "preprocess": t_preprocess - t_start,
+            "infer": t_infer - t_preprocess,
+            "postprocess": t_postprocess - t_infer
+        }
+
+        return chosen_index, all_detections, timings
 
     def draw_detections(
         self,

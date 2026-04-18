@@ -15,7 +15,7 @@
   },
   "UI_Spectrum": {
     "spectrum_left_freq(MHz)": 1000,
-    "spectrum_right_freq(MHz)": 1300
+    "spectrum_right_freq(MHz)": 1050
   },
   "UI_Waterfall": {
     "spectrum_left_freq(MHz)": 1000,

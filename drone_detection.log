@@ -1,0 +1,450 @@
+2026-04-09 12:28:02,683 - __main__ - INFO - ============================================================
+2026-04-09 12:28:02,683 - __main__ - INFO - Initializing drone detection system...
+2026-04-09 12:28:02,744 - ipc - INFO - SharedMemory created - spectrum=wnsm_57e4b6cd waterfall=wnsm_82311cb9 detection=wnsm_21774994
+2026-04-09 12:28:02,744 - __main__ - INFO - Shared memory allocated
+2026-04-09 12:28:02,744 - __main__ - INFO - IPC objects created
+2026-04-09 12:28:02,752 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-09 12:28:02,772 - __main__ - INFO - InferenceEngine process started
+2026-04-09 12:28:02,774 - __main__ - INFO - Receiver process started
+2026-04-09 12:28:05,417 - inference_engine - INFO - InferenceEngine rendering device: cuda
+2026-04-09 12:28:05,542 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-04-09 12:28:05,543 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-04-09 12:28:05,544 - algorithms - INFO - Detector device: cuda
+2026-04-09 12:28:06,105 - algorithms - INFO - Batch detector warmup complete
+2026-04-09 12:28:06,105 - inference_engine - INFO - InferenceEngine initialized, waiting for START
+2026-04-09 12:28:06,411 - UI.performance.stats_manager - INFO - Performance stats saved to Output\performance_stats.csv
+2026-04-09 12:28:06,509 - receiver - INFO - DataReceiver process exited
+2026-04-09 12:28:07,169 - inference_engine - INFO - InferenceEngine subprocess exited
+2026-04-09 12:28:26,266 - __main__ - INFO - ============================================================
+2026-04-09 12:28:26,266 - __main__ - INFO - Initializing drone detection system...
+2026-04-09 12:28:26,330 - ipc - INFO - SharedMemory created - spectrum=wnsm_c84c454f waterfall=wnsm_db1bdf80 detection=wnsm_46f9e68a
+2026-04-09 12:28:26,331 - __main__ - INFO - Shared memory allocated
+2026-04-09 12:28:26,331 - __main__ - INFO - IPC objects created
+2026-04-09 12:28:26,331 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-09 12:28:26,350 - __main__ - INFO - InferenceEngine process started
+2026-04-09 12:28:26,355 - __main__ - INFO - Receiver process started
+2026-04-09 12:28:28,856 - inference_engine - INFO - InferenceEngine rendering device: cuda
+2026-04-09 12:28:28,962 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-04-09 12:28:28,962 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-04-09 12:28:28,965 - algorithms - INFO - Detector device: cuda
+2026-04-09 12:28:29,506 - algorithms - INFO - Batch detector warmup complete
+2026-04-09 12:28:29,506 - inference_engine - INFO - InferenceEngine initialized, waiting for START
+2026-04-09 12:28:31,093 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-04-09 12:28:31,099 - inference_engine - INFO - START received - running InferenceEngine
+2026-04-09 12:28:31,099 - inference_engine - INFO - InferenceEngine running
+2026-04-09 12:28:31,099 - receiver - INFO - Mock SHM receiver loop started
+2026-04-09 12:28:31,115 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-09 12:29:39,362 - UI.spectrum.config_interface - INFO - Connection toggle changed: False
+2026-04-09 12:29:39,364 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-09 12:29:39,379 - inference_engine - INFO - InferenceEngine stopping
+2026-04-09 12:29:39,379 - inference_engine - INFO - InferenceEngine run() returned - back to idle
+2026-04-09 12:29:39,434 - receiver - INFO - Disconnected from device
+2026-04-09 12:29:39,961 - UI.performance.stats_manager - INFO - Performance stats saved to Output\performance_stats.csv
+2026-04-09 12:29:40,038 - receiver - INFO - DataReceiver process exited
+2026-04-09 12:29:40,466 - inference_engine - INFO - Detailed performance profiling saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Output\timing_profile_detailed.csv
+2026-04-09 12:29:40,468 - inference_engine - INFO - InferenceEngine subprocess exited
+2026-04-09 13:43:23,210 - __main__ - INFO - ============================================================
+2026-04-09 13:43:23,210 - __main__ - INFO - Initializing drone detection system...
+2026-04-09 13:43:23,274 - ipc - INFO - SharedMemory created - spectrum=wnsm_39b85bb4 waterfall=wnsm_24ef08d9 detection=wnsm_027e95ff
+2026-04-09 13:43:23,283 - __main__ - INFO - Shared memory allocated
+2026-04-09 13:43:23,283 - __main__ - INFO - IPC objects created
+2026-04-09 13:43:23,286 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-09 13:43:23,304 - __main__ - INFO - InferenceEngine process started
+2026-04-09 13:43:23,311 - __main__ - INFO - Receiver process started
+2026-04-09 13:43:26,033 - inference_engine - INFO - InferenceEngine rendering device: cuda
+2026-04-09 13:43:26,155 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-04-09 13:43:26,155 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-04-09 13:43:26,155 - algorithms - INFO - Detector device: cuda
+2026-04-09 13:43:26,759 - algorithms - INFO - Batch detector warmup complete
+2026-04-09 13:43:26,759 - inference_engine - INFO - InferenceEngine initialized, waiting for START
+2026-04-09 13:43:30,005 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-04-09 13:43:30,014 - inference_engine - INFO - START received - running InferenceEngine
+2026-04-09 13:43:30,014 - receiver - INFO - Mock SHM receiver loop started
+
+2026-04-09 13:43:30,014 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-09 13:44:35,359 - UI.spectrum.config_interface - INFO - Connection toggle changed: False
+2026-04-09 13:44:35,367 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-09 13:44:35,383 - inference_engine - INFO - InferenceEngine stopping
+2026-04-09 13:44:35,383 - inference_engine - INFO - InferenceEngine run() returned - back to idle
+2026-04-09 13:44:35,431 - receiver - INFO - Disconnected from device
+2026-04-09 13:44:36,543 - UI.performance.stats_manager - INFO - Performance stats saved to Output\performance_stats.csv
+2026-04-09 13:44:36,682 - receiver - INFO - DataReceiver process exited
+2026-04-09 13:44:37,453 - inference_engine - INFO - Detailed performance profiling saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Output\timing_profile_detailed.csv
+2026-04-09 13:44:37,453 - inference_engine - INFO - InferenceEngine subprocess exited
+2026-04-09 14:04:20,080 - __main__ - INFO - ============================================================
+2026-04-09 14:04:20,081 - __main__ - INFO - Initializing drone detection system...
+2026-04-09 14:04:20,143 - ipc - INFO - SharedMemory created - spectrum=wnsm_98d0f154 waterfall=wnsm_23ea2800 detection=wnsm_4e8d4f79
+2026-04-09 14:04:20,143 - __main__ - INFO - Shared memory allocated
+2026-04-09 14:04:20,143 - __main__ - INFO - IPC objects created
+2026-04-09 14:04:20,143 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-09 14:04:20,165 - __main__ - INFO - InferenceEngine process started
+2026-04-09 14:04:20,172 - __main__ - INFO - Receiver process started
+2026-04-09 14:04:22,817 - inference_engine - INFO - InferenceEngine rendering device: cuda
+2026-04-09 14:04:22,988 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-04-09 14:04:22,989 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-04-09 14:04:22,991 - algorithms - INFO - Detector device: cuda
+2026-04-09 14:04:23,402 - UI.spectrum.config_interface - INFO - Connection toggle changed: True
+2026-04-09 14:04:23,413 - receiver - INFO - Mock SHM receiver loop started
+2026-04-09 14:04:23,444 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-09 14:04:23,532 - algorithms - INFO - Batch detector warmup complete
+2026-04-09 14:04:23,533 - inference_engine - INFO - InferenceEngine initialized, waiting for START
+2026-04-09 14:04:23,533 - inference_engine - INFO - START received - running InferenceEngine
+2026-04-09 14:04:23,533 - inference_engine - INFO - InferenceEngine running
+2026-04-09 14:05:02,084 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-04-09 14:05:02,085 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-09 14:05:02,086 - inference_engine - INFO - InferenceEngine stopping
+2026-04-09 14:05:02,087 - inference_engine - INFO - InferenceEngine run() returned - back to idle
+2026-04-09 14:05:02,153 - receiver - INFO - Disconnected from device
+2026-04-09 14:05:02,642 - UI.performance.stats_manager - INFO - Performance stats saved to Output\performance_stats.csv
+2026-04-09 14:05:02,763 - receiver - INFO - DataReceiver process exited
+2026-04-09 14:05:03,165 - inference_engine - INFO - Detailed performance profiling saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Output\timing_profile_detailed.csv
+2026-04-09 14:05:03,167 - inference_engine - INFO - InferenceEngine subprocess exited
+2026-04-09 14:05:11,779 - __main__ - INFO - ============================================================
+2026-04-09 14:05:11,779 - __main__ - INFO - Initializing drone detection system...
+2026-04-09 14:05:11,840 - ipc - INFO - SharedMemory created - spectrum=wnsm_cc0dff69 waterfall=wnsm_7ad2e443 detection=wnsm_d875d674
+2026-04-09 14:05:11,843 - __main__ - INFO - Shared memory allocated
+2026-04-09 14:05:11,845 - __main__ - INFO - IPC objects created
+2026-04-09 14:05:11,845 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-09 14:05:11,867 - __main__ - INFO - InferenceEngine process started
+2026-04-09 14:05:11,872 - __main__ - INFO - Receiver process started
+2026-04-09 14:05:14,493 - inference_engine - INFO - InferenceEngine rendering device: cuda
+2026-04-09 14:05:14,587 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-04-09 14:05:14,588 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-04-09 14:05:14,591 - algorithms - INFO - Detector device: cuda
+2026-04-09 14:05:15,116 - algorithms - INFO - Batch detector warmup complete
+2026-04-09 14:05:15,116 - inference_engine - INFO - InferenceEngine initialized, waiting for START
+2026-04-09 14:05:18,797 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-04-09 14:05:18,803 - inference_engine - INFO - START received - running InferenceEngine
+2026-04-09 14:05:18,803 - inference_engine - INFO - InferenceEngine running
+2026-04-09 14:05:18,803 - receiver - INFO - Mock SHM receiver loop started
+2026-04-09 14:05:18,826 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-09 14:06:31,567 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-04-09 14:06:31,569 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-09 14:06:31,573 - inference_engine - INFO - InferenceEngine stopping
+2026-04-09 14:06:31,574 - inference_engine - INFO - InferenceEngine run() returned - back to idle
+2026-04-09 14:06:31,638 - receiver - INFO - Disconnected from device
+2026-04-09 14:06:32,839 - UI.performance.stats_manager - INFO - Performance stats saved to Output\performance_stats.csv
+2026-04-09 14:06:32,985 - receiver - INFO - DataReceiver process exited
+2026-04-09 14:06:33,660 - inference_engine - INFO - Detailed performance profiling saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Output\timing_profile_detailed.csv
+2026-04-09 14:06:33,660 - inference_engine - INFO - InferenceEngine subprocess exited
+2026-04-10 13:14:34,833 - __main__ - INFO - ============================================================
+2026-04-10 13:14:34,833 - __main__ - INFO - Initializing drone detection system...
+2026-04-10 13:14:34,980 - ipc - INFO - SharedMemory created - spectrum=wnsm_34e34626 waterfall=wnsm_18a5c0f9 detection=wnsm_a785a6db
+2026-04-10 13:14:34,981 - __main__ - INFO - Shared memory allocated
+2026-04-10 13:14:34,986 - __main__ - INFO - IPC objects created
+2026-04-10 13:14:34,988 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-10 13:14:35,019 - __main__ - INFO - InferenceEngine process started
+2026-04-10 13:14:35,025 - __main__ - INFO - Receiver process started
+2026-04-10 13:14:37,538 - inference_engine - INFO - InferenceEngine rendering device: cuda
+2026-04-10 13:14:37,657 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-04-10 13:14:37,658 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-04-10 13:14:37,662 - algorithms - INFO - Detector device: cuda
+2026-04-10 13:14:53,508 - algorithms - INFO - Batch detector warmup complete
+2026-04-10 13:14:53,508 - inference_engine - INFO - InferenceEngine initialized, waiting for START
+2026-04-10 13:15:08,277 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-04-10 13:15:08,288 - receiver - INFO - Mock SHM receiver loop started
+ InferenceEngine
+2026-04-10 13:15:08,288 - inference_engine - INFO - InferenceEngine running
+2026-04-10 13:15:08,289 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-10 13:15:23,586 - __main__ - INFO - Parameter change: UI_Spectrum.spectrum_right_freq(MHz) = 1100
+2026-04-10 13:15:23,587 - state - INFO - parameter updated: UI_Spectrum.spectrum_right_freq(MHz) = 1100 (old 1300)
+2026-04-10 13:15:23,588 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-10 13:15:23,588 - UI.spectrum.config_interface - INFO - UI display refreshed: UI_Spectrum.spectrum_right_freq(MHz) = 1100
+2026-04-10 13:15:23,588 - UI.spectrum.config_interface - INFO - Request parameter update: UI_Spectrum.spectrum_right_freq(MHz) = 1100 (type: int)
+2026-04-10 13:15:26,080 - __main__ - INFO - Parameter change: UI_Spectrum.spectrum_right_freq(MHz) = 1100
+2026-04-10 13:15:26,085 - state - INFO - parameter updated: UI_Spectrum.spectrum_right_freq(MHz) = 1100 (old 1100)
+2026-04-10 13:15:26,086 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-10 13:15:26,086 - UI.spectrum.config_interface - INFO - UI display refreshed: UI_Spectrum.spectrum_right_freq(MHz) = 1100
+2026-04-10 13:15:26,086 - UI.spectrum.config_interface - INFO - Request parameter update: UI_Spectrum.spectrum_right_freq(MHz) = 1100 (type: int)
+2026-04-10 13:16:29,000 - UI.spectrum.config_interface - INFO - Connection toggle changed: False
+2026-04-10 13:16:29,006 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-10 13:16:29,020 - inference_engine - INFO - InferenceEngine stopping
+2026-04-10 13:16:29,020 - inference_engine - INFO - InferenceEngine run() returned - back to idle
+2026-04-10 13:16:29,074 - receiver - INFO - Disconnected from device
+2026-04-10 13:16:29,896 - receiver - INFO - DataReceiver process exited
+2026-04-10 13:16:30,098 - inference_engine - INFO - InferenceEngine subprocess exited
+2026-04-11 23:42:08,259 - __main__ - INFO - ============================================================
+2026-04-11 23:42:08,259 - __main__ - INFO - Initializing drone detection system...
+2026-04-11 23:42:08,321 - ipc - INFO - SharedMemory created - spectrum=wnsm_31b6c3aa waterfall=wnsm_ab338490 detection=wnsm_8e76ff26
+2026-04-11 23:42:08,322 - __main__ - INFO - Shared memory allocated
+2026-04-11 23:42:08,326 - __main__ - INFO - IPC objects created
+2026-04-11 23:42:08,328 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-11 23:42:08,345 - __main__ - INFO - InferenceEngine process started
+2026-04-11 23:42:08,350 - __main__ - INFO - Receiver process started
+2026-04-11 23:42:11,008 - inference_engine - INFO - InferenceEngine rendering device: cuda
+2026-04-11 23:42:11,155 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-04-11 23:42:11,156 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-04-11 23:42:11,158 - algorithms - INFO - Detector device: cuda
+2026-04-11 23:42:11,740 - algorithms - INFO - Batch detector warmup complete
+2026-04-11 23:42:11,741 - inference_engine - INFO - InferenceEngine initialized, waiting for START
+2026-04-11 23:42:14,304 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-04-11 23:42:14,307 - inference_engine - INFO - START received - running InferenceEngine
+2026-04-11 23:42:14,307 - inference_engine - INFO - InferenceEngine running
+2026-04-11 23:42:14,326 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-11 23:43:20,661 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-04-11 23:43:20,662 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-11 23:43:20,675 - inference_engine - INFO - InferenceEngine stopping
+2026-04-11 23:43:20,676 - inference_engine - INFO - InferenceEngine run() returned - back to idle
+2026-04-11 23:43:20,728 - receiver - INFO - Disconnected from device
+2026-04-11 23:43:22,040 - UI.performance.stats_manager - INFO - Performance stats saved to Output\performance_stats.csv
+2026-04-11 23:43:22,216 - receiver - INFO - DataReceiver process exited
+2026-04-11 23:43:22,753 - inference_engine - INFO - Detailed performance profiling saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Output\timing_profile_detailed.csv
+2026-04-11 23:43:22,754 - inference_engine - INFO - InferenceEngine subprocess exited
+2026-04-12 16:03:24,227 - __main__ - INFO - ============================================================
+2026-04-12 16:03:24,231 - __main__ - INFO - Initializing drone detection system...
+2026-04-12 16:03:24,393 - ipc - INFO - SharedMemory created - spectrum=wnsm_d010c696 waterfall=wnsm_262d1964 detection=wnsm_0f1d3f06
+2026-04-12 16:03:24,393 - __main__ - INFO - Shared memory allocated
+2026-04-12 16:03:24,403 - __main__ - INFO - IPC objects created
+2026-04-12 16:03:24,403 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-12 16:03:24,439 - __main__ - INFO - InferenceEngine process started
+2026-04-12 16:03:24,439 - __main__ - INFO - Receiver process started
+2026-04-12 16:03:27,051 - inference_engine - INFO - InferenceEngine rendering device: cuda
+2026-04-12 16:03:27,197 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-04-12 16:03:27,198 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-04-12 16:03:27,203 - algorithms - INFO - Detector device: cuda
+2026-04-12 16:03:28,752 - algorithms - INFO - Batch detector warmup complete
+2026-04-12 16:03:28,763 - inference_engine - INFO - InferenceEngine initialized, waiting for START
+2026-04-12 16:03:33,279 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-04-12 16:03:33,283 - receiver - INFO - Mock SHM receiver loop started
+ InferenceEngine
+2026-04-12 16:03:33,283 - inference_engine - INFO - InferenceEngine running
+2026-04-12 16:03:33,283 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-12 16:04:47,841 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-04-12 16:04:47,844 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-12 16:04:47,846 - inference_engine - INFO - InferenceEngine stopping
+2026-04-12 16:04:47,847 - inference_engine - INFO - InferenceEngine run() returned - back to idle
+2026-04-12 16:04:47,912 - receiver - INFO - Disconnected from device
+2026-04-12 16:04:49,036 - UI.performance.stats_manager - INFO - Performance stats saved to Output\performance_stats.csv
+2026-04-12 16:04:49,160 - receiver - INFO - DataReceiver process exited
+2026-04-12 16:04:49,935 - inference_engine - INFO - Detailed performance profiling saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Output\timing_profile_detailed.csv
+2026-04-12 16:04:49,935 - inference_engine - INFO - InferenceEngine subprocess exited
+2026-04-13 20:15:30,838 - __main__ - INFO - ============================================================
+2026-04-13 20:15:30,838 - __main__ - INFO - Initializing drone detection system...
+2026-04-13 20:15:30,900 - ipc - INFO - SharedMemory created - spectrum=wnsm_8691070e waterfall=wnsm_b910ea83 detection=wnsm_ba25f841
+2026-04-13 20:15:30,900 - __main__ - INFO - Shared memory allocated
+2026-04-13 20:15:30,900 - __main__ - INFO - IPC objects created
+2026-04-13 20:15:30,900 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-13 20:15:30,925 - __main__ - INFO - InferenceEngine process started
+2026-04-13 20:15:30,931 - __main__ - INFO - Receiver process started
+2026-04-13 20:15:33,712 - inference_engine - INFO - InferenceEngine rendering device: cuda
+2026-04-13 20:15:33,804 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-04-13 20:15:33,804 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-04-13 20:15:33,804 - algorithms - INFO - Detector device: cuda
+2026-04-13 20:15:34,373 - algorithms - INFO - Batch detector warmup complete
+2026-04-13 20:15:34,373 - inference_engine - INFO - InferenceEngine initialized, waiting for START
+2026-04-13 20:15:36,790 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-04-13 20:15:36,797 - receiver - INFO - Mock SHM receiver loop started
+ InferenceEngine
+2026-04-13 20:15:36,797 - inference_engine - INFO - InferenceEngine running
+2026-04-13 20:15:36,798 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-13 20:16:45,217 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-04-13 20:16:45,220 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-13 20:16:45,242 - inference_engine - INFO - InferenceEngine stopping
+2026-04-13 20:16:45,242 - inference_engine - INFO - InferenceEngine run() returned - back to idle
+2026-04-13 20:16:45,288 - receiver - INFO - Disconnected from device
+2026-04-13 20:16:46,807 - UI.performance.stats_manager - INFO - Performance stats saved to Output\performance_stats.csv
+2026-04-13 20:16:46,896 - receiver - INFO - DataReceiver process exited
+2026-04-13 20:16:47,347 - inference_engine - INFO - Detailed performance profiling saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Output\timing_profile_detailed.csv
+2026-04-13 20:16:47,347 - inference_engine - INFO - InferenceEngine subprocess exited
+2026-04-13 20:19:33,225 - __main__ - INFO - ============================================================
+2026-04-13 20:19:33,225 - __main__ - INFO - Initializing drone detection system...
+2026-04-13 20:19:33,287 - ipc - INFO - SharedMemory created - spectrum=wnsm_df37d5ce waterfall=wnsm_e055da3b detection=wnsm_fcc7cc27
+2026-04-13 20:19:33,287 - __main__ - INFO - Shared memory allocated
+2026-04-13 20:19:33,290 - __main__ - INFO - IPC objects created
+2026-04-13 20:19:33,292 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-13 20:19:33,310 - __main__ - INFO - InferenceEngine process started
+2026-04-13 20:19:33,318 - __main__ - INFO - Receiver process started
+2026-04-13 20:19:36,007 - inference_engine - INFO - InferenceEngine rendering device: cuda
+2026-04-13 20:19:36,163 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-04-13 20:19:36,163 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-04-13 20:19:36,166 - algorithms - INFO - Detector device: cuda
+2026-04-13 20:19:36,744 - algorithms - INFO - Batch detector warmup complete
+2026-04-13 20:19:36,744 - inference_engine - INFO - InferenceEngine initialized, waiting for START
+2026-04-13 20:19:39,404 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-04-13 20:19:39,407 - inference_engine - INFO - START received - running InferenceEngine
+2026-04-13 20:19:39,407 - inference_engine - INFO - InferenceEngine running
+2026-04-13 20:19:39,425 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-13 20:20:31,484 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-04-13 20:20:31,487 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-13 20:20:31,488 - inference_engine - INFO - InferenceEngine stopping
+2026-04-13 20:20:31,489 - inference_engine - INFO - InferenceEngine run() returned - back to idle
+2026-04-13 20:20:31,591 - receiver - INFO - Disconnected from device
+2026-04-13 20:20:32,468 - UI.performance.stats_manager - INFO - Performance stats saved to Output\performance_stats.csv
+2026-04-13 20:20:32,640 - inference_engine - INFO - Detailed performance profiling saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Output\timing_profile_detailed.csv
+2026-04-13 20:20:32,641 - inference_engine - INFO - InferenceEngine subprocess exited
+2026-04-13 20:20:32,671 - receiver - INFO - DataReceiver process exited
+2026-04-13 20:21:15,259 - __main__ - INFO - ============================================================
+2026-04-13 20:21:15,260 - __main__ - INFO - Initializing drone detection system...
+2026-04-13 20:21:15,316 - ipc - INFO - SharedMemory created - spectrum=wnsm_5a9b65ee waterfall=wnsm_eb46c8ee detection=wnsm_d74952af
+2026-04-13 20:21:15,316 - __main__ - INFO - Shared memory allocated
+2026-04-13 20:21:15,326 - __main__ - INFO - IPC objects created
+2026-04-13 20:21:15,326 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-13 20:21:15,337 - __main__ - INFO - InferenceEngine process started
+2026-04-13 20:21:15,351 - __main__ - INFO - Receiver process started
+2026-04-13 20:21:17,879 - inference_engine - INFO - InferenceEngine rendering device: cuda
+2026-04-13 20:21:17,966 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-04-13 20:21:17,967 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-04-13 20:21:17,969 - algorithms - INFO - Detector device: cuda
+2026-04-13 20:21:18,491 - algorithms - INFO - Batch detector warmup complete
+2026-04-13 20:21:18,491 - inference_engine - INFO - InferenceEngine initialized, waiting for START
+2026-04-13 20:21:20,800 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-04-13 20:21:20,807 - inference_engine - INFO - START received - running InferenceEngine
+2026-04-13 20:21:20,807 - inference_engine - INFO - InferenceEngine running
+2026-04-13 20:21:20,807 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-13 20:22:29,028 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-04-13 20:22:29,030 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-13 20:22:29,046 - inference_engine - INFO - InferenceEngine stopping
+2026-04-13 20:22:29,047 - inference_engine - INFO - InferenceEngine run() returned - back to idle
+2026-04-13 20:22:29,100 - receiver - INFO - Disconnected from device
+2026-04-13 20:22:29,836 - UI.performance.stats_manager - INFO - Performance stats saved to Output\performance_stats.csv
+2026-04-13 20:22:29,940 - receiver - INFO - DataReceiver process exited
+2026-04-13 20:22:30,145 - inference_engine - INFO - Detailed performance profiling saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Output\timing_profile_detailed.csv
+2026-04-13 20:22:30,147 - inference_engine - INFO - InferenceEngine subprocess exited
+2026-04-13 23:08:29,663 - __main__ - INFO - ============================================================
+2026-04-13 23:08:29,663 - __main__ - INFO - Initializing drone detection system...
+2026-04-13 23:08:29,729 - ipc - INFO - SharedMemory created - spectrum=wnsm_57bc4a24 waterfall=wnsm_b73eff88 detection=wnsm_00ac9941
+2026-04-13 23:08:29,729 - __main__ - INFO - Shared memory allocated
+2026-04-13 23:08:29,733 - __main__ - INFO - IPC objects created
+2026-04-13 23:08:29,735 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-13 23:08:29,751 - __main__ - INFO - InferenceEngine process started
+2026-04-13 23:08:29,757 - __main__ - INFO - Receiver process started
+2026-04-13 23:08:32,443 - inference_engine - INFO - InferenceEngine rendering device: cuda
+2026-04-13 23:08:32,529 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-04-13 23:08:32,529 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-04-13 23:08:32,532 - algorithms - INFO - Detector device: cuda
+2026-04-13 23:08:33,069 - algorithms - INFO - Batch detector warmup complete
+2026-04-13 23:08:33,069 - inference_engine - INFO - InferenceEngine initialized, waiting for START
+2026-04-13 23:09:11,993 - UI.spectrum.config_interface - INFO - Connection toggle changed: True
+2026-04-13 23:09:12,004 - inference_engine - INFO - START received - running InferenceEngine
+2026-04-13 23:09:12,004 - receiver - INFO - Mock SHM receiver loop started
+2026-04-13 23:09:12,004 - inference_engine - INFO - InferenceEngine running
+2026-04-13 23:09:12,027 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-13 23:09:21,755 - __main__ - INFO - Parameter change: UI_Spectrum.spectrum_right_freq(MHz) = 1050
+2026-04-13 23:09:21,755 - state - INFO - parameter updated: UI_Spectrum.spectrum_right_freq(MHz) = 1050 (old 1100)
+2026-04-13 23:09:21,757 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-13 23:09:21,757 - UI.spectrum.config_interface - INFO - UI display refreshed: UI_Spectrum.spectrum_right_freq(MHz) = 1050
+2026-04-13 23:09:21,757 - UI.spectrum.config_interface - INFO - Request parameter update: UI_Spectrum.spectrum_right_freq(MHz) = 1050 (type: int)
+2026-04-13 23:09:24,216 - __main__ - INFO - Parameter change: UI_Spectrum.spectrum_right_freq(MHz) = 1050
+2026-04-13 23:09:24,216 - state - INFO - parameter updated: UI_Spectrum.spectrum_right_freq(MHz) = 1050 (old 1050)
+2026-04-13 23:09:24,221 - state - INFO - parameters saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-13 23:09:24,221 - UI.spectrum.config_interface - INFO - UI display refreshed: UI_Spectrum.spectrum_right_freq(MHz) = 1050
+2026-04-13 23:09:24,221 - UI.spectrum.config_interface - INFO - Request parameter update: UI_Spectrum.spectrum_right_freq(MHz) = 1050 (type: int)
+2026-04-13 23:11:14,939 - UI.spectrum.config_interface - INFO - Connection toggle changed: False
+2026-04-13 23:11:14,939 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-13 23:11:14,947 - inference_engine - INFO - InferenceEngine stopping
+2026-04-13 23:11:14,948 - inference_engine - INFO - InferenceEngine run() returned - back to idle
+2026-04-13 23:11:15,045 - receiver - INFO - Disconnected from device
+2026-04-13 23:11:15,659 - UI.performance.stats_manager - INFO - Performance stats saved to Output\performance_stats.csv
+2026-04-13 23:11:15,764 - receiver - INFO - DataReceiver process exited
+2026-04-13 23:11:16,072 - inference_engine - INFO - Detailed performance profiling saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Output\timing_profile_detailed.csv
+2026-04-13 23:11:16,074 - inference_engine - INFO - InferenceEngine subprocess exited
+2026-04-18 18:55:36,766 - __main__ - INFO - ============================================================
+2026-04-18 18:55:36,766 - __main__ - INFO - Initializing drone detection system...
+2026-04-18 18:55:36,902 - ipc - INFO - SharedMemory created - spectrum=wnsm_3fb9165e waterfall=wnsm_27139d35 detection=wnsm_2b46a3dc
+2026-04-18 18:55:36,902 - __main__ - INFO - Shared memory allocated
+2026-04-18 18:55:36,910 - __main__ - INFO - IPC objects created
+2026-04-18 18:55:36,912 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-18 18:55:36,948 - __main__ - INFO - InferenceEngine process started
+2026-04-18 18:55:36,951 - __main__ - INFO - Receiver process started
+2026-04-18 18:55:41,256 - inference_engine - INFO - InferenceEngine rendering device: cuda
+2026-04-18 18:55:41,262 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-04-18 18:55:41,262 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-04-18 18:55:41,275 - algorithms - INFO - Detector device: cuda
+2026-04-18 18:55:54,510 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-04-18 18:55:54,515 - receiver - INFO - Mock SHM receiver loop started
+2026-04-18 18:55:54,515 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-18 18:56:01,042 - algorithms - INFO - Batch detector warmup complete
+2026-04-18 18:56:01,042 - inference_engine - INFO - InferenceEngine initialized, waiting for START
+2026-04-18 18:56:01,042 - inference_engine - INFO - START received - running InferenceEngine
+2026-04-18 18:56:01,042 - inference_engine - INFO - InferenceEngine running
+2026-04-18 18:56:01,281 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-04-18 18:56:01,285 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-18 18:56:01,286 - inference_engine - INFO - InferenceEngine stopping
+2026-04-18 18:56:01,287 - inference_engine - INFO - InferenceEngine run() returned - back to idle
+2026-04-18 18:56:01,353 - receiver - INFO - Disconnected from device
+2026-04-18 18:56:07,364 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-04-18 18:56:07,365 - inference_engine - INFO - START received - running InferenceEngine
+2026-04-18 18:56:07,365 - inference_engine - INFO - InferenceEngine running
+2026-04-18 18:56:07,365 - receiver - INFO - Mock SHM receiver loop started
+2026-04-18 18:56:07,365 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-18 18:56:46,931 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-04-18 18:56:46,934 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-18 18:56:46,948 - inference_engine - INFO - InferenceEngine stopping
+2026-04-18 18:56:46,948 - inference_engine - INFO - InferenceEngine run() returned - back to idle
+2026-04-18 18:56:47,003 - receiver - INFO - Disconnected from device
+2026-04-18 18:56:47,593 - UI.performance.stats_manager - INFO - Performance stats saved to Output\performance_stats.csv
+2026-04-18 18:56:47,723 - receiver - INFO - DataReceiver process exited
+2026-04-18 18:56:48,038 - inference_engine - INFO - Detailed performance profiling saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Output\timing_profile_detailed.csv
+2026-04-18 18:56:48,040 - inference_engine - INFO - InferenceEngine subprocess exited
+2026-04-18 19:15:19,850 - __main__ - INFO - ============================================================
+2026-04-18 19:15:19,850 - __main__ - INFO - Initializing drone detection system...
+2026-04-18 19:15:19,923 - ipc - INFO - SharedMemory created - spectrum=wnsm_5bde4e22 waterfall=wnsm_4a7949b6 detection=wnsm_b9a51657
+2026-04-18 19:15:19,924 - __main__ - INFO - Shared memory allocated
+2026-04-18 19:15:19,927 - __main__ - INFO - IPC objects created
+2026-04-18 19:15:19,931 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-18 19:15:19,948 - __main__ - INFO - InferenceEngine process started
+2026-04-18 19:15:19,956 - __main__ - INFO - Receiver process started
+2026-04-18 19:15:25,668 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-04-18 19:15:25,672 - receiver - INFO - Mock SHM receiver loop started
+2026-04-18 19:15:25,681 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-18 19:15:37,930 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-04-18 19:15:37,932 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-18 19:15:37,998 - receiver - INFO - Disconnected from device
+2026-04-18 19:15:39,213 - UI.performance.stats_manager - INFO - Performance stats saved to Output\performance_stats.csv
+2026-04-18 19:15:39,375 - receiver - INFO - DataReceiver process exited
+2026-04-18 19:17:56,764 - __main__ - INFO - ============================================================
+2026-04-18 19:17:56,764 - __main__ - INFO - Initializing drone detection system...
+2026-04-18 19:17:56,833 - ipc - INFO - SharedMemory created - spectrum=wnsm_7f19c8f1 waterfall=wnsm_134fb205 detection=wnsm_5201d27f
+2026-04-18 19:17:56,834 - __main__ - INFO - Shared memory allocated
+2026-04-18 19:17:56,839 - __main__ - INFO - IPC objects created
+2026-04-18 19:17:56,840 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-18 19:17:56,858 - __main__ - INFO - InferenceEngine process started
+2026-04-18 19:17:56,865 - __main__ - INFO - Receiver process started
+2026-04-18 19:18:00,900 - inference_engine - INFO - InferenceEngine rendering device: cuda
+2026-04-18 19:18:00,905 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-04-18 19:18:00,905 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-04-18 19:18:00,910 - algorithms - INFO - Detector device: cuda
+2026-04-18 19:18:01,479 - algorithms - INFO - Batch detector warmup complete
+2026-04-18 19:18:01,479 - inference_engine - INFO - InferenceEngine initialized, waiting for START
+2026-04-18 19:18:01,892 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-04-18 19:18:01,895 - receiver - INFO - Mock SHM receiver loop started
+ InferenceEngine
+2026-04-18 19:18:01,895 - inference_engine - INFO - InferenceEngine running
+2026-04-18 19:18:01,895 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-18 19:19:10,584 - UI.waterfall.config_interface - INFO - Connection toggle changed: False
+2026-04-18 19:19:10,587 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-18 19:19:10,597 - inference_engine - INFO - InferenceEngine stopping
+2026-04-18 19:19:10,597 - inference_engine - INFO - InferenceEngine run() returned - back to idle
+2026-04-18 19:19:10,656 - receiver - INFO - Disconnected from device
+2026-04-18 19:19:11,388 - UI.performance.stats_manager - INFO - Performance stats saved to Output\performance_stats.csv
+2026-04-18 19:19:11,480 - receiver - INFO - DataReceiver process exited
+2026-04-18 19:19:11,695 - inference_engine - INFO - Detailed performance profiling saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Output\timing_profile_detailed.csv
+2026-04-18 19:19:11,696 - inference_engine - INFO - InferenceEngine subprocess exited
+2026-04-18 19:31:51,311 - __main__ - INFO - ============================================================
+2026-04-18 19:31:51,311 - __main__ - INFO - Initializing drone detection system...
+2026-04-18 19:31:51,384 - ipc - INFO - SharedMemory created - spectrum=wnsm_9bcf4bf8 waterfall=wnsm_eabc0903 detection=wnsm_2977f3b4
+2026-04-18 19:31:51,385 - __main__ - INFO - Shared memory allocated
+2026-04-18 19:31:51,389 - __main__ - INFO - IPC objects created
+2026-04-18 19:31:51,390 - state - INFO - parameters loaded from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\parameters.json
+2026-04-18 19:31:51,409 - __main__ - INFO - InferenceEngine process started
+2026-04-18 19:31:51,416 - __main__ - INFO - Receiver process started
+2026-04-18 19:31:55,372 - inference_engine - INFO - InferenceEngine rendering device: cuda
+2026-04-18 19:31:55,372 - algorithms - INFO - Loaded 5 classes from c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\class_names.txt
+2026-04-18 19:31:55,372 - algorithms - INFO - Loading YOLO model: c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Software\best.engine
+2026-04-18 19:31:55,378 - algorithms - INFO - Detector device: cuda
+2026-04-18 19:31:55,940 - algorithms - INFO - Batch detector warmup complete
+2026-04-18 19:31:55,940 - inference_engine - INFO - InferenceEngine initialized, waiting for START
+2026-04-18 19:31:56,578 - UI.waterfall.config_interface - INFO - Connection toggle changed: True
+2026-04-18 19:31:56,588 - receiver - INFO - Mock SHM receiver loop started
+ InferenceEngine
+2026-04-18 19:31:56,589 - inference_engine - INFO - InferenceEngine running
+2026-04-18 19:31:56,589 - receiver - INFO - Mock SHM Mode Connected: attached to shared memory
+2026-04-18 19:33:05,558 - UI.spectrum.config_interface - INFO - Connection toggle changed: False
+2026-04-18 19:33:05,564 - receiver - INFO - Mock SHM receiver loop exited
+2026-04-18 19:33:05,584 - inference_engine - INFO - InferenceEngine stopping
+2026-04-18 19:33:05,584 - inference_engine - INFO - InferenceEngine run() returned - back to idle
+2026-04-18 19:33:05,631 - receiver - INFO - Disconnected from device
+2026-04-18 19:33:06,264 - UI.performance.stats_manager - INFO - Performance stats saved to Output\performance_stats.csv
+2026-04-18 19:33:06,346 - receiver - INFO - DataReceiver process exited
+2026-04-18 19:33:06,682 - inference_engine - INFO - Detailed performance profiling saved to c:\Users\qly24\OneDrive\BUAA\Term8(2026SPR)\Lab-Workspace-2026SPR\Wireless Drone Detection\Project\Output\timing_profile_detailed.csv
+2026-04-18 19:33:06,683 - inference_engine - INFO - InferenceEngine subprocess exited

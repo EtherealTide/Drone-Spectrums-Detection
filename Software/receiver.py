@@ -521,12 +521,12 @@ class DataReceiver:
                 self.sent_frames = curr_seq
                 self.received_frames += 1
 
-                # 每 1000 帧上报 FPS
-                if self.received_frames % 1000 == 0:
+                # 每 100 帧上报 FPS
+                if self.received_frames % 10000 == 0:
                     now = time.perf_counter()
                     elapsed = now - last_time
                     last_time = now
-                    inst_fps = 1000.0 / elapsed if elapsed > 0 else 0.0
+                    inst_fps = 10000.0 / elapsed if elapsed > 0 else 0.0
                     if not hasattr(self, "smoothed_receive_fps"):
                         self.smoothed_receive_fps = inst_fps
                     else:
