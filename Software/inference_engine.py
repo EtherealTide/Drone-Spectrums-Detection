@@ -137,13 +137,13 @@ class InferenceEngine:
         # 分配 pinned memory 的 torch tensor，再通过 .numpy() 暴露 numpy 视图，两者共享底层内存
         self.gpu_ring = torch.empty(
             (self.waterfall_height, self.waterfall_width),
-            dtype=torch.float32,
+            dtype=torch.float16,
             device=self.device,
         )
         # 用于 CPU→GPU 的 pinned 中转缓冲（存未排序的原始 ring 数据）
         self._ring_pin = torch.empty(
             (self.waterfall_height, self.waterfall_width),
-            dtype=torch.float32,
+            dtype=torch.float16,
         ).pin_memory()
         self._ring_pin_np = self._ring_pin.numpy()
 
@@ -222,7 +222,7 @@ class InferenceEngine:
                 if self.waterfall_height != self.waterfall_view.shape[0]:
                     self._waterfall_pin = torch.empty(
                         (self.waterfall_height, self.waterfall_width),
-                        dtype=torch.float32,
+                        dtype=torch.float16,
                     ).pin_memory()
                     self.waterfall_view = self._waterfall_pin.numpy()
             elif name == "max_batch_windows":
