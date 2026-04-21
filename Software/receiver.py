@@ -36,7 +36,8 @@ MOCK_DATA_SHM_NAME = "mock_fft_shm"
 MOCK_CMD_SHM_NAME = "mock_cmd_shm"
 # 头部 24 B：write_seq(8) + read_seq(8) + consumer_ready(4) + reserved(4)
 DATA_SHM_HEADER = 24
-DATA_SHM_SIZE = DATA_SHM_HEADER + MAX_TOTAL_FFT * 4   # + float32 数组
+FLOAT=16
+DATA_SHM_SIZE = DATA_SHM_HEADER + MAX_TOTAL_FFT * (FLOAT // 8)  # + float16 数组
 CMD_SHM_SIZE = 16  # cmd_seq(8) + cmd_code(4) + cmd_value(4)
 
 logger = logging.getLogger(__name__)
@@ -133,7 +134,7 @@ class DataReceiver:
         self._mock_seq_view: np.ndarray | None = None          # uint64 write_seq  [0:8]
         self._mock_read_seq_view: np.ndarray | None = None     # uint64 read_seq   [8:16]
         self._mock_consumer_ready: np.ndarray | None = None    # uint32            [16:20]
-        self._mock_data_view: np.ndarray | None = None         # float32 帧数据    [24:]
+        self._mock_data_view: np.ndarray | None = None         # float16 帧数据    [24:]
         self._mock_cmd_seq: int = 0                            # 本地 cmd 序列号计数器
 
         self.command_protocol = self._load_command_protocol()
@@ -258,7 +259,7 @@ class DataReceiver:
                 self._mock_data_shm.buf, dtype=np.uint32, count=1, offset=16
             )
             self._mock_data_view = np.frombuffer(
-                self._mock_data_shm.buf, dtype=np.float32,
+                self._mock_data_shm.buf, dtype=np.float16,
                 count=MAX_TOTAL_FFT, offset=DATA_SHM_HEADER
             )
 
@@ -397,7 +398,7 @@ class DataReceiver:
                     continue
 
 
-                fft_data = np.frombuffer(frame_data, dtype=np.float32)
+                fft_data = np.frombuffer(frame_data, dtype=np.float16)
 
                 self.sent_frames = frame_id
                 self.received_frames += 1
@@ -448,7 +449,7 @@ class DataReceiver:
         if self.enable_noise_filter:
             if self.noise_filter_mode == "subtraction":
                 if self.noise_floor is None:
-                    self.noise_floor = fft_data.astype(np.float32)
+                    self.noise_floor = fft_data.astype(np.float16)
                 diff = fft_data - self.noise_floor
                 alpha_vec = np.where(
                     diff > 0,

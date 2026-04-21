@@ -15,7 +15,7 @@ mock_fft_shm  (DATA SHM)  —— mock_device 写，receiver 读
   [16:20]   uint32  consumer_ready  consumer 挂载置 1 / 断开置 0；
                                     producer 在此为 0 时暂停生产
   [20:24]   uint32  _reserved
-  [24:  ]   float32 * MAX_TOTAL_FFT  帧数据（20480 点上限）
+  [24:  ]   float16 * MAX_TOTAL_FFT  帧数据（20480 点上限）
 
   流控语义（等效于 TCP 发送窗口 = 1）：
     producer 只在 write_seq == read_seq（consumer 已消费）时才写下一帧，
@@ -43,10 +43,10 @@ MOCK_DATA_SHM_NAME = "mock_fft_shm"
 MOCK_CMD_SHM_NAME = "mock_cmd_shm"
 
 MAX_TOTAL_FFT = 20480  # 必须与 ipc.MAX_TOTAL_FFT 保持一致
-
+FLOAT=16
 # 头部 24 字节：write_seq(8) + read_seq(8) + consumer_ready(4) + reserved(4)
 DATA_SHM_HEADER = 24
-DATA_SHM_SIZE = DATA_SHM_HEADER + MAX_TOTAL_FFT * 4         # + float32 数组
+DATA_SHM_SIZE = DATA_SHM_HEADER + MAX_TOTAL_FFT * (FLOAT // 8)  # + float16 数组
 
 CMD_SHM_SIZE = 16   # cmd_seq(8) + cmd_code(4) + cmd_value(4)
 
@@ -81,11 +81,11 @@ class MockDevice:
         self._current_file_idx = 0
 
         # ── 预加载缓冲（初始化后填充，SET_FFT_LENGTH 触发重建）────────────────────
-        # _preloaded_signals:  (n_frames, single_channel_fft) float32 — 原始 512 点
-        # _preloaded_min_vals: (n_frames,)                    float32 — 每帧最小值
+        # _preloaded_signals:  (n_frames, single_channel_fft) float16 — 原始 512 点
+        # _preloaded_min_vals: (n_frames,)                    float16 — 每帧最小值
         self.preload_files = max(1, int(preload_files))
-        self._preloaded_signals: np.ndarray = np.empty(0, dtype=np.float32)
-        self._preloaded_min_vals: np.ndarray = np.empty(0, dtype=np.float32)
+        self._preloaded_signals: np.ndarray = np.empty(0, dtype=np.float16)
+        self._preloaded_min_vals: np.ndarray = np.empty(0, dtype=np.float16)
         self._preload_count: int = 0
         self._preload_dirty: bool = False
         self._preloaded_frames()  # 初始化时完成所有磁盘 IO
@@ -100,7 +100,7 @@ class MockDevice:
         self._data_seq_view: np.ndarray | None = None           # uint64 write_seq  [0:8]
         self._data_read_seq_view: np.ndarray | None = None      # uint64 read_seq   [8:16]
         self._data_consumer_ready: np.ndarray | None = None     # uint32            [16:20]
-        self._data_frame_view: np.ndarray | None = None         # float32 帧数据    [24:]
+        self._data_frame_view: np.ndarray | None = None         # float16 帧数据    [24:]
 
         # CMD SHM 视图
         self._cmd_seq_view: np.ndarray | None = None            # uint64 cmd_seq    [0:8]
@@ -140,7 +140,7 @@ class MockDevice:
             self._data_shm.buf, dtype=np.uint32, count=1, offset=16
         )
         self._data_frame_view = np.frombuffer(
-            self._data_shm.buf, dtype=np.float32,
+            self._data_shm.buf, dtype=np.float16,
             count=MAX_TOTAL_FFT, offset=DATA_SHM_HEADER
         )
         self._cmd_seq_view = np.frombuffer(
@@ -293,8 +293,8 @@ class MockDevice:
         """加载 preload_files 个 512×512 的 .npy 文件，提取信号和最小值。
 
         存储结构（内存高效）：
-          _preloaded_signals  : (n_frames, ch_fft) float32  — 原始 512 点信号
-          _preloaded_min_vals : (n_frames,)        float32  — 每帧最小值（热路径填背景用）
+          _preloaded_signals  : (n_frames, ch_fft) float16  — 原始 512 点信号
+          _preloaded_min_vals : (n_frames,)        float16  — 每帧最小值（热路径填背景用）
 
         热路径布局：
           _data_frame_view[:fft_len]           = min_val  （scalar 广播填充背景）
@@ -330,8 +330,8 @@ class MockDevice:
         raw_matrix = raw_all[: n_frames * ch_fft].reshape(n_frames, ch_fft)
 
         # 向量化计算每帧最小值，只保留信号和最小值（不构建完整帧）
-        self._preloaded_signals = np.ascontiguousarray(raw_matrix, dtype=np.float32)
-        self._preloaded_min_vals = raw_matrix.min(axis=1).astype(np.float32)
+        self._preloaded_signals = np.ascontiguousarray(raw_matrix, dtype=np.float16)
+        self._preloaded_min_vals = raw_matrix.min(axis=1).astype(np.float16)
         self._preload_count = n_frames
         self._preload_dirty = False
 
@@ -343,7 +343,7 @@ class MockDevice:
         )
 
     def _load_file_chunk(self) -> np.ndarray:
-        """循环加载下一个有效的 .npy 文件并展平为 float32"""
+        """循环加载下一个有效的 .npy 文件并展平为 float16"""
         if not self.npy_files:
             raise RuntimeError(f"未在目录 {self.data_dir} 中找到任何 .npy 文件")
         total = len(self.npy_files)
@@ -355,13 +355,13 @@ class MockDevice:
             except Exception as exc:
                 logging.error(f"加载文件 {path} 失败: {exc}", exc_info=True)
                 continue
-            flat = np.asarray(data, dtype=np.float32).ravel()
+            flat = np.asarray(data, dtype=np.float16).ravel()
             if flat.size == 0:
                 logging.warning(f"文件 {path} 为空，跳过")
                 continue
             return flat
         logging.error("无法从任何 .npy 文件中获取有效数据")
-        return np.array([], dtype=np.float32)
+        return np.array([], dtype=np.float16)
 
 
 

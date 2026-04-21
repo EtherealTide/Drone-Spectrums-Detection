@@ -6,7 +6,7 @@ every module imports from one authoritative place.
 Shared-memory layout (pre-allocated to maximum sizes to avoid runtime
 reallocation when parameters such as FFT_Length change):
 
-    SHM_SPECTRUM   (MAX_TOTAL_FFT,)                        float32
+    SHM_SPECTRUM   (MAX_TOTAL_FFT,)                        float16
     SHM_DETECTION  (512 x 512 x 3)                         uint8
 
 Active shapes are communicated via init_params; workers access only needed
@@ -29,10 +29,10 @@ MAX_WATERFALL_HEIGHT = 1024 # max waterfall history depth
 # ── Array specifications ───────────────────────────────────────────────────────
 
 SHM_SPECTRUM_SHAPE = (MAX_TOTAL_FFT,)  # (fft_pts,)
-SHM_SPECTRUM_DTYPE = np.float32
+SHM_SPECTRUM_DTYPE = np.float16
 
 SHM_WATERFALL_SHAPE = (MAX_WATERFALL_HEIGHT, MAX_TOTAL_FFT)
-SHM_WATERFALL_DTYPE = np.float32
+SHM_WATERFALL_DTYPE = np.float16
 
 SHM_DETECTION_SHAPE = (512, 512, 3)  # fixed UI display output
 SHM_DETECTION_DTYPE = np.uint8
@@ -48,7 +48,7 @@ def create_shared_memory():
     Must be called from the main process before spawning any workers.
 
     Returns:
-        (shm_spectrum, shm_detection)
+        (shm_spectrum, shm_waterfall, shm_detection)
     """
     specs = [
         (SHM_SPECTRUM_SHAPE, SHM_SPECTRUM_DTYPE),
