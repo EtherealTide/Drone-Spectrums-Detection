@@ -4,6 +4,7 @@ This module provides a reusable detector that accepts a batch of BGR images
 already on GPU and runs one-shot YOLO inference.
 """
 
+import sys
 from pathlib import Path
 import logging
 import time
@@ -25,7 +26,8 @@ class BatchDroneDetector:
         model_path: str = "best.engine",
         class_file: str = "class_names.txt",
     ):
-        self.algorithm_path = Path(__file__).parent.absolute()
+        # 以 exe/脚本所在目录为基准查找模型文件，与 model_crypto.get_model_paths() 保持一致
+        self.algorithm_path = Path(sys.argv[0]).resolve().parent # resolve() 将路径解析为绝对路径, argv[0] 为 exe 路径
         self.model_path = self.algorithm_path / model_path
         self.class_file = self.algorithm_path / class_file
 
@@ -84,6 +86,15 @@ class BatchDroneDetector:
         return colors
 
     def _load_model(self):
+        if not self.model_path.exists():
+            logger.error(
+                "Model file not found: %s\n"
+                "  If using encrypted model (best.pt.enc), ensure main process "
+                "has already called _prepare_model() before starting this subprocess.",
+                self.model_path,
+            )
+            self.model = None
+            return
         try:
             logger.info("Loading YOLO model: %s", self.model_path)
             self.model = YOLO(str(self.model_path), task="detect")

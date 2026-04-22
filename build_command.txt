@@ -1,0 +1,114 @@
+===========================================================
+  无人机检测系统 — Nuitka 打包命令参考
+  运行环境：Windows，PowerShell / 命令提示符
+===========================================================
+
+【前置准备】
+  1. 安装 Nuitka 及编译器：
+       pip install nuitka
+       # 需要 MSVC（Visual Studio Build Tools）或 MinGW-w64 作为 C 编译器
+       # 推荐安装 Visual Studio 2022 Build Tools（仅勾选"桌面C++开发"即可）
+
+  2. 安装 cryptography 库（用于模型加密）：
+       pip install cryptography
+
+  3. 确认环境中已有 PyQt6、torch、ultralytics、opencv-python 等依赖
+
+===========================================================
+【步骤一：加密模型文件（仅授权方执行一次）】
+
+  cd Software
+  python encrypt_model_tool.py best.pt best.pt.enc
+
+  # 将生成 best.pt.enc，把它放入分发包，不要分发 best.pt
+
+===========================================================
+【步骤二：执行 Nuitka 打包（在 Software/ 目录下运行）】
+
+  cd Software
+
+  python -m nuitka ^
+    --standalone ^
+    --enable-plugin=pyqt6 ^
+    --module-parameter=torch-disable-jit=yes ^
+    --include-package=ultralytics ^
+    --include-package=torch ^
+    --include-package=torchvision ^
+    --include-package=cv2 ^
+    --include-package=cryptography ^
+    --include-package=PyQt6 ^
+    --include-package-data=ultralytics ^
+    --include-data-files=class_names.txt=class_names.txt ^
+    --nofollow-import-to=polars ^
+    --nofollow-import-to=IPython ^
+    --nofollow-import-to=notebook ^
+    --nofollow-import-to=pytest ^
+    --nofollow-import-to=setuptools ^
+    --include-data-dir=UI=UI ^
+    --windows-console-mode=attach ^
+    --lto=no ^
+    --output-filename=DroneDetection ^
+    --output-dir=..\dist ^
+    main.py
+
+  # 说明：
+  #   --standalone         生成独立目录（比 --onefile 启动更快，推荐）
+  #   --windows-console-mode=attach
+  #                        保留控制台窗口以便查看日志；若不需要改为 disable
+  #   --windows-icon-from-ico=icon.ico
+  #                        若无 icon 文件可删除此行
+  #   --output-dir=..\dist 输出到项目根目录的 dist/ 文件夹
+  #   --jobs=8 ^ 并行C编译
+===========================================================
+【步骤三：整理分发包】
+
+  打包完成后，dist\DroneDetection.dist\ 目录即为发布目录。
+  将以下文件复制到该目录：
+
+    best.pt.enc         ← 加密的模型文件
+    class_names.txt     ← 类别名称文件（如有）
+
+  不要放入：
+    best.pt             ← 原始模型，保密！
+    license.lic         ← 每台机器不同，单独发放
+    generate_license.py ← 授权方专用工具，不分发
+    encrypt_model_tool.py ← 授权方专用工具，不分发
+
+  最终分发包结构：
+    DroneDetection.dist/
+      DroneDetection.exe
+      best.pt.enc
+      class_names.txt
+      （其余由 Nuitka 自动生成的 .dll / .pyd 等文件）
+
+===========================================================
+【步骤四：许可证发放流程】
+
+  a. 用户首次运行 DroneDetection.exe，程序弹窗显示本机指纹码
+  b. 用户将指纹码发给你
+  c. 你在本机运行：
+       python Software/generate_license.py
+     按提示输入指纹码和有效期，生成 license_XXXXXXXX.lic
+  d. 将该文件重命名为 license.lic 发给用户
+  e. 用户将 license.lic 放在 DroneDetection.exe 同目录下，重新运行即可
+
+===========================================================
+【首次运行说明（给用户）】
+
+  用户第一次运行时，若 GPU 与开发机不同，程序会自动：
+    1. 解密 best.pt.enc（几秒）
+    2. 调用 ultralytics 导出 TensorRT engine（5~15 分钟，取决于 GPU）
+    3. 自动继续正常启动
+
+  此后每次启动均直接加载 best.engine，无需等待。
+
+===========================================================
+【已知注意事项】
+
+  1. PyTorch 及 CUDA 库体积很大（数 GB），--standalone 目录会较大，这是正常的
+  2. 若 qfluentwidgets 未使用可删除对应 --include-package 行
+  3. ultralytics 内部有大量动态导入，若打包后报 ImportError，
+     添加对应包名到 --include-package 即可
+  4. 目标机器需安装正确版本的 CUDA 和 cuDNN（TensorRT 依赖），
+     Nuitka 不会打包 CUDA 运行时，需用户自行安装
+===========================================================

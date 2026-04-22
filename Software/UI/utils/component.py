@@ -62,7 +62,6 @@ class CardWidget(QFrame):
 
 
 class BodyLabel(QLabel):
-    """Typography helper to replace qfluentwidgets.BodyLabel."""
 
     def __init__(self, text: str | QWidget = "", parent: QWidget | None = None):
         actual_parent = parent

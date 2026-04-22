@@ -2,9 +2,11 @@
 import sys
 import logging
 import queue as _queue
+import threading
+import time
 from pathlib import Path
-from PyQt6.QtWidgets import QApplication
-from PyQt6.QtCore import QTimer
+from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QVBoxLayout, QMessageBox
+from PyQt6.QtCore import QTimer, Qt
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -30,6 +32,9 @@ class DroneDetectionSystem:
         logger.info("Initializing drone detection system...")
         self.app = QApplication(sys.argv)
 
+        # 许可证验证：失败则弹窗并退出
+        self._check_license()
+
         self.shm_spectrum, self.shm_waterfall, self.shm_detection = create_shared_memory()
         logger.info("Shared memory allocated")
 
@@ -47,6 +52,9 @@ class DroneDetectionSystem:
         logger.info("IPC objects created")
 
         self.state = State()
+
+        # 模型准备：首次运行时解密并导出 TensorRT engine，之后直接加载
+        self._prepare_model()
 
         from UI.performance.stats_manager import PerformanceManager
         self.perf_manager = PerformanceManager(self.state)
@@ -107,6 +115,87 @@ class DroneDetectionSystem:
 
         self._setup_connections()
         self.main_window.closeEvent = self._close_event
+
+    # ── 许可证验证 ──────────────────────────────────────────────────────────────
+
+    def _check_license(self):
+        """启动时验证许可证，失败则弹窗提示机器码并退出。"""
+        from license_manager import verify_license
+        valid, message = verify_license()
+        if not valid:
+            logger.warning("License verification failed: %s", message)
+            msg = QMessageBox()
+            msg.setWindowTitle("授权验证失败 — 无人机检测系统")
+            msg.setText(message)
+            msg.setIcon(QMessageBox.Icon.Critical)
+            msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msg.exec()
+            sys.exit(1)
+        logger.info("License verified: %s", message)
+
+    # ── 模型准备（首次运行解密 + TensorRT 导出）────────────────────────────────
+
+    def _prepare_model(self):
+        """
+        确保 TensorRT engine 针对当前 GPU 就绪。
+        - 若 best.engine 已存在：直接返回（快速路径）。
+        - 若仅有 best.pt.enc：在后台线程解密并导出 engine，
+          主线程显示等待对话框保持 UI 响应，完成后自动继续。
+        """
+        from model_crypto import get_model_paths, ensure_engine_ready
+
+        enc_path, engine_path = get_model_paths()
+
+        if engine_path.exists() or not enc_path.exists():
+            return
+
+        logger.info("TensorRT engine not found, starting first-run conversion...")
+
+        dlg = QDialog()
+        dlg.setWindowTitle("首次运行 — 正在初始化模型")
+        dlg.setWindowFlags(
+            Qt.WindowType.Dialog
+            | Qt.WindowType.CustomizeWindowHint
+            | Qt.WindowType.WindowTitleHint
+        )
+        dlg.setFixedSize(460, 110)
+        layout = QVBoxLayout(dlg)
+        hint = QLabel(
+            "正在为当前 GPU 生成 TensorRT 推理引擎，首次运行需要 5～15 分钟。\n"
+            "请勿关闭程序，转换完成后将自动继续启动…"
+        )
+        hint.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(hint)
+        dlg.show()
+        QApplication.processEvents()
+
+        error_holder: list[Exception | None] = [None]
+
+        def _convert():
+            try:
+                ensure_engine_ready(enc_path, engine_path, self.state.image_size)
+            except Exception as exc:
+                error_holder[0] = exc
+
+        worker = threading.Thread(target=_convert, daemon=True)
+        worker.start()
+        while worker.is_alive():
+            QApplication.processEvents()
+            time.sleep(0.05)
+        dlg.close()
+
+        if error_holder[0] is not None:
+            QMessageBox.critical(
+                None,
+                "模型初始化失败",
+                f"TensorRT 引擎生成失败：\n{error_holder[0]}\n\n"
+                "请检查 GPU 驱动及 TensorRT 是否正确安装。",
+            )
+            sys.exit(1)
+
+        logger.info("TensorRT engine ready: %s", engine_path)
+
+    # ── 其余方法（与原版相同）───────────────────────────────────────────────────
 
     def _make_init_params(self) -> dict:
         return {
@@ -249,4 +338,5 @@ def main():
         sys.exit(1)
 
 if __name__ == "__main__":
+    mp.freeze_support()  # Nuitka/PyInstaller spawn 模式必需，必须是 __main__ 块的第一句
     main()
