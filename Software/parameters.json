@@ -9,13 +9,13 @@
     "port": 5000
   },
   "Detection": {
-    "conf_threshold": 0.25,
+    "conf_threshold": 0.6,
     "iou_threshold": 0.7,
     "image_size": 512
   },
   "UI_Spectrum": {
-    "spectrum_left_freq(MHz)": 1000,
-    "spectrum_right_freq(MHz)": 1050
+    "spectrum_left_freq(MHz)": 700,
+    "spectrum_right_freq(MHz)": 1200
   },
   "UI_Waterfall": {
     "spectrum_left_freq(MHz)": 1000,

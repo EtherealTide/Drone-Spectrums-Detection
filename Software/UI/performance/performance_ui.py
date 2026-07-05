@@ -61,7 +61,7 @@ class PerformanceUI(QWidget):
         self.cpu_chart.addSeries(self.cpu_series)
         self.gpu_chart.addSeries(self.gpu_series)
         
-        self.axis_x_recv, self.axis_y_recv = self._setup_axes(self.recv_chart, "Time (s)", "FPS", 40000, 100000)
+        self.axis_x_recv, self.axis_y_recv = self._setup_axes(self.recv_chart, "Time (s)", "FPS", 60000, 140000)
         self.axis_x_det, self.axis_y_det = self._setup_axes(self.det_chart, "Time (s)", "FPS", 0, 100)
         self.axis_x_cpu, self.axis_y_cpu = self._setup_axes(self.cpu_chart, "Time (s)", "%", 0, 100)
         self.axis_x_gpu, self.axis_y_gpu = self._setup_axes(self.gpu_chart, "Time (s)", "%", 0, 100)

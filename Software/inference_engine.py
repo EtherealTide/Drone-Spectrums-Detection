@@ -24,7 +24,7 @@ import cv2
 import numpy as np
 import torch
 from multiprocessing.shared_memory import SharedMemory
-
+from matplotlib import pyplot as plt
 from algorithms import BatchDroneDetector
 from ipc import (
     SHM_DETECTION_DTYPE,
@@ -549,7 +549,11 @@ class InferenceEngine:
     # ── JET LUT 生成 ─────────────────────────────────────────────────────────────
 
     def _generate_jet_lut(self) -> torch.Tensor:
-        color_map = np.arange(256, dtype=np.uint8).reshape(-1, 1)
-        bgr = cv2.applyColorMap(color_map, cv2.COLORMAP_JET)
-        rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB).squeeze().astype(np.uint8)
+        # 获取 Matplotlib 的 jet 颜色映射
+        cmap = plt.cm.jet
+        # 在 [0, 1] 区间均匀采样 256 个点（对应 0~255 灰度值）
+        colors = cmap(np.linspace(0, 1, 256))   # shape: (256, 4) RGBA
+        # 提取 RGB 通道，缩放至 0~255 并转为 uint8
+        rgb = (colors[:, :3] * 255).astype(np.uint8)
+        # 转换为 PyTorch 张量并移至指定设备
         return torch.from_numpy(rgb).to(self.device)

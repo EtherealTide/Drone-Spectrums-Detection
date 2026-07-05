@@ -23,7 +23,7 @@ class BatchDroneDetector:
     def __init__(
         self,
         init_params: dict,
-        model_path: str = "best.engine",
+        model_path: str = "yolo26_l.engine",
         class_file: str = "class_names.txt",
     ):
         # 以 exe/脚本所在目录为基准查找模型文件，与 model_crypto.get_model_paths() 保持一致
@@ -80,7 +80,7 @@ class BatchDroneDetector:
                 colors.append(predefined[idx])
             else:
                 hue = int(180 * idx / max(1, len(self.class_names)))
-                hsv = np.uint8([[[hue, 255, 255]]])
+                hsv = np.array([[[hue, 255, 255]]], dtype=np.uint8)
                 bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)[0][0]
                 colors.append(tuple(map(int, bgr)))
         return colors

@@ -77,6 +77,8 @@ class MockDevice:
 
         # ── 数据源（仅用于预加载，热路径不访问）──────────────────────────────────
         self.data_dir = Path(__file__).parent.parent.parent / "data"
+        # self.data_dir ='C:/Users/qly24/Desktop/fast_hop 2/fast_hop'
+        self.data_dir = Path(self.data_dir)
         self.npy_files = sorted(self.data_dir.glob("*.npy"))
         self._current_file_idx = 0
 
@@ -352,6 +354,10 @@ class MockDevice:
             self._current_file_idx = (self._current_file_idx + 1) % total
             try:
                 data = np.load(path)
+                # 只加载512×512的前半部分，且转换为 float16
+                if data.shape != (512, 512):
+                    data = data[:512, :512]
+                    
             except Exception as exc:
                 logging.error(f"加载文件 {path} 失败: {exc}", exc_info=True)
                 continue
